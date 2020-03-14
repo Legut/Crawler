@@ -11,6 +11,6 @@ namespace Crawler
         public string src { get; set; }
         public string alt { get; set; }
         public string title { get; set; }
-        testsetset
+        
     }
 }

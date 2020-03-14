@@ -20,6 +20,7 @@ namespace Crawler
 
         private void button1_Click(object sender, EventArgs e)
         {
+            button1.Enabled = false;
             if (siteToCrawl.Text.Length > 0) 
             {
                 if (PageExists(siteToCrawl.Text))
@@ -36,7 +37,7 @@ namespace Crawler
                         {
                             siteToCrawlMsg.Text = "Istnieje i nie ma certyfikatu";
                         }
-                        Crawler crawl = new Crawler(siteToCrawl.Text);
+                        Crawler crawl = new Crawler(this,siteToCrawl.Text);
                         crawl.StartCrawl();
                     }
                 }
@@ -100,5 +101,75 @@ namespace Crawler
                 return false;
             }
         }
+
+        private void AddRowToPanel(TableLayoutPanel panel, string[] rowElements)
+        {
+            if (panel.ColumnCount != rowElements.Length)
+                throw new Exception("Elements number doesn't match!");
+            //get a reference to the previous existent row
+            //RowStyle temp = panel.RowStyles[panel.RowCount - 1];
+            RowStyle temp = new RowStyle();
+            temp.SizeType = SizeType.Absolute;
+            temp.Height = 20;
+
+            //increase panel rows count by one
+            panel.RowCount++;
+            //add a new RowStyle as a copy of the previous one
+            
+            panel.RowStyles.Add(new RowStyle(temp.SizeType, temp.Height));
+            //add the control
+            for (int i = 0; i < rowElements.Length; i++)
+            {
+                panel.Controls.Add(new Label() { Text = rowElements[i] }, i, panel.RowCount - 1);
+            }
+        }
+
+        public void AddUriToGui2(string url)
+        {
+            string[] dane = new string[1];
+            dane[0] = url;
+            AddRowToPanel(tableLayoutPanel2, dane);
+        }
+
+        public void AddUriToGui(string url)
+        {
+            string[] dane = new string[3];
+            dane[0] = url;
+            dane[1] = "benis";
+            dane[2] = ":---DDD";
+            AddRowToPanel(tableLayoutPanel1, dane);
+
+/*
+            tableLayoutPanel1.RowCount++;
+            int lastrow = tableLayoutPanel1.RowCount;
+
+            //this.tabPage1.Text += "url" + '\n';
+            Label label = new Label();
+            label.Text = url;
+
+            tableLayoutPanel1.SetRow(label, lastrow);            
+            *///this.tabPage1.Controls.Add(label);
+        }
+
+        public void UpdateIdleCounter(int count)
+        {
+            label6.Text = "IdleCounter: " + count;
+        }
+
+        public void UpdateCrawlingStatus(int status)
+        {
+            label3.Text = status + " / 10";
+        }
+
+        public void UpdateCrawledStatus(int left, int all)
+        {
+            label5.Text = left + " / " + all;
+        }
+
+        public void UnblockSearchButton()
+        {
+            button1.Enabled = true;
+        }
+
     }
 }
