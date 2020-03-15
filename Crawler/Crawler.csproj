@@ -64,6 +64,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
@@ -99,6 +100,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Elements\MetaKeywords.cs" />
+    <Compile Include="Elements\MetaDescription.cs" />
+    <Compile Include="Elements\HeadingTwo.cs" />
+    <Compile Include="Elements\HeadingOne.cs" />
+    <Compile Include="Elements\Title.cs" />
     <Compile Include="Crawler.cs" />
     <Compile Include="HtmlImage.cs" />
     <Compile Include="Form1.cs">
@@ -151,5 +157,6 @@
   <ItemGroup>
     <Content Include="NewFile1.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

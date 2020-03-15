@@ -127,7 +127,14 @@ namespace Crawler
         public void AddUriToGui2(string url)
         {
             string[] dane = new string[1];
-            dane[0] = url;
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+                dane[0] = url;
+            else if (url.StartsWith("/"))
+                dane[0] = siteToCrawl.Text + url;
+            else if (url.StartsWith("mailto") || url.StartsWith("tel") || url.StartsWith("#") || url.StartsWith("null"))
+                return;
+            else
+                dane[0] = url;
             AddRowToPanel(tableLayoutPanel2, dane);
         }
 
