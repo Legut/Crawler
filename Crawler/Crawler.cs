@@ -13,18 +13,8 @@ namespace Crawler
     {
         private string baseUrl { get; set; }
         private HashSet<string> crawledPages = new HashSet<string>();
-
-        private bool crawlerAlive = true;
-        private int maxIdleCount = 100;
-        private int idleCount = 0;
-
-        private List<string> pagesToCrawl = new List<string>();
-
-        private int maxCrawling = 10;
-        private int actualCrawling = 0;
-
-        private int pagesCrawled = 0;
-        private int pagesFound = 0;
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(5);
+        private CancellationToken cancellationToken = default(CancellationToken);
 
         Form1 okienkoGui;
 
@@ -34,97 +24,54 @@ namespace Crawler
         {
             pageFragments = new List<PageFragment>();
             okienkoGui = form1;
-            this.baseUrl = siteToCrawl;
-            pagesToCrawl.Add(siteToCrawl);
-            maxCrawling = 10;
-            actualCrawling = 0;
-
-            Debug.Write("\nCrawler started with page: " + siteToCrawl + "\n\n"); //no to git, startuje
-            //Console.WriteLine("Crawler started with page: {0}", siteToCrawl);
-
+            baseUrl = siteToCrawl;
         }
         public void StartCrawl() 
         {
-            pagesFound = 1;
-            okienkoGui.UpdateCrawledStatus(pagesCrawled, pagesFound);
-            
-            //crawler loop
-            //czeka czy są nowe linki do przeszukania
-
-            //chce zrobic tutaj loopa aby nienasrało się np 10k tasków na zmiane wpierdalających sie do zasobów aż będzie wolne miejsce
-            // ale zlapalem errora przy sprawdzaniu baseUrl, siteToCrawl
-
-            while (crawlerAlive)
-            {
-                if (pagesToCrawl.Count > 0)
-                {
-                    if (actualCrawling < maxCrawling)
-                    {
-                        Debug.Write("\nStrona do przeszukania: " + pagesToCrawl[0] + "\n\n");
-                        //Task<CrawlPage> task = CrawlPageMethod(pagesToCrawl[0]);
-                        Task task1 = startCrawlingPage(pagesToCrawl[0]);
-                        pagesToCrawl.RemoveAt(0);                       
-                        okienkoGui.UpdateCrawlingStatus(actualCrawling);
-                        okienkoGui.UpdateCrawledStatus(pagesCrawled, pagesFound);
-                    }
-                    else
-                    {
-                        Debug.Write("\n oczekuje na wolny watek\n");
-                        Thread.Sleep(10);
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("\n brak zadan " + idleCount);
-                    idleCount++;
-                    okienkoGui.UpdateIdleCounter(idleCount);
-                    Thread.Sleep(10);
-                    if (idleCount >= maxIdleCount)
-                    {
-                        crawlerAlive = false;
-                        okienkoGui.UnblockSearchButton();
-                    }
-                }
-            }
+            Task task1 = startCrawlingPage(baseUrl);
         }
-        private async Task startCrawlingPage(string pageToCrawl)
-        {            
-            actualCrawling++;
-            okienkoGui.UpdateCrawlingStatus(actualCrawling);
+        private async Task startCrawlingPage(string page)
+        {
+            // Dodaje do podstron już przecrawlowanych (bo nawet jesli to nie jest jeszcze przecrawlowane, to będzie crawlowane zaraz jak tylko semafor się zwolni)
+            crawledPages.Add(page);
 
-            var httpClient = new HttpClient();
-            var html = await httpClient.GetStringAsync(pageToCrawl);
-            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
-            htmlDocument.LoadHtml(html);
+            // Czekam aż semafor będzie wolny
+            await this.semaphore.WaitAsync(cancellationToken);
 
-            if (Uri.Compare(new Uri(baseUrl), new Uri(pageToCrawl), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
+            try
             {
-                if (!crawledPages.Contains(pageToCrawl))
+                // Sprawdzam czy powinienem Crawlować tą podstronę
+                if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                 {
-                    // Dodaje stronę do listy stron, których nie chcę więcej przeglądać
-                    crawledPages.Add(pageToCrawl);
+                    // Pobieram HTML podstrony
+                    var httpClient = new HttpClient();
+                    var html = await httpClient.GetStringAsync(page);
+                    var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+                    htmlDocument.LoadHtml(html);
 
+                    // Pobieram wszystkie <a></a> z podstrony i rekurencyjnie zaczynam ich crawlowanie
                     var anchors = htmlDocument.DocumentNode.Descendants("a").ToList();
-
                     foreach (var anchor in anchors)
                     {
                         PageFragment pf = new PageFragment();
                         pf.address = anchor.GetAttributeValue("href", "null").ToString();
+                        // Popraw adres tak aby był pełnym linkiem
+                        pf.NormalizeAddress(baseUrl);
 
-                        //dodawanie podstron do kolejki
-                        //jezeli podstrona juz przejrzana, to nie dodawaj jej
-                        if (!crawledPages.Contains(pf.address))
-                        {
-                            if (!pagesToCrawl.Contains(pf.address))
+                        // Sprawdzam czy adres podstrony został już przecrawlowany zanim zacznę go crawlować
+                        if (pf.address != null) { 
+                            if (!crawledPages.Contains(pf.address))
                             {
-
-                                pagesToCrawl.Add(pf.address);
+                                // To jest tu tymczasowo, ogólnie dodawanie czegokolwiek do widoku, będzie odbywać się na samym końcu
+                                if (pf.address.Contains("oferta")) 
+                                {
+                                    Debug.Write(" oferta: " + pf.address + "\n");
+                                }
                                 okienkoGui.AddUriToDataGridView(pf.address);
-                                pagesFound++;
-
+                                // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
+                                Task task1 = startCrawlingPage(pf.address);
                             }
                         }
-
                         /* foreach (var img in imgs)
                         {
                             var htmlImage = new HtmlImage();
@@ -134,26 +81,21 @@ namespace Crawler
                             htmlImages.Add(htmlImage);
 
                         }*/
-
-                        
                     }
+
                 }
                 else
                 {
-                    //strona powinna byc juz przejrzana
-                    Debug.Write("strona: " + pageToCrawl + "powinna byc juz przejrzana\n");
+                    Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
                 }
             }
-            else
+            catch (UriFormatException e) 
             {
-                Debug.Write("\n strona: " + pageToCrawl + " wychodzi poza strone bazowa \n");
+                Debug.Write(" strona: " + page + " Wywala UriFormatException \n");
             }
 
-            //zwolnienie miejsca
-            pagesCrawled++;
-            actualCrawling--;
-            okienkoGui.UpdateCrawlingStatus(actualCrawling);
-            okienkoGui.UpdateCrawledStatus(pagesCrawled, pagesFound);
+            // Zwalniam semafor
+            this.semaphore.Release();
         }
     }
 }

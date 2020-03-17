@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Crawler
@@ -27,6 +28,7 @@ namespace Crawler
         private BigInteger size; // rozmiar elementu na dysku. W sensie w MB kb itd. Kod html waży, obrazki ważą, załączone arkusze stylów (css) ważą, załączone JS (.js) ważą.
         private int wordCount; // Ilość słów na podstronie. Chodzi o treść samą, we wszystkich nagłówkach i paragrafach itd. Tylko dla kontentu typu html, bo nie liczymy słów w cssie, czy js, czy na zdjęciach.
         private int textRatio; // Number of non-HTML characters found in the HTML body tag on a page (the text), divided by the total number of characters the HTML page is made up of, and displayed as a percentage.
+
         private int crawlDepth; // "Głębokość" przecrawlowanego elementu. Np. obrazek znajdujący się pod adresem https://bcd.pl/obrazki/2020/01/obrazek.jpg ma głębokość 4. Innymi słowy jest to ilość slashy ("/") w linku, po jego baseURL (https://bcd.pl)
 
         private long inLinks; // Ilość linków linkujących do tej (aktualnie crawlowanej) podstrony na wszystkich podstronach w serwisie (czyli trzeba przecrawlować wszystko inne żeby mieć ostateczną wartośc tutaj)
@@ -45,5 +47,16 @@ namespace Crawler
         private int responseTime; // Czas w sekundach od początku nawiązywania połączenia z podstroną do pobrania jej zawartości (jak masz już var htmlDocument to koniec liczenia czasu)
         private string redirectURL; // na co zostałeś przekierowany, jeśli było przekierowanie.
         private string redirectType; // jaki rodzaj przekierowania słownie.
+        internal void NormalizeAddress(string baseUrl)
+        {
+            if (this.address.StartsWith("http://") || this.address.StartsWith("https://"))
+                return;
+            else if (this.address.StartsWith("/"))
+                this.address = baseUrl + this.address;
+            else if (this.address.StartsWith("mailto") || this.address.StartsWith("tel") || this.address.StartsWith("#") || this.address.StartsWith("null"))
+                this.address = null;
+            else
+                return;
+        }
     }
 }

@@ -154,14 +154,7 @@ namespace Crawler
 
         internal void AddUriToDataGridView(string url)
         {
-            if (url.StartsWith("http://") || url.StartsWith("https://"))
-                dataGridView1.Rows.Add(url);
-            else if (url.StartsWith("/"))
-                dataGridView1.Rows.Add(siteToCrawl.Text + url);
-            else if (url.StartsWith("mailto") || url.StartsWith("tel") || url.StartsWith("#") || url.StartsWith("null"))
-                return;
-            else
-                dataGridView1.Rows.Add(url);
+            dataGridView1.Rows.Add(url);
             dataGridView1.Update();
         }
 
