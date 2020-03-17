@@ -102,7 +102,7 @@ namespace Crawler
             }
         }
 
-        private void AddRowToPanel(TableLayoutPanel panel, string[] rowElements)
+        /*private void AddRowToPanel(TableLayoutPanel panel, string[] rowElements)
         {
             if (panel.ColumnCount != rowElements.Length)
                 throw new Exception("Elements number doesn't match!");
@@ -126,19 +126,46 @@ namespace Crawler
 
         public void AddUriToGui2(string url)
         {
-            string[] dane = new string[1];
+            //string[] dane = new string[1];
+            Label lab = new Label();
+            lab.AutoSize = true;
+            lab.Margin = new Padding(3);
             if (url.StartsWith("http://") || url.StartsWith("https://"))
-                dane[0] = url;
+                //dane[0] = url;
+                lab.Text = url;
             else if (url.StartsWith("/"))
-                dane[0] = siteToCrawl.Text + url;
+                //dane[0] = siteToCrawl.Text + url;
+                lab.Text = siteToCrawl.Text + url;
             else if (url.StartsWith("mailto") || url.StartsWith("tel") || url.StartsWith("#") || url.StartsWith("null"))
                 return;
             else
-                dane[0] = url;
-            AddRowToPanel(tableLayoutPanel2, dane);
+                //dane[0] = url;
+                lab.Text = url;
+            tableLayoutPanel2.Controls.Add(lab, -1, -1);
+            tableLayoutPanel2.Update();
+            //AddRowToPanel(tableLayoutPanel2, dane);
         }
 
-        public void AddUriToGui(string url)
+        internal void configurePanel()
+        {
+            tableLayoutPanel2.Dock = DockStyle.Top;
+            tableLayoutPanel2.ColumnCount = 1;
+        }*/
+
+        internal void AddUriToDataGridView(string url)
+        {
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+                dataGridView1.Rows.Add(url);
+            else if (url.StartsWith("/"))
+                dataGridView1.Rows.Add(siteToCrawl.Text + url);
+            else if (url.StartsWith("mailto") || url.StartsWith("tel") || url.StartsWith("#") || url.StartsWith("null"))
+                return;
+            else
+                dataGridView1.Rows.Add(url);
+            dataGridView1.Update();
+        }
+
+        /*public void AddUriToGui(string url)
         {
             string[] dane = new string[3];
             dane[0] = url;
@@ -146,7 +173,7 @@ namespace Crawler
             dane[2] = ":---DDD";
             AddRowToPanel(tableLayoutPanel1, dane);
 
-/*
+
             tableLayoutPanel1.RowCount++;
             int lastrow = tableLayoutPanel1.RowCount;
 
@@ -155,8 +182,8 @@ namespace Crawler
             label.Text = url;
 
             tableLayoutPanel1.SetRow(label, lastrow);            
-            *///this.tabPage1.Controls.Add(label);
-        }
+            //this.tabPage1.Controls.Add(label);
+        }*/
 
         public void UpdateIdleCounter(int count)
         {

@@ -28,8 +28,11 @@ namespace Crawler
 
         Form1 okienkoGui;
 
+        private List<PageFragment> pageFragments;
+
         public Crawler(Form1 form1, string siteToCrawl)
         {
+            pageFragments = new List<PageFragment>();
             okienkoGui = form1;
             this.baseUrl = siteToCrawl;
             pagesToCrawl.Add(siteToCrawl);
@@ -53,7 +56,6 @@ namespace Crawler
 
             while (crawlerAlive)
             {
-
                 if (pagesToCrawl.Count > 0)
                 {
                     if (actualCrawling < maxCrawling)
@@ -61,7 +63,7 @@ namespace Crawler
                         Debug.Write("\nStrona do przeszukania: " + pagesToCrawl[0] + "\n\n");
                         //Task<CrawlPage> task = CrawlPageMethod(pagesToCrawl[0]);
                         Task task1 = startCrawlingPage(pagesToCrawl[0]);
-                        pagesToCrawl.RemoveAt(0);                        
+                        pagesToCrawl.RemoveAt(0);                       
                         okienkoGui.UpdateCrawlingStatus(actualCrawling);
                         okienkoGui.UpdateCrawledStatus(pagesCrawled, pagesFound);
                     }
@@ -86,10 +88,7 @@ namespace Crawler
             }
         }
         private async Task startCrawlingPage(string pageToCrawl)
-        {
-            Debug.Write("\n Aktualnie przeszukiwana strona: " + pageToCrawl + "\n");
-            
-            //rozpoczyna crawling podstrony
+        {            
             actualCrawling++;
             okienkoGui.UpdateCrawlingStatus(actualCrawling);
 
@@ -98,39 +97,29 @@ namespace Crawler
             var htmlDocument = new HtmlAgilityPack.HtmlDocument();
             htmlDocument.LoadHtml(html);
 
-            //Debug.Write("strona: " + pageToCrawl + " poloczona, rozpoczynamy \n");
-
             if (Uri.Compare(new Uri(baseUrl), new Uri(pageToCrawl), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
             {
-                //Debug.Write("strona: " + pageToCrawl + " zawiera sie w stronie glownej\n");
                 if (!crawledPages.Contains(pageToCrawl))
                 {
-                    //Debug.Write("Rozkladam strone: " + pageToCrawl + " na czynniki\n");
                     // Dodaje stronę do listy stron, których nie chcę więcej przeglądać
                     crawledPages.Add(pageToCrawl);
-                    //wyswietlenie uri strony na gui
-                    //url, text/html, 200, title, desc
-                    okienkoGui.AddUriToGui(pageToCrawl);
 
-                    //zbieranie danych ze strony
-                    
                     var anchors = htmlDocument.DocumentNode.Descendants("a").ToList();
+
                     foreach (var anchor in anchors)
                     {
-                        //PageFragment pf = new PageFragment();
-                        string subPageLink = anchor.GetAttributeValue("href", "null").ToString();
-
-                        //pf.address = 
+                        PageFragment pf = new PageFragment();
+                        pf.address = anchor.GetAttributeValue("href", "null").ToString();
 
                         //dodawanie podstron do kolejki
                         //jezeli podstrona juz przejrzana, to nie dodawaj jej
-                        if (!crawledPages.Contains(subPageLink))
+                        if (!crawledPages.Contains(pf.address))
                         {
-                            if (!pagesToCrawl.Contains(subPageLink))
+                            if (!pagesToCrawl.Contains(pf.address))
                             {
 
-                                pagesToCrawl.Add(subPageLink);
-                                okienkoGui.AddUriToGui2(subPageLink);
+                                pagesToCrawl.Add(pf.address);
+                                okienkoGui.AddUriToDataGridView(pf.address);
                                 pagesFound++;
 
                             }

@@ -7,7 +7,7 @@ namespace Crawler
     {
         // TO jest nasza biblia, tu jest wszystko: https://docs.microsoft.com/en-us/dotnet/api/system.net.httpwebresponse?view=netframework-4.8
 
-        private string address; //url elementu
+        public string address { get; set; } //url elementu
         private string contentType; // text/css, image/jpeg, text/html, application/pdf... Wszystko załatwia: HttpWebResponse.ContentType
 
         // https://restfulapi.net/http-status-codes/, HttpStatusCode załatwia robotę
