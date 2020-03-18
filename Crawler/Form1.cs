@@ -183,9 +183,10 @@ namespace Crawler
             label6.Text = "IdleCounter: " + count;
         }
 
-        public void UpdateCrawlingStatus(int status)
+        public void UpdateCrawlingStatus(int status, int max)
         {
-            label3.Text = status + " / 10";
+            label3.Text = status + " / "+max;
+            this.Update();
         }
 
         public void UpdateCrawledStatus(int left, int all)

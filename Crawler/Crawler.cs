@@ -13,18 +13,27 @@ namespace Crawler
     {
         private string baseUrl { get; set; }
         private HashSet<string> crawledPages = new HashSet<string>();
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(5);
+        private static int maxSemaphores = 5;
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphores);
         private CancellationToken cancellationToken = default(CancellationToken);
 
-        Form1 okienkoGui;
-
         private List<PageFragment> pageFragments;
+
+        //GUI
+        Form1 okienkoGui;
+        private int przejrzaneStrony;
+        private int stronyDoPrzejrzenia;
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
             pageFragments = new List<PageFragment>();
             okienkoGui = form1;
             baseUrl = siteToCrawl;
+
+            //GUI
+            okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
+            przejrzaneStrony = 0;
+            stronyDoPrzejrzenia = 1;
         }
         public void StartCrawl() 
         {
@@ -32,6 +41,9 @@ namespace Crawler
         }
         private async Task startCrawlingPage(string page)
         {
+            // Update GUI
+            okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores);
+
             // Dodaje do podstron już przecrawlowanych (bo nawet jesli to nie jest jeszcze przecrawlowane, to będzie crawlowane zaraz jak tylko semafor się zwolni)
             crawledPages.Add(page);
 
@@ -69,6 +81,7 @@ namespace Crawler
                                 }
                                 okienkoGui.AddUriToDataGridView(pf.address);
                                 // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
+                                stronyDoPrzejrzenia++;
                                 Task task1 = startCrawlingPage(pf.address);
                             }
                         }
@@ -96,6 +109,12 @@ namespace Crawler
 
             // Zwalniam semafor
             this.semaphore.Release();
+
+            // Update GUI
+            przejrzaneStrony++;
+            okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores);
+            okienkoGui.UpdateCrawledStatus(przejrzaneStrony,stronyDoPrzejrzenia);
+
         }
     }
 }
