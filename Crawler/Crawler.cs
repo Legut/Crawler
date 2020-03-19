@@ -1,8 +1,10 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -14,11 +16,11 @@ namespace Crawler
     {
         private string baseUrl { get; set; }
         private HashSet<string> crawledPages = new HashSet<string>();
-        private static int maxSemaphores = 5;
+        private static int maxSemaphores = 50;
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphores);
         private CancellationToken cancellationToken = default(CancellationToken);
 
-        private List<PageFragment> pageFragments;
+        /*private BindingList<PageFragment> pageFragments;*/
 
         //GUI
         Form1 okienkoGui;
@@ -27,9 +29,16 @@ namespace Crawler
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
-            pageFragments = new List<PageFragment>();
             okienkoGui = form1;
             baseUrl = siteToCrawl;
+
+            // Przypięcie listy do gridView
+            /*
+            pageFragments = new BindingList<PageFragment>();
+            pageFragments.RaiseListChangedEvents = true;
+            pageFragments.ListChanged += new ListChangedEventHandler(okienkoGui.pageFragments_ListChanged);
+            okienkoGui.SetDataSource(pageFragments);
+            */
 
             //GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
@@ -38,44 +47,99 @@ namespace Crawler
         }
         public void StartCrawl() 
         {
+
             Task task1 = startCrawlingPage(baseUrl);
         }
         private async Task startCrawlingPage(string page)
         {
-            // Update GUI
-            okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores);
+            okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores); // Update GUI
+            crawledPages.Add(page); // Dodaje do podstron już przecrawlowanych (bo nawet jesli to nie jest jeszcze przecrawlowane, to będzie crawlowane zaraz jak tylko semafor się zwolni)
+            await this.semaphore.WaitAsync(cancellationToken); // Czekam aż semafor będzie wolny
 
-            // Dodaje do podstron już przecrawlowanych (bo nawet jesli to nie jest jeszcze przecrawlowane, to będzie crawlowane zaraz jak tylko semafor się zwolni)
-            crawledPages.Add(page);
+            PageFragment pf = new PageFragment();
 
-            // Czekam aż semafor będzie wolny
-            await this.semaphore.WaitAsync(cancellationToken);
+            // Pobieram HTML podstrony
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response = await httpClient.GetAsync(page);
 
             try
             {
                 // Sprawdzam czy powinienem Crawlować tą podstronę
                 if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                 {
-                    // Pobieram HTML podstrony
-                    var httpClient = new HttpClient();
-                    var html = await httpClient.GetStringAsync(page);
-                    var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+                    string html = await response.Content.ReadAsStringAsync();
+                    HtmlDocument htmlDocument = new HtmlDocument();
                     htmlDocument.LoadHtml(html);
 
-                    PageFragment pf = new PageFragment();
-                    CrawlFurther(htmlDocument, ref pf);
+                    CrawlFurther(htmlDocument);
+
+                    pf.Address = page;
+
+                    if (pf.Address != null) { 
+                        pf.ContentType = response.Content.Headers.ContentType.MediaType;
+                        pf.StatusCode = ((int)response.StatusCode).ToString();
+                        pf.Status = response.StatusCode.ToString();
+                        pf.Indexability = "Indexable";
+
+                        if (pf.StatusCode != "200") 
+                        {
+                            pf.Indexability = "Non-indexable";
+                        }
+
+                        var metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
+                        foreach (var meta in metas) 
+                        {
+                            if (meta.GetAttributeValue("name", "null") == "robots") 
+                            {
+                                if (meta.GetAttributeValue("content", "null") == "noindex")
+                                {
+                                    pf.Indexability = "Non-Indexable";
+                                }
+                            }
+                        }
+
+                        // pageFragments.Add(pf); // Dodaje element do listy dowiązanej do gridView
+                        okienkoGui.AddUriToDataGridView(ref pf); // Dodaje rekord na sztywno
+                    }
                 }
                 else
                 {
+                    pf.Address = page;
+                    
+                    pf.ContentType = response.Content.Headers.ContentType.MediaType;
+                    pf.StatusCode = ((int)response.StatusCode).ToString();
+                    pf.Status = response.StatusCode.ToString();
+                    pf.Indexability = "";
+
+                    // pageFragments.Add(pf); // Dodaje element do listy dowiązanej do gridView
+                    okienkoGui.AddUriToDataGridView(ref pf); // Dodaje rekord na sztywno
+
                     //Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
                 }
             }
+            //zly format strony
             catch (UriFormatException e)
             {
-                Debug.Write(" strona: " + page + " Wywala UriFormatException \n");
-            } catch (Exception e)
+                Debug.WriteLine(" strona: " + page + " Wywala UriFormatException.");
+            }
+            //404
+            catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
             {
-                Debug.Write("Mamy any exception ziom");
+                pf.StatusCode = "404";
+                Debug.WriteLine(" strona " + page + " jest niedostepna.");
+            }
+            //inne bledy Web
+            catch(WebException ex)
+            {
+                
+                string status = (ex.Response as HttpWebResponse).StatusCode.ToString();
+                pf.StatusCode = status;
+                Debug.WriteLine(" strona " + page + " WebEx: " + status);
+            }
+            //inne wyjatki
+            catch (Exception e)
+            {
+                Debug.WriteLine(" strona " + page + " spotkala wyjatek: " + e.Message);
             }
 
             // Zwalniam semafor
@@ -88,37 +152,37 @@ namespace Crawler
 
         }
 
-        private void CrawlFurther(HtmlDocument htmlDocument, ref PageFragment pf)
+        private void CrawlFurther(HtmlDocument htmlDocument)
         {
-            CrawlThroughAnchors(htmlDocument, ref pf);
-            CrawlThroughLinks(htmlDocument, ref pf);
-            CrawlThroughScripts(htmlDocument, ref pf);
-            CrawlThroughIframes(htmlDocument, ref pf);
-            CrawlThroughImages(htmlDocument, ref pf);
+            CrawlThroughAnchors(htmlDocument);
+            CrawlThroughLinks(htmlDocument);
+            CrawlThroughScripts(htmlDocument);
+            CrawlThroughIframes(htmlDocument);
+            CrawlThroughImages(htmlDocument);
         }
-        private void CrawlThroughImages(HtmlDocument htmlDocument, ref PageFragment pf)
+        private void CrawlThroughImages(HtmlDocument htmlDocument)
         {
             // Pobieram wszystkie <img> z podstrony i rekurencyjnie zaczynam ich crawlowanie
             var images = htmlDocument.DocumentNode.Descendants("img").ToList();
             foreach (var image in images)
             {
-                pf.address = image.GetAttributeValue("src", "null").ToString();
+                string address = image.GetAttributeValue("src", "null").ToString();
 
-                TryCrawlingNextPage(ref pf);
+                TryCrawlingNextPage(address);
             }
         }
-        private void CrawlThroughIframes(HtmlDocument htmlDocument, ref PageFragment pf)
+        private void CrawlThroughIframes(HtmlDocument htmlDocument)
         {
             // Pobieram wszystkie <iframe></iframe> z podstrony i rekurencyjnie zaczynam ich crawlowanie
             var iframes = htmlDocument.DocumentNode.Descendants("iframe").ToList();
             foreach (var iframe in iframes)
             {
-                pf.address = iframe.GetAttributeValue("src", "null").ToString();
+                string address = iframe.GetAttributeValue("src", "null").ToString();
 
-                TryCrawlingNextPage(ref pf);
+                TryCrawlingNextPage(address);
             }
         }
-        private void CrawlThroughScripts(HtmlDocument htmlDocument, ref PageFragment pf)
+        private void CrawlThroughScripts(HtmlDocument htmlDocument)
         {
             // Pobieram wszystkie <script></script> z podstrony i rekurencyjnie zaczynam ich crawlowanie
             var scripts = htmlDocument.DocumentNode.Descendants("script").ToList();
@@ -126,13 +190,13 @@ namespace Crawler
             {
                 if (script.GetAttributeValue("type", "null") == "text/javascript")
                 {
-                    pf.address = script.GetAttributeValue("src", "null").ToString();
+                    string address = script.GetAttributeValue("src", "null").ToString();
 
-                    TryCrawlingNextPage(ref pf);
+                    TryCrawlingNextPage(address);
                 }
             }
         }
-        private void CrawlThroughLinks(HtmlDocument htmlDocument, ref PageFragment pf)
+        private void CrawlThroughLinks(HtmlDocument htmlDocument)
         {
             // Pobieram wszystkie <link></link> z podstrony i rekurencyjnie zaczynam ich crawlowanie
             var links = htmlDocument.DocumentNode.Descendants("link").ToList();
@@ -140,39 +204,58 @@ namespace Crawler
             {
                 if (link.GetAttributeValue("rel", "null") == "stylesheet")
                 {
-                    pf.address = link.GetAttributeValue("href", "null").ToString();
+                    string address = link.GetAttributeValue("href", "null").ToString();
 
-                    TryCrawlingNextPage(ref pf);
+                    TryCrawlingNextPage(address);
                 }
             }
         }
-        private void CrawlThroughAnchors(HtmlDocument htmlDocument, ref PageFragment pf)
+        private void CrawlThroughAnchors(HtmlDocument htmlDocument)
         {
             // Pobieram wszystkie <a></a> z podstrony i rekurencyjnie zaczynam ich crawlowanie
             var anchors = htmlDocument.DocumentNode.Descendants("a").ToList();
             foreach (var anchor in anchors)
             {
-                pf.address = anchor.GetAttributeValue("href", "null").ToString();
+                string address = anchor.GetAttributeValue("href", "null").ToString();
                 
-                TryCrawlingNextPage(ref pf);
+                TryCrawlingNextPage(address);
             }
         }
-        private void TryCrawlingNextPage(ref PageFragment pf)
+        private void TryCrawlingNextPage(string address)
         {
             // Popraw adres tak aby był pełnym linkiem
-            pf.NormalizeAddress(baseUrl);
+            NormalizeAddress(baseUrl, ref address);
             // Sprawdzam czy adres jest poprawny
-            if (pf.address != null)
+            if (address != null)
             {
                 // Sprawdzam czy adres podstrony został już przecrawlowany zanim zacznę go crawlować
-                if (!crawledPages.Contains(pf.address))
+                if (!crawledPages.Contains(address))
                 {
-                    // To jest tu tymczasowo, ogólnie dodawanie czegokolwiek do widoku, będzie odbywać się na samym końcu
-                    okienkoGui.AddUriToDataGridView(pf.address);
                     // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
                     stronyDoPrzejrzenia++;
-                    Task task1 = startCrawlingPage(pf.address);
+                    Task task1 = startCrawlingPage(address);
                 }
+            }
+        }
+        private void NormalizeAddress(string baseUrl, ref string address)
+        {
+            if (address.Contains("?"))
+            {
+                address = address.Remove(address.IndexOf("?"));
+            }
+            if (address.StartsWith("http://") || address.StartsWith("https://"))
+                return;
+            else if (address.StartsWith("/"))
+                address = baseUrl + address;
+            else if (address.StartsWith("mailto") || address.StartsWith("tel") || address.StartsWith("#") || address.StartsWith("null"))
+                address = null;
+
+            Uri outUri;
+
+            if (!(Uri.TryCreate(address, UriKind.Absolute, out outUri)
+               && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
+            {
+                address = null;
             }
         }
     }

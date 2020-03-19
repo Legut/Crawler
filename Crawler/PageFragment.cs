@@ -8,15 +8,15 @@ namespace Crawler
     {
         // TO jest nasza biblia, tu jest wszystko: https://docs.microsoft.com/en-us/dotnet/api/system.net.httpwebresponse?view=netframework-4.8
 
-        public string address { get; set; } //url elementu
+        private string address; //url elementu
         private string contentType; // text/css, image/jpeg, text/html, application/pdf... Wszystko załatwia: HttpWebResponse.ContentType
 
         // https://restfulapi.net/http-status-codes/, HttpStatusCode załatwia robotę
         private string statusCode; // np. 404 kiedy not found, albo 200 jak wszystko git, albo 301 przekierowanie
         private string status; // to samo co status code, tylko słowem, jak 301 to "Przekierowanie", jak 404 "Not Found", jak 200 to "OK" itd.
-        
+
         // W zależności od status code, bo jak jest 200 / OK to wiadomo, że indexable, jak jest co innego (np. 301, to non-indexable, przyczyna: przekierowanie) to praktycznie zawsze nie jest indexable, ale trzeba sprawdzić jeszcze
-        private bool indexability; // Czy strona jest możliwa do zaindexowania. Jeśli np. masz podstrone /o-nas, która od razu przekierowuje na /kontakt, to /o-nas nie jest indexowalne, tak samo jak masz atrybut no-index. Dwie możliwe wartości: Indexable, Non-Indexable.
+        private string indexability; // Czy strona jest możliwa do zaindexowania. Jeśli np. masz podstrone /o-nas, która od razu przekierowuje na /kontakt, to /o-nas nie jest indexowalne, tak samo jak masz atrybut no-index. Dwie możliwe wartości: Indexable, Non-Indexable.
         private string indexabilityStatus; // Jeśli w poprzednim non-indexable, to tutaj przyczyna, np. nie jest indexable, bo było przekierowanie, albo nie jest indexable, bo robots.txt zabrania
 
         private List<Title> titles;
@@ -38,7 +38,7 @@ namespace Crawler
         private long outLinks; // Ilość wewnętrznych linków na danej podstronie
         private long uniqueOutLinks; // ilość unikalnych wewnętrznych linków na danej podstronie
         private int uniqueOutLinksOfTotal; // Wartość w procentach. Jeśli na stronie bcd.pl jest 50 podstron, a na crawlowanej podstronie są linki do 30 unikalnych podstron, to ta wartość wynosi: 30/50 * 100% 
-        
+
         private long externalOutLinks; // To samo co wyżej tylko dla linków zewnętrznych
         private long uniqueExternalOutLinks; // To samo co wyżej tylko dla linków zewnętrznych
         private int uniqueExternalOutLinksOfTotal; // To samo co wyżej tylko dla linków zewnętrznych
@@ -47,26 +47,121 @@ namespace Crawler
         private int responseTime; // Czas w sekundach od początku nawiązywania połączenia z podstroną do pobrania jej zawartości (jak masz już var htmlDocument to koniec liczenia czasu)
         private string redirectURL; // na co zostałeś przekierowany, jeśli było przekierowanie.
         private string redirectType; // jaki rodzaj przekierowania słownie.
-        internal void NormalizeAddress(string baseUrl)
+
+        public string Address
         {
-            if (this.address.Contains("?")) 
-            {
-                this.address = this.address.Remove(this.address.IndexOf("?"));
-            }
-            if (this.address.StartsWith("http://") || this.address.StartsWith("https://"))
-                return;
-            else if (this.address.StartsWith("/"))
-                this.address = baseUrl + this.address;
-            else if (this.address.StartsWith("mailto") || this.address.StartsWith("tel") || this.address.StartsWith("#") || this.address.StartsWith("null"))
-                this.address = null;
-
-            Uri outUri;
-
-            if (!(Uri.TryCreate(this.address, UriKind.Absolute, out outUri)
-               && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
-            {
-                this.address = null;
-            }
+            get { return address; }
+            set { address = value; }
+        }
+        public string ContentType
+        {
+            get { return contentType; }
+            set { contentType = value; }
+        }
+        public string StatusCode
+        {
+            get { return statusCode; }
+            set { statusCode = value; }
+        }
+        public string Status
+        {
+            get { return status; }
+            set { status = value; }
+        }
+        public string Indexability
+        {
+            get { return indexability; }
+            set { indexability = value; }
+        }
+        public string IndexabilityStatus
+        {
+            get { return indexabilityStatus; }
+            set { indexabilityStatus = value; }
+        }
+        public BigInteger Size
+        {
+            get { return size; }
+            set { size = value; }
+        }
+        public int WordCount
+        {
+            get { return wordCount; }
+            set { wordCount = value; }
+        }
+        public int TextRatio
+        {
+            get { return textRatio; }
+            set { textRatio = value; }
+        }
+        public int CrawlDepth
+        {
+            get { return crawlDepth; }
+            set { crawlDepth = value; }
+        }
+        public long InLinks
+        {
+            get { return inLinks; }
+            set { inLinks = value; }
+        }
+        public long UniqueInLinks
+        {
+            get { return uniqueInLinks; }
+            set { uniqueInLinks = value; }
+        }
+        public int UniqueInLinksOfTotal
+        {
+            get { return uniqueInLinksOfTotal; }
+            set { uniqueInLinksOfTotal = value; }
+        }
+        public long OutLinks
+        {
+            get { return outLinks; }
+            set { outLinks = value; }
+        }
+        public long UniqueOutLinks
+        {
+            get { return uniqueOutLinks; }
+            set { uniqueOutLinks = value; }
+        }
+        public int UniqueOutLinksOfTotal
+        {
+            get { return uniqueOutLinksOfTotal; }
+            set { uniqueOutLinksOfTotal = value; }
+        }
+        public long ExternalOutLinks
+        {
+            get { return externalOutLinks; }
+            set { externalOutLinks = value; }
+        }
+        public long UniqueExternalOutLinks
+        {
+            get { return uniqueExternalOutLinks; }
+            set { uniqueExternalOutLinks = value; }
+        }
+        public int UniqueExternalOutLinksOfTotal
+        {
+            get { return uniqueExternalOutLinksOfTotal; }
+            set { uniqueExternalOutLinksOfTotal = value; }
+        }
+        public string Hash
+        {
+            get { return hash; }
+            set { hash = value; }
+        }
+        public int ResponseTime
+        {
+            get { return responseTime; }
+            set { responseTime = value; }
+        }
+        public string RedirectURL
+        {
+            get { return redirectURL; }
+            set { redirectURL = value; }
+        }
+        public string RedirectType
+        {
+            get { return redirectType; }
+            set { redirectType = value; }
         }
     }
 }

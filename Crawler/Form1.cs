@@ -16,6 +16,13 @@ namespace Crawler
         public Form1()
         {
             InitializeComponent();
+            // Ustawienia ogólne forma
+            dataGridView1.ColumnCount = 5;
+            dataGridView1.Columns[0].Name = "Address";
+            dataGridView1.Columns[1].Name = "Content Type";
+            dataGridView1.Columns[2].Name = "Status Code";
+            dataGridView1.Columns[3].Name = "Status";
+            dataGridView1.Columns[4].Name = "Indexability";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -47,6 +54,18 @@ namespace Crawler
                 }
             }
         }
+
+        internal void pageFragments_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            dataGridView1.Update();
+        }
+
+        internal void SetDataSource(BindingList<PageFragment> pageFragments)
+        {
+            dataGridView1.DataSource = pageFragments;
+
+        }
+
         private bool PageExists(string url)
         {
             // If no http:// or https:// was given add it to url
@@ -102,81 +121,12 @@ namespace Crawler
             }
         }
 
-        /*private void AddRowToPanel(TableLayoutPanel panel, string[] rowElements)
+        internal void AddUriToDataGridView(ref PageFragment pf)
         {
-            if (panel.ColumnCount != rowElements.Length)
-                throw new Exception("Elements number doesn't match!");
-            //get a reference to the previous existent row
-            //RowStyle temp = panel.RowStyles[panel.RowCount - 1];
-            RowStyle temp = new RowStyle();
-            temp.SizeType = SizeType.Absolute;
-            temp.Height = 20;
-
-            //increase panel rows count by one
-            panel.RowCount++;
-            //add a new RowStyle as a copy of the previous one
-            
-            panel.RowStyles.Add(new RowStyle(temp.SizeType, temp.Height));
-            //add the control
-            for (int i = 0; i < rowElements.Length; i++)
-            {
-                panel.Controls.Add(new Label() { Text = rowElements[i] }, i, panel.RowCount - 1);
-            }
-        }
-
-        public void AddUriToGui2(string url)
-        {
-            //string[] dane = new string[1];
-            Label lab = new Label();
-            lab.AutoSize = true;
-            lab.Margin = new Padding(3);
-            if (url.StartsWith("http://") || url.StartsWith("https://"))
-                //dane[0] = url;
-                lab.Text = url;
-            else if (url.StartsWith("/"))
-                //dane[0] = siteToCrawl.Text + url;
-                lab.Text = siteToCrawl.Text + url;
-            else if (url.StartsWith("mailto") || url.StartsWith("tel") || url.StartsWith("#") || url.StartsWith("null"))
-                return;
-            else
-                //dane[0] = url;
-                lab.Text = url;
-            tableLayoutPanel2.Controls.Add(lab, -1, -1);
-            tableLayoutPanel2.Update();
-            //AddRowToPanel(tableLayoutPanel2, dane);
-        }
-
-        internal void configurePanel()
-        {
-            tableLayoutPanel2.Dock = DockStyle.Top;
-            tableLayoutPanel2.ColumnCount = 1;
-        }*/
-
-        internal void AddUriToDataGridView(string url)
-        {
-            dataGridView1.Rows.Add(url);
+            string[] row = { pf.Address, pf.ContentType, pf.StatusCode, pf.Status, pf.Indexability.ToString() };
+            dataGridView1.Rows.Add(row);
             dataGridView1.Update();
         }
-
-        /*public void AddUriToGui(string url)
-        {
-            string[] dane = new string[3];
-            dane[0] = url;
-            dane[1] = "benis";
-            dane[2] = ":---DDD";
-            AddRowToPanel(tableLayoutPanel1, dane);
-
-
-            tableLayoutPanel1.RowCount++;
-            int lastrow = tableLayoutPanel1.RowCount;
-
-            //this.tabPage1.Text += "url" + '\n';
-            Label label = new Label();
-            label.Text = url;
-
-            tableLayoutPanel1.SetRow(label, lastrow);            
-            //this.tabPage1.Controls.Add(label);
-        }*/
 
         public void UpdateIdleCounter(int count)
         {
