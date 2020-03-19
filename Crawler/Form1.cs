@@ -185,7 +185,7 @@ namespace Crawler
 
         public void UpdateCrawlingStatus(int status, int max)
         {
-            label3.Text = status + " / "+max;
+            label3.Text = status + " / " + max;
             this.Update();
         }
 

@@ -49,14 +49,24 @@ namespace Crawler
         private string redirectType; // jaki rodzaj przekierowania słownie.
         internal void NormalizeAddress(string baseUrl)
         {
+            if (this.address.Contains("?")) 
+            {
+                this.address = this.address.Remove(this.address.IndexOf("?"));
+            }
             if (this.address.StartsWith("http://") || this.address.StartsWith("https://"))
                 return;
             else if (this.address.StartsWith("/"))
                 this.address = baseUrl + this.address;
             else if (this.address.StartsWith("mailto") || this.address.StartsWith("tel") || this.address.StartsWith("#") || this.address.StartsWith("null"))
                 this.address = null;
-            else
-                return;
+
+            Uri outUri;
+
+            if (!(Uri.TryCreate(this.address, UriKind.Absolute, out outUri)
+               && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
+            {
+                this.address = null;
+            }
         }
     }
 }
