@@ -15,18 +15,15 @@ namespace Crawler
     {
         public Form1()
         {
-            InitializeComponent();
             // Ustawienia ogólne forma
-            dataGridView1.ColumnCount = 5;
-            dataGridView1.Columns[0].Name = "Address";
-            dataGridView1.Columns[1].Name = "Content Type";
-            dataGridView1.Columns[2].Name = "Status Code";
-            dataGridView1.Columns[3].Name = "Status";
-            dataGridView1.Columns[4].Name = "Indexability";
+            InitializeComponent();
+            dataGridView1.ColumnCount = 0;
+            dataGridView2.ColumnCount = 0;
+            dataGridView3.ColumnCount = 0;
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
+            // Reakcja na wciśnięcie guzika "Crawluj"
             button1.Enabled = false;
             if (siteToCrawl.Text.Length > 0) 
             {
@@ -54,21 +51,14 @@ namespace Crawler
                 }
             }
         }
-
         internal void pageFragments_ListChanged(object sender, ListChangedEventArgs e)
         {
+            // Dynamiczna aktualizacja listy w postaci Listenera
             dataGridView1.Update();
         }
-
-        internal void SetDataSource(BindingList<PageFragment> pageFragments)
-        {
-            dataGridView1.DataSource = pageFragments;
-
-        }
-
         private bool PageExists(string url)
         {
-            // If no http:// or https:// was given add it to url
+            // Jeśli nie dodano prefixu protokołu to dodaj go do adresu url
             if (!url.StartsWith("http://") && !url.StartsWith("https://"))
             {
                 url = "http://" + url;
@@ -77,37 +67,35 @@ namespace Crawler
 
             try
             {
-                //Creating the HttpWebRequest
+                // Inicjalizacja odwołania do podanego adresu Url w celu uzyskania odpowiedzi
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                //Setting the Request method HEAD, you can also use GET too.
                 request.Method = "HEAD";
-                //Getting the Web Response.
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                //Returns TRUE if the Status code == 200
                 response.Close();
+
+                //Jeśli Status code == 200 to zwrócę true. Innymi słowy jeśli uda się nawiązać połączenie to zwrócę true
                 return (response.StatusCode == HttpStatusCode.OK);
             }
             catch
             {
-                //Any exception will returns false.
+                // Jakiekolwiek wyjątki zwrócą false.
+                // TODO: Obsługa poszczególnych wyjątków, tak aby poinformować użytkownika nie tylko o tym, że nie udało się nawiązać połączenia, ale również czemu to się nie udało 
                 return false;
             }
         }
         private bool PageHasCertificate(string url)
         {
-            
+            // Jeśli strona ma certyfikat to należy zastąpić http:// na https://
             url = url.Replace("http://", "https://");
-
             try
             {
-                //Creating the HttpWebRequest
+                // Inicjalizacja odwołania do podanego adresu Url w celu uzyskania odpowiedzi
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                //Setting the Request method HEAD, you can also use GET too.
                 request.Method = "HEAD";
-                //Getting the Web Response.
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                //Returns TRUE if the Status code == 200
                 response.Close();
+
+                //Jeśli Status code == 200 to zwrócę true. Innymi słowy jeśli uda się nawiązać połączenie to zwrócę true
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     siteToCrawl.Text = url;
@@ -116,38 +104,46 @@ namespace Crawler
             }
             catch
             {
-                //Any exception will returns false.
+                // Jakiekolwiek wyjątki zwrócą false.
+                // TODO: Obsługa poszczególnych wyjątków, tak aby poinformować użytkownika nie tylko o tym, że nie udało się nawiązać połączenia, ale również czemu to się nie udało 
                 return false;
             }
         }
-
-        internal void AddUriToDataGridView(ref PageFragment pf)
-        {
-            string[] row = { pf.Address, pf.ContentType, pf.StatusCode, pf.Status, pf.Indexability.ToString() };
-            dataGridView1.Rows.Add(row);
-            dataGridView1.Update();
-        }
-
         public void UpdateIdleCounter(int count)
         {
             label6.Text = "IdleCounter: " + count;
         }
-
         public void UpdateCrawlingStatus(int status, int max)
         {
             label3.Text = status + " / " + max;
             this.Update();
         }
-
         public void UpdateCrawledStatus(int left, int all)
         {
             label5.Text = left + " / " + all;
         }
-
         public void UnblockSearchButton()
         {
             button1.Enabled = true;
         }
-
+        public void bindDataTableToWszystkie(DataTable dt)
+        {
+            dataGridView1.DataSource = dt;
+        }
+        public void bindDataTableToWewnetrzne(DataTable dt)
+        {
+            BindingSource src = new BindingSource();
+            src.DataSource = new DataView(dt);
+            src.Filter = "IsInternal = 'True'";
+            dataGridView2.DataSource = src;
+        }
+        public void bindDataTableToZewnetrzne(DataTable dt)
+        {
+            BindingSource src = new BindingSource();
+            src.DataSource = new DataView(dt);
+            src.Filter = "IsInternal = 'False'";
+            dataGridView3.DataSource = src;
+            dataGridView3.Columns["Indexability"].Visible = false;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -20,35 +21,23 @@ namespace Crawler
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphores);
         private CancellationToken cancellationToken = default(CancellationToken);
 
-        /*private BindingList<PageFragment> pageFragments;*/
-
         //GUI
         Form1 okienkoGui;
         private int przejrzaneStrony;
         private int stronyDoPrzejrzenia;
+
+        //Data
+        DataTable dt;
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
             okienkoGui = form1;
             baseUrl = siteToCrawl;
 
-            // Przypięcie listy do gridView
-            /*
-            pageFragments = new BindingList<PageFragment>();
-            pageFragments.RaiseListChangedEvents = true;
-            pageFragments.ListChanged += new ListChangedEventHandler(okienkoGui.pageFragments_ListChanged);
-            okienkoGui.SetDataSource(pageFragments);
-            */
-
             //GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
             przejrzaneStrony = 0;
             stronyDoPrzejrzenia = 1;
-        }
-        public void StartCrawl() 
-        {
-
-            Task task1 = startCrawlingPage(baseUrl);
         }
         private async Task startCrawlingPage(string page)
         {
@@ -58,22 +47,26 @@ namespace Crawler
 
             PageFragment pf = new PageFragment();
 
-            // Pobieram HTML podstrony
+            // Pobieram podstronę
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response = await httpClient.GetAsync(page);
 
             try
             {
-                // Sprawdzam czy powinienem Crawlować tą podstronę
+                // Sprawdzam czy podstrona jest wewnętrzna czy zewnętrzna
                 if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                 {
+                    // Wyjmuję Html jako string
                     string html = await response.Content.ReadAsStringAsync();
                     HtmlDocument htmlDocument = new HtmlDocument();
                     htmlDocument.LoadHtml(html);
 
+                    // Głębsze crawlowanie znalezionych na podstronie linków, w osobnych wątkach
                     CrawlFurther(htmlDocument);
 
+                    // Uzupełniam PageFragment danymi
                     pf.Address = page;
+                    pf.IsInternal = true;
 
                     if (pf.Address != null) { 
                         pf.ContentType = response.Content.Headers.ContentType.MediaType;
@@ -98,60 +91,59 @@ namespace Crawler
                             }
                         }
 
-                        // pageFragments.Add(pf); // Dodaje element do listy dowiązanej do gridView
-                        okienkoGui.AddUriToDataGridView(ref pf); // Dodaje rekord na sztywno
+                        // Aktualizuję źródło danych
+                        updateDataTable(pf);
                     }
                 }
                 else
                 {
                     pf.Address = page;
-                    
+                    pf.IsInternal = false;
+
                     pf.ContentType = response.Content.Headers.ContentType.MediaType;
                     pf.StatusCode = ((int)response.StatusCode).ToString();
                     pf.Status = response.StatusCode.ToString();
                     pf.Indexability = "";
 
-                    // pageFragments.Add(pf); // Dodaje element do listy dowiązanej do gridView
-                    okienkoGui.AddUriToDataGridView(ref pf); // Dodaje rekord na sztywno
-
-                    //Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
+                    // Aktualizuję źródło danych
+                    updateDataTable(pf);
+                    // Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
                 }
             }
-            //zly format strony
             catch (UriFormatException e)
             {
-                Debug.WriteLine(" strona: " + page + " Wywala UriFormatException.");
+                Debug.WriteLine(" Podstrona: " + page + " ma niepoprawnie sformatowany url ");
             }
-            //404
             catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
             {
                 pf.StatusCode = "404";
-                Debug.WriteLine(" strona " + page + " jest niedostepna.");
+                Debug.WriteLine(" strona " + page + " jest niedostepna -> 404 NotFound");
             }
-            //inne bledy Web
             catch(WebException ex)
             {
-                
                 string status = (ex.Response as HttpWebResponse).StatusCode.ToString();
                 pf.StatusCode = status;
                 Debug.WriteLine(" strona " + page + " WebEx: " + status);
             }
-            //inne wyjatki
             catch (Exception e)
             {
-                Debug.WriteLine(" strona " + page + " spotkala wyjatek: " + e.Message);
+                Debug.WriteLine(" strona " + page + " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + e.Message);
             }
 
             // Zwalniam semafor
             this.semaphore.Release();
 
-            // Update GUI
+            // Aktualizuję GUI
             przejrzaneStrony++;
             okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores);
             okienkoGui.UpdateCrawledStatus(przejrzaneStrony,stronyDoPrzejrzenia);
 
         }
-
+        public void StartCrawl()
+        {
+            createDataTable();
+            Task task1 = startCrawlingPage(baseUrl);
+        }
         private void CrawlFurther(HtmlDocument htmlDocument)
         {
             CrawlThroughAnchors(htmlDocument);
@@ -239,6 +231,8 @@ namespace Crawler
         }
         private void NormalizeAddress(string baseUrl, ref string address)
         {
+            // Normalizacja adresu url. Wywalamy argumenty po znaku zapytania. Sprawdzamy, czy na początku jest prefix protokołu.
+            // Wykluczamy adresy, które nas nieinteresują, przez ustawienie wartościu null.
             if (address.Contains("?"))
             {
                 address = address.Remove(address.IndexOf("?"));
@@ -251,12 +245,38 @@ namespace Crawler
                 address = null;
 
             Uri outUri;
-
-            if (!(Uri.TryCreate(address, UriKind.Absolute, out outUri)
-               && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
+            if (!(Uri.TryCreate(address, UriKind.Absolute, out outUri) && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
             {
                 address = null;
             }
+        }
+        private void createDataTable() 
+        {
+            // Bazowa konstrukcja źródła danych. Definicja kolumn.
+            dt = new DataTable();
+            dt.Clear();
+            dt.Columns.Add("Address").DefaultValue = "";
+            dt.Columns.Add("Content Type").DefaultValue = "";
+            dt.Columns.Add("Status Code").DefaultValue = "";
+            dt.Columns.Add("Status").DefaultValue = "";
+            dt.Columns.Add("Indexability").DefaultValue = "";
+            dt.Columns.Add("IsInternal").DefaultValue = "";
+
+            okienkoGui.bindDataTableToWszystkie(dt);
+            okienkoGui.bindDataTableToZewnetrzne(dt);
+            okienkoGui.bindDataTableToWewnetrzne(dt);
+        }
+        private void updateDataTable(PageFragment pf) {
+            // Aktualizacja źródła danych przez umieszczenie danych w odpowiednich kolumnach
+            DataRow _ravi = dt.NewRow();
+            _ravi["Address"] = pf.Address;
+            _ravi["Content Type"] = pf.ContentType;
+            _ravi["Status Code"] = pf.StatusCode;
+            _ravi["Status"] = pf.Status;
+            _ravi["Indexability"] = pf.Indexability;
+            _ravi["IsInternal"] = pf.IsInternal;
+
+            dt.Rows.Add(_ravi);
         }
     }
 }

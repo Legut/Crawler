@@ -7,7 +7,6 @@ namespace Crawler
     internal class PageFragment
     {
         // TO jest nasza biblia, tu jest wszystko: https://docs.microsoft.com/en-us/dotnet/api/system.net.httpwebresponse?view=netframework-4.8
-
         private string address; //url elementu
         private string contentType; // text/css, image/jpeg, text/html, application/pdf... Wszystko załatwia: HttpWebResponse.ContentType
 
@@ -47,6 +46,7 @@ namespace Crawler
         private int responseTime; // Czas w sekundach od początku nawiązywania połączenia z podstroną do pobrania jej zawartości (jak masz już var htmlDocument to koniec liczenia czasu)
         private string redirectURL; // na co zostałeś przekierowany, jeśli było przekierowanie.
         private string redirectType; // jaki rodzaj przekierowania słownie.
+        private bool isInternal;
 
         public string Address
         {
@@ -162,6 +162,11 @@ namespace Crawler
         {
             get { return redirectType; }
             set { redirectType = value; }
+        }
+        public bool IsInternal
+        {
+            get { return isInternal; }
+            set { isInternal = value; }
         }
     }
 }
