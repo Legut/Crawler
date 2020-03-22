@@ -1,9 +1,11 @@
 ﻿using HtmlAgilityPack;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -27,12 +29,15 @@ namespace Crawler
         private int stronyDoPrzejrzenia;
 
         //Data
-        DataTable dt;
+        private DataTable dt;
+        private int titlesCounter;
+
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
             okienkoGui = form1;
             baseUrl = siteToCrawl;
+            titlesCounter = 0;
 
             //GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
@@ -72,24 +77,56 @@ namespace Crawler
                         pf.ContentType = response.Content.Headers.ContentType.MediaType;
                         pf.StatusCode = ((int)response.StatusCode).ToString();
                         pf.Status = response.StatusCode.ToString();
+                        
+
+                        // Update Indexability and IndexabilityStatus values
                         pf.Indexability = "Indexable";
 
                         if (pf.StatusCode != "200") 
                         {
                             pf.Indexability = "Non-indexable";
+                            if (pf.StatusCode.StartsWith("3"))
+                            {
+                                pf.IndexabilityStatus = "Redirect";
+                            } 
+                            else if (pf.StatusCode.StartsWith("4"))
+                            {
+                                pf.IndexabilityStatus = "Client Error";
+                            } 
+                            else if (pf.StatusCode.StartsWith("5"))
+                            {
+                                pf.IndexabilityStatus = "Server Error";
+                            }
                         }
 
-                        var metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
-                        foreach (var meta in metas) 
+
+                        List<HtmlNode> metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
+                        foreach (HtmlNode meta in metas) 
                         {
                             if (meta.GetAttributeValue("name", "null") == "robots") 
                             {
                                 if (meta.GetAttributeValue("content", "null") == "noindex")
                                 {
                                     pf.Indexability = "Non-Indexable";
+                                    pf.IndexabilityStatus = "Noindex";
                                 }
                             }
                         }
+
+                        List<HtmlNode> htmlTitles = htmlDocument.DocumentNode.Descendants("title").ToList();
+                        pf.Titles = new List<Title>();
+                        foreach (HtmlNode htmlTitle in htmlTitles) 
+                        {
+                            Title title = new Title();
+                            title.TitleText = htmlTitle.InnerText;
+                            title.TitleLength = title.TitleText.Length;
+
+                            Font arialBold = new Font("Arial", 13.0F);
+                            title.TitlePixelWidth = System.Windows.Forms.TextRenderer.MeasureText(title.TitleText, arialBold).Width;
+
+                            pf.Titles.Add(title);
+                        }
+                        
 
                         // Aktualizuję źródło danych
                         updateDataTable(pf);
@@ -104,6 +141,8 @@ namespace Crawler
                     pf.StatusCode = ((int)response.StatusCode).ToString();
                     pf.Status = response.StatusCode.ToString();
                     pf.Indexability = "";
+
+                    pf.Titles = new List<Title>();
 
                     // Aktualizuję źródło danych
                     updateDataTable(pf);
@@ -137,12 +176,13 @@ namespace Crawler
             przejrzaneStrony++;
             okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores);
             okienkoGui.UpdateCrawledStatus(przejrzaneStrony,stronyDoPrzejrzenia);
-
+            
         }
-        public void StartCrawl()
+
+        public async void StartCrawl()
         {
             createDataTable();
-            Task task1 = startCrawlingPage(baseUrl);
+            await startCrawlingPage(baseUrl);
         }
         private void CrawlFurther(HtmlDocument htmlDocument)
         {
@@ -225,7 +265,7 @@ namespace Crawler
                 {
                     // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
                     stronyDoPrzejrzenia++;
-                    Task task1 = startCrawlingPage(address);
+                    startCrawlingPage(address);
                 }
             }
         }
@@ -260,6 +300,7 @@ namespace Crawler
             dt.Columns.Add("Status Code").DefaultValue = "";
             dt.Columns.Add("Status").DefaultValue = "";
             dt.Columns.Add("Indexability").DefaultValue = "";
+            dt.Columns.Add("Indexability Status").DefaultValue = "";
             dt.Columns.Add("IsInternal").DefaultValue = "";
 
             okienkoGui.bindDataTableToWszystkie(dt);
@@ -268,15 +309,30 @@ namespace Crawler
         }
         private void updateDataTable(PageFragment pf) {
             // Aktualizacja źródła danych przez umieszczenie danych w odpowiednich kolumnach
-            DataRow _ravi = dt.NewRow();
-            _ravi["Address"] = pf.Address;
-            _ravi["Content Type"] = pf.ContentType;
-            _ravi["Status Code"] = pf.StatusCode;
-            _ravi["Status"] = pf.Status;
-            _ravi["Indexability"] = pf.Indexability;
-            _ravi["IsInternal"] = pf.IsInternal;
+            DataRow row = dt.NewRow();
+            row["Address"] = pf.Address;
+            row["Content Type"] = pf.ContentType;
+            row["Status Code"] = pf.StatusCode;
+            row["Status"] = pf.Status;
+            row["Indexability"] = pf.Indexability;
+            row["Indexability Status"] = pf.IndexabilityStatus;
+            int i = 1;
+            foreach (Title title in pf.Titles) {
+                if (titlesCounter < i) 
+                {
+                    dt.Columns.Add("Title " + i).DefaultValue = "";
+                    dt.Columns.Add("Title Length " + i).DefaultValue = "";
+                    dt.Columns.Add("Title Pixel Width " + i).DefaultValue = "";
+                    titlesCounter++;
+                }
+                row["Title " + i] = title.TitleText;
+                row["Title Length " + i] = title.TitleLength;
+                row["Title Pixel Width " + i] = title.TitlePixelWidth;
+                i++;
+            }
+            row["IsInternal"] = pf.IsInternal;
 
-            dt.Rows.Add(_ravi);
+            dt.Rows.Add(row);
         }
     }
 }

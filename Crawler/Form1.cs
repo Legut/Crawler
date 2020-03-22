@@ -13,6 +13,8 @@ namespace Crawler
 {
     public partial class Form1 : Form
     {
+        bool isCrawling;
+        Crawler crawler;
         public Form1()
         {
             // Ustawienia ogólne forma
@@ -20,35 +22,48 @@ namespace Crawler
             dataGridView1.ColumnCount = 0;
             dataGridView2.ColumnCount = 0;
             dataGridView3.ColumnCount = 0;
+            isCrawling = false;
         }
         private void button1_Click(object sender, EventArgs e)
         {
             // Reakcja na wciśnięcie guzika "Crawluj"
-            button1.Enabled = false;
-            if (siteToCrawl.Text.Length > 0) 
+            if (isCrawling == false)
             {
-                if (PageExists(siteToCrawl.Text))
+                isCrawling = true;
+                button1.Enabled = false;
+                if (siteToCrawl.Text.Length > 0)
                 {
-                    siteToCrawlMsg.Text = "Istnieje";
-                    if (!siteToCrawl.Text.StartsWith("https://"))
+                    if (PageExists(siteToCrawl.Text))
                     {
-                        if (PageHasCertificate(siteToCrawl.Text))
+                        siteToCrawlMsg.Text = "Istnieje";
+                        if (!siteToCrawl.Text.StartsWith("https://"))
                         {
-                            siteToCrawlMsg.Text = "Istnieje i ma certyfikat";
-
+                            if (PageHasCertificate(siteToCrawl.Text))
+                            {
+                                siteToCrawlMsg.Text = "Istnieje i ma certyfikat";
+                            }
+                            else
+                            {
+                                siteToCrawlMsg.Text = "Istnieje i nie ma certyfikatu";
+                            }
+                            crawler = new Crawler(this, siteToCrawl.Text);
+                            crawler.StartCrawl();
                         }
-                        else
-                        {
-                            siteToCrawlMsg.Text = "Istnieje i nie ma certyfikatu";
-                        }
-                        Crawler crawl = new Crawler(this,siteToCrawl.Text);
-                        crawl.StartCrawl();
+                    }
+                    else
+                    {
+                        siteToCrawlMsg.Text = "Nie istnieje";
                     }
                 }
-                else 
-                {
-                    siteToCrawlMsg.Text = "Nie istnieje";
-                }
+                button1.Text = "Stop";
+                button1.Enabled = true;
+            }
+            else
+            {
+                button1.Enabled = false;
+                isCrawling = false;
+                button1.Text = "Start";
+                button1.Enabled = true;
             }
         }
         internal void pageFragments_ListChanged(object sender, ListChangedEventArgs e)
@@ -116,15 +131,10 @@ namespace Crawler
         public void UpdateCrawlingStatus(int status, int max)
         {
             label3.Text = status + " / " + max;
-            this.Update();
         }
         public void UpdateCrawledStatus(int left, int all)
         {
             label5.Text = left + " / " + all;
-        }
-        public void UnblockSearchButton()
-        {
-            button1.Enabled = true;
         }
         public void bindDataTableToWszystkie(DataTable dt)
         {

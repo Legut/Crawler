@@ -78,6 +78,11 @@ namespace Crawler
             get { return indexabilityStatus; }
             set { indexabilityStatus = value; }
         }
+        public List<Title> Titles
+        {
+            get { return titles; }
+            set { titles = value; }
+        }
         public BigInteger Size
         {
             get { return size; }
