@@ -31,6 +31,7 @@ namespace Crawler
         //Data
         private DataTable dt;
         private int titlesCounter;
+        private int metaDescriptionsCounter;
 
 
         public Crawler(Form1 form1, string siteToCrawl)
@@ -38,6 +39,7 @@ namespace Crawler
             okienkoGui = form1;
             baseUrl = siteToCrawl;
             titlesCounter = 0;
+            metaDescriptionsCounter = 0;
 
             //GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
@@ -121,12 +123,28 @@ namespace Crawler
                             title.TitleText = htmlTitle.InnerText;
                             title.TitleLength = title.TitleText.Length;
 
-                            Font arialBold = new Font("Arial", 13.0F);
+                            Font arialBold = new Font("Arial", 16.0F);
                             title.TitlePixelWidth = System.Windows.Forms.TextRenderer.MeasureText(title.TitleText, arialBold).Width;
 
                             pf.Titles.Add(title);
                         }
-                        
+
+                        pf.MetaDescriptions = new List<MetaDescription>();
+                        foreach (HtmlNode meta in metas)
+                        {
+                            if (meta.GetAttributeValue("name", "null") == "description")
+                            {
+                                MetaDescription metaDesc = new MetaDescription();
+                                metaDesc.MetaDescriptionText = meta.GetAttributeValue("content", "");
+                                metaDesc.MetaDescriptionLength = metaDesc.MetaDescriptionText.Length;
+
+                                Font arialBold = new Font("Arial", 13.0F);
+                                metaDesc.MetaDescriptionPixelWidth = System.Windows.Forms.TextRenderer.MeasureText(metaDesc.MetaDescriptionText, arialBold).Width;
+
+                                pf.MetaDescriptions.Add(metaDesc);
+                            }
+                        }
+
 
                         // Aktualizuję źródło danych
                         updateDataTable(pf);
@@ -143,6 +161,7 @@ namespace Crawler
                     pf.Indexability = "";
 
                     pf.Titles = new List<Title>();
+                    pf.MetaDescriptions = new List<MetaDescription>();
 
                     // Aktualizuję źródło danych
                     updateDataTable(pf);
@@ -316,6 +335,8 @@ namespace Crawler
             row["Status"] = pf.Status;
             row["Indexability"] = pf.Indexability;
             row["Indexability Status"] = pf.IndexabilityStatus;
+
+            // Ogarnij wszystkie title (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
             int i = 1;
             foreach (Title title in pf.Titles) {
                 if (titlesCounter < i) 
@@ -328,6 +349,23 @@ namespace Crawler
                 row["Title " + i] = title.TitleText;
                 row["Title Length " + i] = title.TitleLength;
                 row["Title Pixel Width " + i] = title.TitlePixelWidth;
+                i++;
+            }
+
+            // Ogarnij wszystkie meta description (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (MetaDescription desc in pf.MetaDescriptions)
+            {
+                if (metaDescriptionsCounter < i)
+                {
+                    dt.Columns.Add("Meta Description " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Description Length " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Description Pixel Width " + i).DefaultValue = "";
+                    metaDescriptionsCounter++;
+                }
+                row["Meta Description " + i] = desc.MetaDescriptionText;
+                row["Meta Description Length " + i] = desc.MetaDescriptionLength;
+                row["Meta Description Pixel Width " + i] = desc.MetaDescriptionPixelWidth;
                 i++;
             }
             row["IsInternal"] = pf.IsInternal;

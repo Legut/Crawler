@@ -83,6 +83,26 @@ namespace Crawler
             get { return titles; }
             set { titles = value; }
         }
+        public List<MetaDescription> MetaDescriptions
+        {
+            get { return metaDescriptions; }
+            set { metaDescriptions = value; }
+        }
+        public List<MetaKeywords> MetaKeywords
+        {
+            get { return metaKeywords; }
+            set { metaKeywords = value; }
+        }
+        public List<HeadingOne> HeadingOnes
+        {
+            get { return headingOnes; }
+            set { headingOnes = value; }
+        }
+        public List<HeadingTwo> HeadingTwos
+        {
+            get { return headingTwos; }
+            set { headingTwos = value; }
+        }
         public BigInteger Size
         {
             get { return size; }
