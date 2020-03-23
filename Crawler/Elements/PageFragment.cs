@@ -21,8 +21,8 @@ namespace Crawler
         private List<Title> titles;
         private List<MetaDescription> metaDescriptions;
         private List<MetaKeywords> metaKeywords;
-        private List<HeadingOne> headingOnes;
-        private List<HeadingTwo> headingTwos;
+        private List<HeadingOne> headingsOne;
+        private List<HeadingTwo> headingsTwo;
 
         private BigInteger size; // rozmiar elementu na dysku. W sensie w MB kb itd. Kod html waży, obrazki ważą, załączone arkusze stylów (css) ważą, załączone JS (.js) ważą.
         private int wordCount; // Ilość słów na podstronie. Chodzi o treść samą, we wszystkich nagłówkach i paragrafach itd. Tylko dla kontentu typu html, bo nie liczymy słów w cssie, czy js, czy na zdjęciach.
@@ -93,15 +93,15 @@ namespace Crawler
             get { return metaKeywords; }
             set { metaKeywords = value; }
         }
-        public List<HeadingOne> HeadingOnes
+        public List<HeadingOne> HeadingsOne
         {
-            get { return headingOnes; }
-            set { headingOnes = value; }
+            get { return headingsOne; }
+            set { headingsOne = value; }
         }
-        public List<HeadingTwo> HeadingTwos
+        public List<HeadingTwo> HeadingsTwo
         {
-            get { return headingTwos; }
-            set { headingTwos = value; }
+            get { return headingsTwo; }
+            set { headingsTwo = value; }
         }
         public BigInteger Size
         {

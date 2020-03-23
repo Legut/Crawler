@@ -23,25 +23,30 @@ namespace Crawler
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphores);
         private CancellationToken cancellationToken = default(CancellationToken);
 
-        //GUI
+        // GUI
         Form1 okienkoGui;
         private int przejrzaneStrony;
         private int stronyDoPrzejrzenia;
 
-        //Data
+        // Data
         private DataTable dt;
+
+        // Countery kolumn danego typu
         private int titlesCounter;
         private int metaDescriptionsCounter;
-
+        private int metaKeywordsCounter;
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
             okienkoGui = form1;
             baseUrl = siteToCrawl;
+
+            // inicjacja counterów kolumn;
             titlesCounter = 0;
             metaDescriptionsCounter = 0;
+            metaKeywordsCounter = 0;
 
-            //GUI
+            // GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
             przejrzaneStrony = 0;
             stronyDoPrzejrzenia = 1;
@@ -101,7 +106,9 @@ namespace Crawler
                             }
                         }
 
-
+                        // Przegląd wszystkich meta - description, keywords i sprawdzenie robots w poszukiwaniu noindex
+                        pf.MetaDescriptions = new List<MetaDescription>();
+                        pf.MetaKeywords = new List<MetaKeywords>();
                         List<HtmlNode> metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
                         foreach (HtmlNode meta in metas) 
                         {
@@ -112,6 +119,25 @@ namespace Crawler
                                     pf.Indexability = "Non-Indexable";
                                     pf.IndexabilityStatus = "Noindex";
                                 }
+                            } 
+                            else if (meta.GetAttributeValue("name", "null") == "description")
+                            {
+                                MetaDescription metaDesc = new MetaDescription();
+                                metaDesc.MetaDescriptionText = meta.GetAttributeValue("content", "");
+                                metaDesc.MetaDescriptionLength = metaDesc.MetaDescriptionText.Length;
+
+                                Font arialBold = new Font("Arial", 13.0F);
+                                metaDesc.MetaDescriptionPixelWidth = System.Windows.Forms.TextRenderer.MeasureText(metaDesc.MetaDescriptionText, arialBold).Width;
+
+                                pf.MetaDescriptions.Add(metaDesc);
+                            }
+                            else if (meta.GetAttributeValue("name", "null") == "keywords")
+                            {
+                                MetaKeywords metaKey = new MetaKeywords();
+                                metaKey.MetaKeywordsText = meta.GetAttributeValue("content", "");
+                                metaKey.MetaKeywordsLength = metaKey.MetaKeywordsText.Length;
+
+                                pf.MetaKeywords.Add(metaKey);
                             }
                         }
 
@@ -129,22 +155,7 @@ namespace Crawler
                             pf.Titles.Add(title);
                         }
 
-                        pf.MetaDescriptions = new List<MetaDescription>();
-                        foreach (HtmlNode meta in metas)
-                        {
-                            if (meta.GetAttributeValue("name", "null") == "description")
-                            {
-                                MetaDescription metaDesc = new MetaDescription();
-                                metaDesc.MetaDescriptionText = meta.GetAttributeValue("content", "");
-                                metaDesc.MetaDescriptionLength = metaDesc.MetaDescriptionText.Length;
-
-                                Font arialBold = new Font("Arial", 13.0F);
-                                metaDesc.MetaDescriptionPixelWidth = System.Windows.Forms.TextRenderer.MeasureText(metaDesc.MetaDescriptionText, arialBold).Width;
-
-                                pf.MetaDescriptions.Add(metaDesc);
-                            }
-                        }
-
+                        
 
                         // Aktualizuję źródło danych
                         updateDataTable(pf);
@@ -162,6 +173,7 @@ namespace Crawler
 
                     pf.Titles = new List<Title>();
                     pf.MetaDescriptions = new List<MetaDescription>();
+                    pf.MetaKeywords = new List<MetaKeywords>();
 
                     // Aktualizuję źródło danych
                     updateDataTable(pf);
@@ -366,6 +378,21 @@ namespace Crawler
                 row["Meta Description " + i] = desc.MetaDescriptionText;
                 row["Meta Description Length " + i] = desc.MetaDescriptionLength;
                 row["Meta Description Pixel Width " + i] = desc.MetaDescriptionPixelWidth;
+                i++;
+            }
+
+            // Ogarnij wszystkie meta keywords (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (MetaKeywords desc in pf.MetaKeywords)
+            {
+                if (metaKeywordsCounter < i)
+                {
+                    dt.Columns.Add("Meta Keywords " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Keywords Length " + i).DefaultValue = "";
+                    metaKeywordsCounter++;
+                }
+                row["Meta Keywords " + i] = desc.MetaKeywordsText;
+                row["Meta Keywords Length " + i] = desc.MetaKeywordsLength;
                 i++;
             }
             row["IsInternal"] = pf.IsInternal;
