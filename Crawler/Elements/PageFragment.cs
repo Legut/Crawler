@@ -24,7 +24,7 @@ namespace Crawler
         private List<HeadingOne> headingsOne;
         private List<HeadingTwo> headingsTwo;
 
-        private BigInteger size; // rozmiar elementu na dysku. W sensie w MB kb itd. Kod html waży, obrazki ważą, załączone arkusze stylów (css) ważą, załączone JS (.js) ważą.
+        private Int64 size; // rozmiar elementu na dysku. W sensie w MB kb itd. Kod html waży, obrazki ważą, załączone arkusze stylów (css) ważą, załączone JS (.js) ważą.
         private int wordCount; // Ilość słów na podstronie. Chodzi o treść samą, we wszystkich nagłówkach i paragrafach itd. Tylko dla kontentu typu html, bo nie liczymy słów w cssie, czy js, czy na zdjęciach.
         private int textRatio; // Number of non-HTML characters found in the HTML body tag on a page (the text), divided by the total number of characters the HTML page is made up of, and displayed as a percentage.
 
@@ -103,7 +103,7 @@ namespace Crawler
             get { return headingsTwo; }
             set { headingsTwo = value; }
         }
-        public BigInteger Size
+        public Int64 Size
         {
             get { return size; }
             set { size = value; }

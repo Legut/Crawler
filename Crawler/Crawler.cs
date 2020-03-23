@@ -35,6 +35,11 @@ namespace Crawler
         private int titlesCounter;
         private int metaDescriptionsCounter;
         private int metaKeywordsCounter;
+        private int headingOneCounter;
+        private int headingTwoCounter;
+
+        // TODO: sortowanie liczb w widoku jest alfabetyczne zamiast wielkościowego
+        static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
@@ -42,9 +47,11 @@ namespace Crawler
             baseUrl = siteToCrawl;
 
             // inicjacja counterów kolumn;
-            titlesCounter = 0;
-            metaDescriptionsCounter = 0;
-            metaKeywordsCounter = 0;
+            titlesCounter = 1;
+            metaDescriptionsCounter = 1;
+            metaKeywordsCounter = 1;
+            headingOneCounter = 1;
+            headingTwoCounter = 1;
 
             // GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
@@ -155,8 +162,30 @@ namespace Crawler
                             pf.Titles.Add(title);
                         }
 
-                        
+                        List<HtmlNode> htmlHeadingsOne = htmlDocument.DocumentNode.Descendants("h1").ToList();
+                        pf.HeadingsOne = new List<HeadingOne>();
+                        foreach (HtmlNode htmlHeadingOne in htmlHeadingsOne)
+                        {
+                            HeadingOne headingOne = new HeadingOne();
+                            headingOne.HeadingOneText = htmlHeadingOne.InnerText;
+                            headingOne.HeadingOneLength = headingOne.HeadingOneText.Length;
 
+                            pf.HeadingsOne.Add(headingOne);
+                        }
+
+                        List<HtmlNode> htmlHeadingsTwo = htmlDocument.DocumentNode.Descendants("h2").ToList();
+                        pf.HeadingsTwo = new List<HeadingTwo>();
+                        foreach (HtmlNode htmlHeadingTwo in htmlHeadingsTwo)
+                        {
+                            HeadingTwo headingTwo = new HeadingTwo();
+                            headingTwo.HeadingTwoText = htmlHeadingTwo.InnerText;
+                            headingTwo.HeadingTwoLength = headingTwo.HeadingTwoText.Length;
+
+                            pf.HeadingsTwo.Add(headingTwo);
+                        }
+
+
+                        pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
                         // Aktualizuję źródło danych
                         updateDataTable(pf);
                     }
@@ -174,6 +203,8 @@ namespace Crawler
                     pf.Titles = new List<Title>();
                     pf.MetaDescriptions = new List<MetaDescription>();
                     pf.MetaKeywords = new List<MetaKeywords>();
+                    pf.HeadingsOne = new List<HeadingOne>();
+                    pf.HeadingsTwo = new List<HeadingTwo>();
 
                     // Aktualizuję źródło danych
                     updateDataTable(pf);
@@ -334,6 +365,25 @@ namespace Crawler
             dt.Columns.Add("Indexability Status").DefaultValue = "";
             dt.Columns.Add("IsInternal").DefaultValue = "";
 
+            dt.Columns.Add("Title 1").DefaultValue = "";
+            dt.Columns.Add("Title Length 1").DefaultValue = "";
+            dt.Columns.Add("Title Pixel Width 1").DefaultValue = "";
+
+            dt.Columns.Add("Meta Description 1").DefaultValue = "";
+            dt.Columns.Add("Meta Description Length 1").DefaultValue = "";
+            dt.Columns.Add("Meta Description Pixel Width 1").DefaultValue = "";
+
+            dt.Columns.Add("Meta Keywords 1").DefaultValue = "";
+            dt.Columns.Add("Meta Keywords Length 1").DefaultValue = "";
+
+            dt.Columns.Add("H1 1").DefaultValue = "";
+            dt.Columns.Add("H1 Length 1").DefaultValue = "";
+
+            dt.Columns.Add("H2 1").DefaultValue = "";
+            dt.Columns.Add("H2 Length 1").DefaultValue = "";
+
+            dt.Columns.Add("Size").DefaultValue = "";
+
             okienkoGui.bindDataTableToWszystkie(dt);
             okienkoGui.bindDataTableToZewnetrzne(dt);
             okienkoGui.bindDataTableToWewnetrzne(dt);
@@ -347,6 +397,15 @@ namespace Crawler
             row["Status"] = pf.Status;
             row["Indexability"] = pf.Indexability;
             row["Indexability Status"] = pf.IndexabilityStatus;
+            row["IsInternal"] = pf.IsInternal;
+            if (pf.IsInternal == true)
+            {
+                row["Size"] = SizeSuffix(pf.Size, 2);
+            }
+            else 
+            {
+                row["Size"] = "";
+            }
 
             // Ogarnij wszystkie title (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
             int i = 1;
@@ -395,9 +454,61 @@ namespace Crawler
                 row["Meta Keywords Length " + i] = desc.MetaKeywordsLength;
                 i++;
             }
-            row["IsInternal"] = pf.IsInternal;
+
+            // Ogarnij wszystkie h1 (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (HeadingOne headingOne in pf.HeadingsOne)
+            {
+                if (headingOneCounter < i)
+                {
+                    dt.Columns.Add("H1 " + i).DefaultValue = "";
+                    dt.Columns.Add("H1 Length " + i).DefaultValue = "";
+                    headingOneCounter++;
+                }
+                row["H1 " + i] = headingOne.HeadingOneText;
+                row["H1 Length " + i] = headingOne.HeadingOneLength;
+                i++;
+            }
+
+            // Ogarnij wszystkie h2 (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (HeadingTwo headingTwo in pf.HeadingsTwo)
+            {
+                if (headingTwoCounter < i)
+                {
+                    dt.Columns.Add("H2 " + i).DefaultValue = "";
+                    dt.Columns.Add("H2 Length " + i).DefaultValue = "";
+                    headingTwoCounter++;
+                }
+                row["H2 " + i] = headingTwo.HeadingTwoText;
+                row["H2 Length " + i] = headingTwo.HeadingTwoLength;
+                i++;
+            }
 
             dt.Rows.Add(row);
+        }
+        private static string SizeSuffix(Int64 value, int decimalPlaces = 1)
+        {
+            if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
+            if (value < 0) { return "-" + SizeSuffix(-value); }
+            if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
+
+            // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
+            int mag = (int)Math.Log(value, 1024);
+
+            // 1L << (mag * 10) == 2 ^ (10 * mag) 
+            // [i.e. the number of bytes in the unit corresponding to mag]
+            decimal adjustedSize = (decimal)value / (1L << (mag * 10));
+
+            // make adjustment when the value is large enough that
+            // it would round up to 1000 or more
+            if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
+            {
+                mag += 1;
+                adjustedSize /= 1024;
+            }
+
+            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, SizeSuffixes[mag]);
         }
     }
 }
