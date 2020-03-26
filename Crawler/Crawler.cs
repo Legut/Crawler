@@ -23,11 +23,8 @@ namespace Crawler
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphores);
         private CancellationToken cancellationToken = default(CancellationToken);
 
+        CancellationTokenSource cts;
         List<Task> taskList = new List<Task>();
-        private bool canceled;
-        private int canceldedOnStart;
-        private int canceledOnUrl;
-        private int canceledOnEnd;
 
         //GUI
         Form1 okienkoGui;
@@ -44,169 +41,151 @@ namespace Crawler
             baseUrl = siteToCrawl;
             titlesCounter = 0;
 
-            canceled = false;
-            canceldedOnStart = 0;
-            canceledOnUrl = 0;
-            canceledOnEnd = 0;
+            cts = new CancellationTokenSource();
 
             //GUI
             okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
             przejrzaneStrony = 0;
             stronyDoPrzejrzenia = 1;
         }
-        private async Task startCrawlingPage(string page)
+        private async Task startCrawlingPage(string page, CancellationToken ctsToken)
         {
-            if (canceled)
-            {
-                Debug.WriteLine("Task anulowany zupelnie na poczatku");
-            }
-            else
+            try
             {
                 okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores); // Update GUI
                 crawledPages.Add(page); // Dodaje do podstron już przecrawlowanych (bo nawet jesli to nie jest jeszcze przecrawlowane, to będzie crawlowane zaraz jak tylko semafor się zwolni)
                 await this.semaphore.WaitAsync(cancellationToken); // Czekam aż semafor będzie wolny
+                
+                PageFragment pf = new PageFragment();
 
-                if (canceled)
+                // Pobieram podstronę
+                HttpClient httpClient = new HttpClient();
+                HttpResponseMessage response = await httpClient.GetAsync(page);
+
+                try
                 {
-                    Debug.WriteLine("Task zostal anulowany przed wykonaniem");
-                    canceldedOnStart++;
-                }
-                else
-                {
-                    PageFragment pf = new PageFragment();
-
-                    // Pobieram podstronę
-                    HttpClient httpClient = new HttpClient();
-                    HttpResponseMessage response = await httpClient.GetAsync(page);
-
-                    if (canceled)
+                    // Sprawdzam czy podstrona jest wewnętrzna czy zewnętrzna
+                    if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped,
+                        StringComparison.CurrentCulture) == 0)
                     {
-                        Debug.WriteLine("Task zostal anulowany po polaczeniu ze strona");
-                        canceledOnUrl++;
+                        // Wyjmuję Html jako string
+                        string html = await response.Content.ReadAsStringAsync();
+                        HtmlDocument htmlDocument = new HtmlDocument();
+                        htmlDocument.LoadHtml(html);
+
+                        // Głębsze crawlowanie znalezionych na podstronie linków, w osobnych wątkach
+                        if (!cts.IsCancellationRequested)
+                        {
+                            CrawlFurther(htmlDocument);
+                        }
+
+                        // Uzupełniam PageFragment danymi
+                        pf.Address = page;
+                        pf.IsInternal = true;
+
+                        if (pf.Address != null)
+                        {
+                            pf.ContentType = response.Content.Headers.ContentType.MediaType;
+                            pf.StatusCode = ((int) response.StatusCode).ToString();
+                            pf.Status = response.StatusCode.ToString();
+
+                            // Update Indexability and IndexabilityStatus values
+                            pf.Indexability = "Indexable";
+
+                            if (pf.StatusCode != "200")
+                            {
+                                pf.Indexability = "Non-indexable";
+                                if (pf.StatusCode.StartsWith("3"))
+                                {
+                                    pf.IndexabilityStatus = "Redirect";
+                                }
+                                else if (pf.StatusCode.StartsWith("4"))
+                                {
+                                    pf.IndexabilityStatus = "Client Error";
+                                }
+                                else if (pf.StatusCode.StartsWith("5"))
+                                {
+                                    pf.IndexabilityStatus = "Server Error";
+                                }
+                            }
+
+                            List<HtmlNode> metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
+                            foreach (HtmlNode meta in metas)
+                            {
+                                if (meta.GetAttributeValue("name", "null") == "robots")
+                                {
+                                    if (meta.GetAttributeValue("content", "null") == "noindex")
+                                    {
+                                        pf.Indexability = "Non-Indexable";
+                                        pf.IndexabilityStatus = "Noindex";
+                                    }
+                                }
+                            }
+
+                            List<HtmlNode> htmlTitles = htmlDocument.DocumentNode.Descendants("title").ToList();
+                            pf.Titles = new List<Title>();
+                            foreach (HtmlNode htmlTitle in htmlTitles)
+                            {
+                                Title title = new Title();
+                                title.TitleText = htmlTitle.InnerText;
+                                title.TitleLength = title.TitleText.Length;
+
+                                Font arialBold = new Font("Arial", 13.0F);
+                                title.TitlePixelWidth = System.Windows.Forms.TextRenderer
+                                    .MeasureText(title.TitleText, arialBold).Width;
+
+                                pf.Titles.Add(title);
+                            }
+
+                            // Aktualizuję źródło danych
+                            updateDataTable(pf);
+                        }
                     }
                     else
                     {
-                        try
-                        {
-                            // Sprawdzam czy podstrona jest wewnętrzna czy zewnętrzna
-                            if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
-                            {
-                                // Wyjmuję Html jako string
-                                string html = await response.Content.ReadAsStringAsync();
-                                HtmlDocument htmlDocument = new HtmlDocument();
-                                htmlDocument.LoadHtml(html);
+                        pf.Address = page;
+                        pf.IsInternal = false;
 
-                                // Głębsze crawlowanie znalezionych na podstronie linków, w osobnych wątkach
-                                CrawlFurther(htmlDocument);
+                        pf.ContentType = response.Content.Headers.ContentType.MediaType;
+                        pf.StatusCode = ((int) response.StatusCode).ToString();
+                        pf.Status = response.StatusCode.ToString();
+                        pf.Indexability = "";
 
-                                // Uzupełniam PageFragment danymi
-                                pf.Address = page;
-                                pf.IsInternal = true;
+                        pf.Titles = new List<Title>();
 
-                                if (pf.Address != null)
-                                {
-                                    pf.ContentType = response.Content.Headers.ContentType.MediaType;
-                                    pf.StatusCode = ((int)response.StatusCode).ToString();
-                                    pf.Status = response.StatusCode.ToString();
-
-
-                                    // Update Indexability and IndexabilityStatus values
-                                    pf.Indexability = "Indexable";
-
-                                    if (pf.StatusCode != "200")
-                                    {
-                                        pf.Indexability = "Non-indexable";
-                                        if (pf.StatusCode.StartsWith("3"))
-                                        {
-                                            pf.IndexabilityStatus = "Redirect";
-                                        }
-                                        else if (pf.StatusCode.StartsWith("4"))
-                                        {
-                                            pf.IndexabilityStatus = "Client Error";
-                                        }
-                                        else if (pf.StatusCode.StartsWith("5"))
-                                        {
-                                            pf.IndexabilityStatus = "Server Error";
-                                        }
-                                    }
-
-
-                                    List<HtmlNode> metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
-                                    foreach (HtmlNode meta in metas)
-                                    {
-                                        if (meta.GetAttributeValue("name", "null") == "robots")
-                                        {
-                                            if (meta.GetAttributeValue("content", "null") == "noindex")
-                                            {
-                                                pf.Indexability = "Non-Indexable";
-                                                pf.IndexabilityStatus = "Noindex";
-                                            }
-                                        }
-                                    }
-
-                                    List<HtmlNode> htmlTitles = htmlDocument.DocumentNode.Descendants("title").ToList();
-                                    pf.Titles = new List<Title>();
-                                    foreach (HtmlNode htmlTitle in htmlTitles)
-                                    {
-                                        Title title = new Title();
-                                        title.TitleText = htmlTitle.InnerText;
-                                        title.TitleLength = title.TitleText.Length;
-
-                                        Font arialBold = new Font("Arial", 13.0F);
-                                        title.TitlePixelWidth = System.Windows.Forms.TextRenderer.MeasureText(title.TitleText, arialBold).Width;
-
-                                        pf.Titles.Add(title);
-                                    }
-
-
-                                    // Aktualizuję źródło danych
-                                    updateDataTable(pf);
-                                }
-                            }
-                            else
-                            {
-                                pf.Address = page;
-                                pf.IsInternal = false;
-
-                                pf.ContentType = response.Content.Headers.ContentType.MediaType;
-                                pf.StatusCode = ((int)response.StatusCode).ToString();
-                                pf.Status = response.StatusCode.ToString();
-                                pf.Indexability = "";
-
-                                pf.Titles = new List<Title>();
-
-                                // Aktualizuję źródło danych
-                                updateDataTable(pf);
-                                // Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
-                            }
-                        }
-                        catch (UriFormatException e)
-                        {
-                            Debug.WriteLine(" Podstrona: " + page + " ma niepoprawnie sformatowany url ");
-                        }
-                        catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            pf.StatusCode = "404";
-                            Debug.WriteLine(" strona " + page + " jest niedostepna -> 404 NotFound");
-                        }
-                        catch (WebException ex)
-                        {
-                            string status = (ex.Response as HttpWebResponse).StatusCode.ToString();
-                            pf.StatusCode = status;
-                            Debug.WriteLine(" strona " + page + " WebEx: " + status);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine(" strona " + page + " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + e.Message);
-                        }
-                    }
-
-                    if (canceled)
-                    {
-                        Debug.WriteLine("Task zostal wykonany podczas aborcji");
-                        canceledOnEnd++;
+                        // Aktualizuję źródło danych
+                        updateDataTable(pf);
+                        // Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
                     }
                 }
+                catch (UriFormatException e)
+                {
+                    Debug.WriteLine(" Podstrona: " + page + " ma niepoprawnie sformatowany url ");
+                }
+                catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
+                {
+                    pf.StatusCode = "404";
+                    Debug.WriteLine(" strona " + page + " jest niedostepna -> 404 NotFound");
+                }
+                catch (WebException ex)
+                {
+                    string status = (ex.Response as HttpWebResponse).StatusCode.ToString();
+                    pf.StatusCode = status;
+                    Debug.WriteLine(" strona " + page + " WebEx: " + status);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("jakis error "+e.Message);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("Task anulowany");
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Task sie nie powiodl");
+
             }
 
             // Zwalniam semafor
@@ -225,7 +204,7 @@ namespace Crawler
         public async void StartCrawl()
         {
             createDataTable();
-            await startCrawlingPage(baseUrl);
+            await startCrawlingPage(baseUrl, cts.Token);
         }
         private void CrawlFurther(HtmlDocument htmlDocument)
         {
@@ -298,6 +277,7 @@ namespace Crawler
         }
         private void TryCrawlingNextPage(string address)
         {
+            
             // Popraw adres tak aby był pełnym linkiem
             NormalizeAddress(baseUrl, ref address);
             // Sprawdzam czy adres jest poprawny
@@ -309,7 +289,7 @@ namespace Crawler
                     // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
                     stronyDoPrzejrzenia++;
 
-                    taskList.Add(startCrawlingPage(address));
+                    taskList.Add(startCrawlingPage(address, cts.Token));
                     //startCrawlingPage(address);
                 }
             }
@@ -379,39 +359,18 @@ namespace Crawler
 
             dt.Rows.Add(row);
         }
-
-        private async Task waitForPurge()
-        {
-            int toKill = taskList.Count;
-            Debug.WriteLine("Do egzekucji: " + toKill);
-            int tick = 0;
-            while (canceldedOnStart + canceledOnUrl + canceledOnEnd < toKill)
-            {
-                Task.Delay(1000);
-                //Thread.Sleep(1000);
-                tick++;
-                int total = canceledOnEnd + canceldedOnStart + canceledOnUrl;
-                Debug.WriteLine(tick+" Postep: "+ total+" / "+toKill);
-            }
-
-            Debug.WriteLine("Zabito na starcie "+canceldedOnStart);
-            Debug.WriteLine("Zabito na url " + canceledOnUrl);
-            Debug.WriteLine("Ukonczylo sie " + canceledOnEnd);
-
-        }
-
+        
         public void AbortCrawl()
         {
-            canceled = true;
-
-            //Task task = startCrawlingPage("ABORCJAAA");
-            //uruchomienie taska z debugiem zajmuje wszelkie zasoby xD
-            //Task task = waitForPurge();
-            //await waitForPurge();
-
-            //release stuff?
-
-
+            if (cts != null)
+            {
+                cts.Cancel();
+            }
+            else
+            {
+                //to nie powinno nigdy wyskoczyc ale kto wie xd
+                Debug.WriteLine("CancelationToken jest null, nie mozna anulowac");
+            }
         }
     }
 }
