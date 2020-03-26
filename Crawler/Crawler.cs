@@ -26,7 +26,7 @@ namespace Crawler
         CancellationTokenSource cts;
         List<Task> taskList = new List<Task>();
 
-        // GUI
+        //GUI
         Form1 okienkoGui;
         private int przejrzaneStrony;
         private int stronyDoPrzejrzenia;
@@ -252,7 +252,6 @@ namespace Crawler
 
             // Zwalniam semafor
             this.semaphore.Release();
-
             UpdateDebugGui();
         }
 
@@ -340,6 +339,7 @@ namespace Crawler
         }
         private void TryCrawlingNextPage(string address)
         {
+            
             // Popraw adres tak aby był pełnym linkiem
             NormalizeAddress(baseUrl, ref address);
             // Sprawdzam czy adres jest poprawny

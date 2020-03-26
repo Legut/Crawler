@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -26,45 +27,63 @@ namespace Crawler
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            // Reakcja na wciśnięcie guzika "Crawluj"
-            if (isCrawling == false)
+            Button senderButton = (Button) sender;
+            if (senderButton.Text == "Start")
             {
-                isCrawling = true;
-                button1.Enabled = false;
-                if (siteToCrawl.Text.Length > 0)
+                // Reakcja na wciśnięcie guzika "Crawluj"
+                if (isCrawling == false)
                 {
-                    if (PageExists(siteToCrawl.Text))
+                    isCrawling = true;
+                    button1.Enabled = false;
+                    if (siteToCrawl.Text.Length > 0)
                     {
-                        siteToCrawlMsg.Text = "Istnieje";
-                        if (!siteToCrawl.Text.StartsWith("https://"))
+                        if (PageExists(siteToCrawl.Text))
                         {
-                            if (PageHasCertificate(siteToCrawl.Text))
+                            siteToCrawlMsg.Text = "Istnieje";
+                            if (!siteToCrawl.Text.StartsWith("https://"))
                             {
-                                siteToCrawlMsg.Text = "Istnieje i ma certyfikat";
+                                if (PageHasCertificate(siteToCrawl.Text))
+                                {
+                                    siteToCrawlMsg.Text = "Istnieje i ma certyfikat";
+                                }
+                                else
+                                {
+                                    siteToCrawlMsg.Text = "Istnieje i nie ma certyfikatu";
+                                }
+                                crawler = new Crawler(this, siteToCrawl.Text);
+                                crawler.StartCrawl();
                             }
-                            else
-                            {
-                                siteToCrawlMsg.Text = "Istnieje i nie ma certyfikatu";
-                            }
-                            crawler = new Crawler(this, siteToCrawl.Text);
-                            crawler.StartCrawl();
+                        }
+                        else
+                        {
+                            siteToCrawlMsg.Text = "Nie istnieje";
                         }
                     }
-                    else
-                    {
-                        siteToCrawlMsg.Text = "Nie istnieje";
-                    }
+                    button1.Text = "Stop";
+                    button1.Enabled = true;
                 }
-                button1.Text = "Stop";
-                button1.Enabled = true;
+                else
+                {
+                    button1.Enabled = false;
+                    isCrawling = false;
+                    button1.Text = "Start";
+                    button1.Enabled = true;
+                }
             }
             else
             {
-                button1.Enabled = false;
-                isCrawling = false;
-                button1.Text = "Start";
-                button1.Enabled = true;
+                if (crawler != null)
+                {
+                    crawler.AbortCrawl();
+                    button1.Text = "Aborcjowanie";
+                    Debug.WriteLine("Aborcja");
+                    siteToCrawlMsg.Text = "Zatrzymywanie crawlowania";
+                    button1.Enabled = false;
+                }
             }
+
+
+
         }
         internal void pageFragments_ListChanged(object sender, ListChangedEventArgs e)
         {
@@ -135,6 +154,15 @@ namespace Crawler
         public void UpdateCrawledStatus(int left, int all)
         {
             label5.Text = left + " / " + all;
+
+            //hehe
+            if (left == all && button1.Text == "Aborcjowanie")
+            {
+                button1.Text = "Start";
+                // TODO: Umożliwnie wznowienia
+                //button1.Enabled = true;
+                siteToCrawlMsg.Text = "Skonczylem anulowac zadania";
+            }
         }
         public void bindDataTableToWszystkie(DataTable dt)
         {
