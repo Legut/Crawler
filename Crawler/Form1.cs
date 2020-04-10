@@ -81,9 +81,6 @@ namespace Crawler
                     button1.Enabled = false;
                 }
             }
-
-
-
         }
         internal void pageFragments_ListChanged(object sender, ListChangedEventArgs e)
         {
@@ -164,18 +161,18 @@ namespace Crawler
                 siteToCrawlMsg.Text = "Skonczylem anulowac zadania";
             }
         }
-        public void bindDataTableToWszystkie(DataTable dt)
+        public void BindDataTableToWszystkie(DataTable dt)
         {
             dataGridView1.DataSource = dt;
         }
-        public void bindDataTableToWewnetrzne(DataTable dt)
+        public void BindDataTableToWewnetrzne(DataTable dt)
         {
             BindingSource src = new BindingSource();
             src.DataSource = new DataView(dt);
             src.Filter = "IsInternal = 'True'";
             dataGridView2.DataSource = src;
         }
-        public void bindDataTableToZewnetrzne(DataTable dt)
+        public void BindDataTableToZewnetrzne(DataTable dt)
         {
             BindingSource src = new BindingSource();
             src.DataSource = new DataView(dt);
