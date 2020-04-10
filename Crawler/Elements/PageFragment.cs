@@ -218,7 +218,7 @@ namespace Crawler
             this.ContentType = "";
             this.StatusCode = "";
             this.Status = "";
-            this.Indexability = "";
+            this.Indexability = "Indexable";
             this.IndexabilityStatus = "";
             this.Titles = new List<Title>();
             this.MetaDescriptions = new List<MetaDescription>();

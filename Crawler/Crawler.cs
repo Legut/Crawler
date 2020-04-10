@@ -18,23 +18,21 @@ namespace Crawler
     class Crawler
     {
         private string baseUrl { get; set; }
-        private HashSet<string> crawledPages = new HashSet<string>();
-        private static int maxSemaphores = 50;
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(maxSemaphores);
-        private CancellationToken cancellationToken = default(CancellationToken);
-
-        CancellationTokenSource cts;
-        List<Task> taskList = new List<Task>();
+        private HashSet<string> crawledPages;
+        private const int MaxSemaphores = 50;
+        private readonly SemaphoreSlim semaphore;
+        private CancellationToken cancellationToken;
+        private readonly CancellationTokenSource cts;
 
         //GUI
-        Form1 okienkoGui;
+        public readonly Form1 MainForm;
         private int przejrzaneStrony;
         private int stronyDoPrzejrzenia;
 
         // Data
         private DataTable dt;
 
-        // Countery kolumn danego typu
+        // column counters
         private int titlesCounter;
         private int metaDescriptionsCounter;
         private int metaKeywordsCounter;
@@ -42,16 +40,19 @@ namespace Crawler
         private int headingTwoCounter;
 
         // TODO: sortowanie liczb w widoku jest alfabetyczne zamiast wielkościowego
-        static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
+        private static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
-            okienkoGui = form1;
+            MainForm = form1;
             baseUrl = siteToCrawl;
 
             cts = new CancellationTokenSource();
+            crawledPages = new HashSet<string>();
+            semaphore = new SemaphoreSlim(MaxSemaphores);
+            cancellationToken = default;
 
-            // inicjacja counterów kolumn;
+            // columns counter initiation
             titlesCounter = 1;
             metaDescriptionsCounter = 1;
             metaKeywordsCounter = 1;
@@ -59,16 +60,17 @@ namespace Crawler
             headingTwoCounter = 1;
 
             // GUI
-            okienkoGui.UpdateCrawlingStatus(maxSemaphores, maxSemaphores);
+            MainForm.UpdateCrawlingStatus(MaxSemaphores, MaxSemaphores);
             przejrzaneStrony = 0;
             stronyDoPrzejrzenia = 1;
         }
-        private async Task startCrawlingPage(string page, CancellationToken ctsToken)
+        private async Task StartCrawlingPage(string page, CancellationToken ctsToken)
         {
-            okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores); // Update GUI
+            MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores); // Update GUI
             crawledPages.Add(page); // Dodaje do podstron już przecrawlowanych (bo nawet jesli to nie jest jeszcze przecrawlowane, to będzie crawlowane zaraz jak tylko semafor się zwolni)
             await this.semaphore.WaitAsync(cancellationToken); // Czekam aż semafor będzie wolny
             try {
+                // Sprawdzam cancelation token - czyli sprawdzam czy nie wciśniętu guzika stop
                 if (!cts.IsCancellationRequested)
                 {
                     PageFragment pf = new PageFragment();
@@ -79,10 +81,9 @@ namespace Crawler
 
                     try
                     {
-                        // Sprawdzam czy podstrona jest wewnętrzna czy zewnętrzna
-                        if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped,
-                            StringComparison.CurrentCulture) == 0)
+                        if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                         {
+                            // Podstrona jest wewnętrzna
                             // Wyjmuję Html jako string
                             string html = await response.Content.ReadAsStringAsync();
                             HtmlDocument htmlDocument = new HtmlDocument();
@@ -91,121 +92,20 @@ namespace Crawler
                             // Głębsze crawlowanie znalezionych na podstronie linków, w osobnych wątkach
                             CrawlFurther(htmlDocument, ref pf);
 
-                            // Uzupełniam PageFragment danymi
-                            pf.Address = page;
-                            pf.IsInternal = true;
+                            // Uzupełnij PageFragment danymi
+                            ManagePageFragment(ref pf, ref response, ref htmlDocument, page);
 
-                            if (pf.Address != null)
-                            {
-                                pf.ContentType = response.Content.Headers.ContentType.MediaType;
-                                pf.StatusCode = ((int) response.StatusCode).ToString();
-                                pf.Status = response.StatusCode.ToString();
-
-                                // Update Indexability and IndexabilityStatus values
-                                pf.Indexability = "Indexable";
-
-                                if (pf.StatusCode != "200")
-                                {
-                                    pf.Indexability = "Non-indexable";
-                                    if (pf.StatusCode.StartsWith("3"))
-                                    {
-                                        pf.IndexabilityStatus = "Redirect";
-                                    }
-                                    else if (pf.StatusCode.StartsWith("4"))
-                                    {
-                                        pf.IndexabilityStatus = "Client Error";
-                                    }
-                                    else if (pf.StatusCode.StartsWith("5"))
-                                    {
-                                        pf.IndexabilityStatus = "Server Error";
-                                    }
-                                }
-
-                                // Przegląd wszystkich meta - description, keywords i sprawdzenie robots w poszukiwaniu noindex
-                                List<HtmlNode> metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
-                                foreach (HtmlNode meta in metas)
-                                {
-                                    if (meta.GetAttributeValue("name", "null") == "robots")
-                                    {
-                                        if (meta.GetAttributeValue("content", "null") == "noindex")
-                                        {
-                                            pf.Indexability = "Non-Indexable";
-                                            pf.IndexabilityStatus = "Noindex";
-                                        }
-                                    }
-                                    else if (meta.GetAttributeValue("name", "null") == "description")
-                                    {
-                                        MetaDescription metaDesc = new MetaDescription();
-                                        metaDesc.MetaDescriptionText = meta.GetAttributeValue("content", "");
-                                        metaDesc.MetaDescriptionLength = metaDesc.MetaDescriptionText.Length;
-
-                                        Font arialBold = new Font("Arial", 13.0F);
-                                        metaDesc.MetaDescriptionPixelWidth = System.Windows.Forms.TextRenderer
-                                            .MeasureText(metaDesc.MetaDescriptionText, arialBold).Width;
-
-                                        pf.MetaDescriptions.Add(metaDesc);
-                                    }
-                                    else if (meta.GetAttributeValue("name", "null") == "keywords")
-                                    {
-                                        MetaKeywords metaKey = new MetaKeywords();
-                                        metaKey.MetaKeywordsText = meta.GetAttributeValue("content", "");
-                                        metaKey.MetaKeywordsLength = metaKey.MetaKeywordsText.Length;
-
-                                        pf.MetaKeywords.Add(metaKey);
-                                    }
-                                }
-
-                                List<HtmlNode> htmlTitles = htmlDocument.DocumentNode.Descendants("title").ToList();
-                                foreach (HtmlNode htmlTitle in htmlTitles)
-                                {
-                                    Title title = new Title();
-                                    title.TitleText = htmlTitle.InnerText;
-                                    title.TitleLength = title.TitleText.Length;
-
-                                    Font arialBold = new Font("Arial", 16.0F);
-                                    title.TitlePixelWidth = System.Windows.Forms.TextRenderer
-                                        .MeasureText(title.TitleText, arialBold).Width;
-
-                                    pf.Titles.Add(title);
-                                }
-
-                                List<HtmlNode> htmlHeadingsOne = htmlDocument.DocumentNode.Descendants("h1").ToList();
-                                foreach (HtmlNode htmlHeadingOne in htmlHeadingsOne)
-                                {
-                                    HeadingOne headingOne = new HeadingOne();
-                                    headingOne.HeadingOneText = htmlHeadingOne.InnerText;
-                                    headingOne.HeadingOneLength = headingOne.HeadingOneText.Length;
-
-                                    pf.HeadingsOne.Add(headingOne);
-                                }
-
-                                List<HtmlNode> htmlHeadingsTwo = htmlDocument.DocumentNode.Descendants("h2").ToList();
-                                foreach (HtmlNode htmlHeadingTwo in htmlHeadingsTwo)
-                                {
-                                    HeadingTwo headingTwo = new HeadingTwo();
-                                    headingTwo.HeadingTwoText = htmlHeadingTwo.InnerText;
-                                    headingTwo.HeadingTwoLength = headingTwo.HeadingTwoText.Length;
-
-                                    pf.HeadingsTwo.Add(headingTwo);
-                                }
-
-
-                                pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
-                                // Aktualizuję źródło danych
-                                updateDataTable(pf);
-                            }
+                            // Aktualizuję źródło danych
+                            UpdateDataTable(pf);
                         }
                         else
                         {
-                            pf.Address = page;
-                            pf.IsInternal = false;
-
-                            pf.ContentType = response.Content.Headers.ContentType.MediaType;
-                            pf.StatusCode = ((int) response.StatusCode).ToString();
-                            pf.Status = response.StatusCode.ToString();
+                            // Podstrona jest zewnętrzna
+                            // Uzupełnij PageFragment danymi
+                            ManagePageFragmentIfExternal(ref pf, ref response, page);
 
                             // Aktualizuję źródło danych
-                            updateDataTable(pf);
+                            UpdateDataTable(pf);
                             // Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
                         }
                     }
@@ -227,9 +127,10 @@ namespace Crawler
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(" strona " + page +
-                                        " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + e.Message);
+                        Debug.WriteLine(" strona " + page + " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + e.Message);
                     }
+
+                    UpdateDebugGui();
                 }
             }
             catch (OperationCanceledException)
@@ -243,21 +144,267 @@ namespace Crawler
 
             // Zwalniam semafor
             this.semaphore.Release();
-            UpdateDebugGui();
         }
 
+        private static void ManagePageFragmentIfExternal(ref PageFragment pf, ref HttpResponseMessage response, string page)
+        {
+            pf.Address = page;
+            pf.IsInternal = false;
+
+            pf.ContentType = response.Content.Headers.ContentType.MediaType;
+            pf.StatusCode = ((int)response.StatusCode).ToString();
+            pf.Status = response.StatusCode.ToString();
+        }
+        private static void ManagePageFragment(ref PageFragment pf, ref HttpResponseMessage response, ref HtmlDocument htmlDocument, string page)
+        {
+            pf.Address = page;
+            pf.IsInternal = true;
+            pf.ContentType = response.Content.Headers.ContentType.MediaType;
+            pf.StatusCode = ((int)response.StatusCode).ToString();
+            pf.Status = response.StatusCode.ToString();
+            pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
+
+            if (pf.StatusCode != "200")
+            {
+                pf.Indexability = "Non-indexable";
+                if (pf.StatusCode.StartsWith("3"))
+                {
+                    pf.IndexabilityStatus = "Redirect";
+                }
+                else if (pf.StatusCode.StartsWith("4"))
+                {
+                    pf.IndexabilityStatus = "Client Error";
+                }
+                else if (pf.StatusCode.StartsWith("5"))
+                {
+                    pf.IndexabilityStatus = "Server Error";
+                }
+            }
+
+            // Przegląd wszystkich meta - description, keywords i sprawdzenie robots w poszukiwaniu noindex
+            AnalyzeMetas(ref pf, ref htmlDocument);
+            AnalyzeTitles(ref pf, ref htmlDocument);
+            AnalyzeHeadingsOne(ref pf, ref htmlDocument);
+            AnalyzeHeadingsTwo(ref pf, ref htmlDocument);
+        }
         private void UpdateDebugGui()
         {
             // Aktualizuję GUI
             przejrzaneStrony++;
-            okienkoGui.UpdateCrawlingStatus(semaphore.CurrentCount, maxSemaphores);
-            okienkoGui.UpdateCrawledStatus(przejrzaneStrony, stronyDoPrzejrzenia);
+            MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores);
+            MainForm.UpdateCrawledStatus(przejrzaneStrony, stronyDoPrzejrzenia);
         }
         public async void StartCrawl()
         {
-            createDataTable();
-            await startCrawlingPage(baseUrl, cts.Token);
+            CreateDataTable();
+            await StartCrawlingPage(baseUrl, cts.Token);
         }
+        private static void NormalizeAddress(string baseUrl, ref string address)
+        {
+            // Normalizacja adresu url. Wywalamy argumenty po znaku zapytania. Sprawdzamy, czy na początku jest prefix protokołu.
+            // Wykluczamy adresy, które nas nieinteresują, przez ustawienie wartościu null.
+            if (address.Contains("?"))
+            {
+                address = address.Remove(address.IndexOf("?"));
+            }
+            if (address.StartsWith("http://") || address.StartsWith("https://"))
+                return;
+            else if (address.StartsWith("/"))
+                address = baseUrl + address;
+            else if (address.StartsWith("mailto") || address.StartsWith("tel") || address.StartsWith("#") || address.StartsWith("null"))
+                address = null;
+
+            Uri outUri;
+            if (!(Uri.TryCreate(address, UriKind.Absolute, out outUri) && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
+            {
+                address = null;
+            }
+        }
+        private void CreateDataTable()
+        {
+            // Bazowa konstrukcja źródła danych. Definicja kolumn.
+            dt = new DataTable();
+            dt.Clear();
+            dt.Columns.Add("Address").DefaultValue = "";
+            dt.Columns.Add("Content Type").DefaultValue = "";
+            dt.Columns.Add("Status Code").DefaultValue = "";
+            dt.Columns.Add("Status").DefaultValue = "";
+            dt.Columns.Add("Indexability").DefaultValue = "";
+            dt.Columns.Add("Indexability Status").DefaultValue = "";
+            dt.Columns.Add("IsInternal").DefaultValue = "";
+
+            dt.Columns.Add("Title 1").DefaultValue = "";
+            dt.Columns.Add("Title Length 1").DefaultValue = "";
+            dt.Columns.Add("Title Pixel Width 1").DefaultValue = "";
+
+            dt.Columns.Add("Meta Description 1").DefaultValue = "";
+            dt.Columns.Add("Meta Description Length 1").DefaultValue = "";
+            dt.Columns.Add("Meta Description Pixel Width 1").DefaultValue = "";
+
+            dt.Columns.Add("Meta Keywords 1").DefaultValue = "";
+            dt.Columns.Add("Meta Keywords Length 1").DefaultValue = "";
+
+            dt.Columns.Add("H1 1").DefaultValue = "";
+            dt.Columns.Add("H1 Length 1").DefaultValue = "";
+
+            dt.Columns.Add("H2 1").DefaultValue = "";
+            dt.Columns.Add("H2 Length 1").DefaultValue = "";
+
+            dt.Columns.Add("Size").DefaultValue = "";
+
+            dt.Columns.Add("OutLinks").DefaultValue = "";
+            dt.Columns.Add("UniqueOutLinks").DefaultValue = "";
+            dt.Columns.Add("UniqueOutLinksOfTotal").DefaultValue = "";
+
+            dt.Columns.Add("ExternalOutLinks").DefaultValue = "";
+            dt.Columns.Add("UniqueExternalOutLinks").DefaultValue = "";
+            dt.Columns.Add("UniqueExternalOutLinksOfTotal").DefaultValue = "";
+
+            MainForm.BindDataTableToWszystkie(dt);
+            MainForm.BindDataTableToZewnetrzne(dt);
+            MainForm.BindDataTableToWewnetrzne(dt);
+        }
+        private void UpdateDataTable(PageFragment pf)
+        {
+            // Aktualizacja źródła danych przez umieszczenie danych w odpowiednich kolumnach
+            DataRow row = dt.NewRow();
+            row["Address"] = pf.Address;
+            row["Content Type"] = pf.ContentType;
+            row["Status Code"] = pf.StatusCode;
+            row["Status"] = pf.Status;
+            row["Indexability"] = pf.Indexability;
+            row["Indexability Status"] = pf.IndexabilityStatus;
+            row["IsInternal"] = pf.IsInternal;
+            if (pf.IsInternal == true)
+            {
+                row["Size"] = SizeSuffix(pf.Size, 2);
+            }
+            else
+            {
+                row["Size"] = "";
+            }
+
+            // Ogarnij wszystkie title (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            int i = 1;
+            foreach (Title title in pf.Titles)
+            {
+                if (titlesCounter < i)
+                {
+                    dt.Columns.Add("Title " + i).DefaultValue = "";
+                    dt.Columns.Add("Title Length " + i).DefaultValue = "";
+                    dt.Columns.Add("Title Pixel Width " + i).DefaultValue = "";
+                    titlesCounter++;
+                }
+                row["Title " + i] = title.TitleText;
+                row["Title Length " + i] = title.TitleLength;
+                row["Title Pixel Width " + i] = title.TitlePixelWidth;
+                i++;
+            }
+
+            // Ogarnij wszystkie meta description (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (MetaDescription desc in pf.MetaDescriptions)
+            {
+                if (metaDescriptionsCounter < i)
+                {
+                    dt.Columns.Add("Meta Description " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Description Length " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Description Pixel Width " + i).DefaultValue = "";
+                    metaDescriptionsCounter++;
+                }
+                row["Meta Description " + i] = desc.MetaDescriptionText;
+                row["Meta Description Length " + i] = desc.MetaDescriptionLength;
+                row["Meta Description Pixel Width " + i] = desc.MetaDescriptionPixelWidth;
+                i++;
+            }
+
+            // Ogarnij wszystkie meta keywords (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (MetaKeywords desc in pf.MetaKeywords)
+            {
+                if (metaKeywordsCounter < i)
+                {
+                    dt.Columns.Add("Meta Keywords " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Keywords Length " + i).DefaultValue = "";
+                    metaKeywordsCounter++;
+                }
+                row["Meta Keywords " + i] = desc.MetaKeywordsText;
+                row["Meta Keywords Length " + i] = desc.MetaKeywordsLength;
+                i++;
+            }
+
+            // Ogarnij wszystkie h1 (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (HeadingOne headingOne in pf.HeadingsOne)
+            {
+                if (headingOneCounter < i)
+                {
+                    dt.Columns.Add("H1 " + i).DefaultValue = "";
+                    dt.Columns.Add("H1 Length " + i).DefaultValue = "";
+                    headingOneCounter++;
+                }
+                row["H1 " + i] = headingOne.HeadingOneText;
+                row["H1 Length " + i] = headingOne.HeadingOneLength;
+                if (i == 3) break;
+                i++;
+            }
+
+            // Ogarnij wszystkie h2 (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
+            i = 1;
+            foreach (HeadingTwo headingTwo in pf.HeadingsTwo)
+            {
+                if (headingTwoCounter < i)
+                {
+                    dt.Columns.Add("H2 " + i).DefaultValue = "";
+                    dt.Columns.Add("H2 Length " + i).DefaultValue = "";
+                    headingTwoCounter++;
+                }
+                row["H2 " + i] = headingTwo.HeadingTwoText;
+                row["H2 Length " + i] = headingTwo.HeadingTwoLength;
+                if (i == 3) break;
+                i++;
+            }
+
+            if (pf.OutLinks > 0)
+            {
+                row["OutLinks"] = pf.OutLinks;
+                row["UniqueOutLinks"] = pf.UniqueOutLinks;
+                row["UniqueOutLinksOfTotal"] = ((double)pf.UniqueOutLinks / (double)pf.OutLinks) * 100;
+            }
+
+            if (pf.ExternalOutLinks > 0)
+            {
+                row["ExternalOutLinks"] = pf.ExternalOutLinks;
+                row["UniqueExternalOutLinks"] = pf.UniqueExternalOutLinks;
+                row["UniqueExternalOutLinksOfTotal"] = ((double)pf.UniqueExternalOutLinks / (double)pf.ExternalOutLinks) * 100;
+            }
+
+            dt.Rows.Add(row);
+        }
+        private static string SizeSuffix(long value, int decimalPlaces = 1)
+        {
+            if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
+            if (value < 0) { return "-" + SizeSuffix(-value); }
+            if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
+
+            // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
+            int mag = (int)Math.Log(value, 1024);
+
+            // 1L << (mag * 10) == 2 ^ (10 * mag) 
+            // [i.e. the number of bytes in the unit corresponding to mag]
+            decimal adjustedSize = (decimal)value / (1L << (mag * 10));
+
+            // make adjustment when the value is large enough that
+            // it would round up to 1000 or more
+            if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
+            {
+                mag += 1;
+                adjustedSize /= 1024;
+            }
+
+            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, SizeSuffixes[mag]);
+        }
+
         private void CrawlFurther(HtmlDocument htmlDocument, ref PageFragment pf)
         {
             CrawlThroughAnchors(htmlDocument, ref pf);
@@ -341,8 +488,8 @@ namespace Crawler
                     // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
                     stronyDoPrzejrzenia++;
 
-                    taskList.Add(startCrawlingPage(address, cts.Token));
-                    //startCrawlingPage(address);
+                    StartCrawlingPage(address, cts.Token);
+                    //StartCrawlingPage(address);
                 } 
                 else
                 {
@@ -367,209 +514,83 @@ namespace Crawler
                 }
             }
         }
-        private void NormalizeAddress(string baseUrl, ref string address)
+
+        private static void AnalyzeHeadingsTwo(ref PageFragment pf, ref HtmlDocument htmlDocument)
         {
-            // Normalizacja adresu url. Wywalamy argumenty po znaku zapytania. Sprawdzamy, czy na początku jest prefix protokołu.
-            // Wykluczamy adresy, które nas nieinteresują, przez ustawienie wartościu null.
-            if (address.Contains("?"))
+            List<HtmlNode> htmlHeadingsTwo = htmlDocument.DocumentNode.Descendants("h2").ToList();
+            foreach (HtmlNode htmlHeadingTwo in htmlHeadingsTwo)
             {
-                address = address.Remove(address.IndexOf("?"));
-            }
-            if (address.StartsWith("http://") || address.StartsWith("https://"))
-                return;
-            else if (address.StartsWith("/"))
-                address = baseUrl + address;
-            else if (address.StartsWith("mailto") || address.StartsWith("tel") || address.StartsWith("#") || address.StartsWith("null"))
-                address = null;
+                HeadingTwo headingTwo = new HeadingTwo();
+                headingTwo.HeadingTwoText = htmlHeadingTwo.InnerText;
+                headingTwo.HeadingTwoLength = headingTwo.HeadingTwoText.Length;
 
-            Uri outUri;
-            if (!(Uri.TryCreate(address, UriKind.Absolute, out outUri) && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
-            {
-                address = null;
+                pf.HeadingsTwo.Add(headingTwo);
             }
         }
-        private void createDataTable() 
+        private static void AnalyzeHeadingsOne(ref PageFragment pf, ref HtmlDocument htmlDocument)
         {
-            // Bazowa konstrukcja źródła danych. Definicja kolumn.
-            dt = new DataTable();
-            dt.Clear();
-            dt.Columns.Add("Address").DefaultValue = "";
-            dt.Columns.Add("Content Type").DefaultValue = "";
-            dt.Columns.Add("Status Code").DefaultValue = "";
-            dt.Columns.Add("Status").DefaultValue = "";
-            dt.Columns.Add("Indexability").DefaultValue = "";
-            dt.Columns.Add("Indexability Status").DefaultValue = "";
-            dt.Columns.Add("IsInternal").DefaultValue = "";
+            List<HtmlNode> htmlHeadingsOne = htmlDocument.DocumentNode.Descendants("h1").ToList();
+            foreach (HtmlNode htmlHeadingOne in htmlHeadingsOne)
+            {
+                HeadingOne headingOne = new HeadingOne();
+                headingOne.HeadingOneText = htmlHeadingOne.InnerText;
+                headingOne.HeadingOneLength = headingOne.HeadingOneText.Length;
 
-            dt.Columns.Add("Title 1").DefaultValue = "";
-            dt.Columns.Add("Title Length 1").DefaultValue = "";
-            dt.Columns.Add("Title Pixel Width 1").DefaultValue = "";
-
-            dt.Columns.Add("Meta Description 1").DefaultValue = "";
-            dt.Columns.Add("Meta Description Length 1").DefaultValue = "";
-            dt.Columns.Add("Meta Description Pixel Width 1").DefaultValue = "";
-
-            dt.Columns.Add("Meta Keywords 1").DefaultValue = "";
-            dt.Columns.Add("Meta Keywords Length 1").DefaultValue = "";
-
-            dt.Columns.Add("H1 1").DefaultValue = "";
-            dt.Columns.Add("H1 Length 1").DefaultValue = "";
-
-            dt.Columns.Add("H2 1").DefaultValue = "";
-            dt.Columns.Add("H2 Length 1").DefaultValue = "";
-
-            dt.Columns.Add("Size").DefaultValue = "";
-
-            dt.Columns.Add("OutLinks").DefaultValue = "";
-            dt.Columns.Add("UniqueOutLinks").DefaultValue = "";
-            dt.Columns.Add("UniqueOutLinksOfTotal").DefaultValue = "";
-
-            dt.Columns.Add("ExternalOutLinks").DefaultValue = "";
-            dt.Columns.Add("UniqueExternalOutLinks").DefaultValue = "";
-            dt.Columns.Add("UniqueExternalOutLinksOfTotal").DefaultValue = "";
-
-            okienkoGui.BindDataTableToWszystkie(dt);
-            okienkoGui.BindDataTableToZewnetrzne(dt);
-            okienkoGui.BindDataTableToWewnetrzne(dt);
+                pf.HeadingsOne.Add(headingOne);
+            }
         }
-        private void updateDataTable(PageFragment pf) {
-            // Aktualizacja źródła danych przez umieszczenie danych w odpowiednich kolumnach
-            DataRow row = dt.NewRow();
-            row["Address"] = pf.Address;
-            row["Content Type"] = pf.ContentType;
-            row["Status Code"] = pf.StatusCode;
-            row["Status"] = pf.Status;
-            row["Indexability"] = pf.Indexability;
-            row["Indexability Status"] = pf.IndexabilityStatus;
-            row["IsInternal"] = pf.IsInternal;
-            if (pf.IsInternal == true)
-            {
-                row["Size"] = SizeSuffix(pf.Size, 2);
-            }
-            else 
-            {
-                row["Size"] = "";
-            }
-
-            // Ogarnij wszystkie title (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
-            int i = 1;
-            foreach (Title title in pf.Titles) {
-                if (titlesCounter < i) 
-                {
-                    dt.Columns.Add("Title " + i).DefaultValue = "";
-                    dt.Columns.Add("Title Length " + i).DefaultValue = "";
-                    dt.Columns.Add("Title Pixel Width " + i).DefaultValue = "";
-                    titlesCounter++;
-                }
-                row["Title " + i] = title.TitleText;
-                row["Title Length " + i] = title.TitleLength;
-                row["Title Pixel Width " + i] = title.TitlePixelWidth;
-                i++;
-            }
-
-            // Ogarnij wszystkie meta description (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
-            i = 1;
-            foreach (MetaDescription desc in pf.MetaDescriptions)
-            {
-                if (metaDescriptionsCounter < i)
-                {
-                    dt.Columns.Add("Meta Description " + i).DefaultValue = "";
-                    dt.Columns.Add("Meta Description Length " + i).DefaultValue = "";
-                    dt.Columns.Add("Meta Description Pixel Width " + i).DefaultValue = "";
-                    metaDescriptionsCounter++;
-                }
-                row["Meta Description " + i] = desc.MetaDescriptionText;
-                row["Meta Description Length " + i] = desc.MetaDescriptionLength;
-                row["Meta Description Pixel Width " + i] = desc.MetaDescriptionPixelWidth;
-                i++;
-            }
-
-            // Ogarnij wszystkie meta keywords (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
-            i = 1;
-            foreach (MetaKeywords desc in pf.MetaKeywords)
-            {
-                if (metaKeywordsCounter < i)
-                {
-                    dt.Columns.Add("Meta Keywords " + i).DefaultValue = "";
-                    dt.Columns.Add("Meta Keywords Length " + i).DefaultValue = "";
-                    metaKeywordsCounter++;
-                }
-                row["Meta Keywords " + i] = desc.MetaKeywordsText;
-                row["Meta Keywords Length " + i] = desc.MetaKeywordsLength;
-                i++;
-            }
-
-            // Ogarnij wszystkie h1 (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
-            i = 1;
-            foreach (HeadingOne headingOne in pf.HeadingsOne)
-            {
-                if (headingOneCounter < i)
-                {
-                    dt.Columns.Add("H1 " + i).DefaultValue = "";
-                    dt.Columns.Add("H1 Length " + i).DefaultValue = "";
-                    headingOneCounter++;
-                }
-                row["H1 " + i] = headingOne.HeadingOneText;
-                row["H1 Length " + i] = headingOne.HeadingOneLength;
-                if (i == 3) break;
-                i++;
-            }
-
-            // Ogarnij wszystkie h2 (może być ich na stronie 0 lub więcej, ilośc nieokreślona)
-            i = 1;
-            foreach (HeadingTwo headingTwo in pf.HeadingsTwo)
-            {
-                if (headingTwoCounter < i)
-                {
-                    dt.Columns.Add("H2 " + i).DefaultValue = "";
-                    dt.Columns.Add("H2 Length " + i).DefaultValue = "";
-                    headingTwoCounter++;
-                }
-                row["H2 " + i] = headingTwo.HeadingTwoText;
-                row["H2 Length " + i] = headingTwo.HeadingTwoLength;
-                if (i == 3) break;
-                i++;
-            }
-
-            if (pf.OutLinks > 0)
-            {
-                row["OutLinks"] = pf.OutLinks;
-                row["UniqueOutLinks"] = pf.UniqueOutLinks;
-                row["UniqueOutLinksOfTotal"] = ((double) pf.UniqueOutLinks / (double) pf.OutLinks) * 100;
-            }
-
-            if (pf.ExternalOutLinks > 0)
-            {
-                row["ExternalOutLinks"] = pf.ExternalOutLinks;
-                row["UniqueExternalOutLinks"] = pf.UniqueExternalOutLinks;
-                row["UniqueExternalOutLinksOfTotal"] = ((double)pf.UniqueExternalOutLinks / (double)pf.ExternalOutLinks) * 100;
-            }
-
-            dt.Rows.Add(row);
-        }
-        private static string SizeSuffix(Int64 value, int decimalPlaces = 1)
+        private static void AnalyzeTitles(ref PageFragment pf, ref HtmlDocument htmlDocument)
         {
-            if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
-            if (value < 0) { return "-" + SizeSuffix(-value); }
-            if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
-
-            // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
-            int mag = (int)Math.Log(value, 1024);
-
-            // 1L << (mag * 10) == 2 ^ (10 * mag) 
-            // [i.e. the number of bytes in the unit corresponding to mag]
-            decimal adjustedSize = (decimal)value / (1L << (mag * 10));
-
-            // make adjustment when the value is large enough that
-            // it would round up to 1000 or more
-            if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
+            List<HtmlNode> htmlTitles = htmlDocument.DocumentNode.Descendants("title").ToList();
+            foreach (HtmlNode htmlTitle in htmlTitles)
             {
-                mag += 1;
-                adjustedSize /= 1024;
-            }
+                Title title = new Title();
+                title.TitleText = htmlTitle.InnerText;
+                title.TitleLength = title.TitleText.Length;
 
-            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, SizeSuffixes[mag]);
+                Font arialBold = new Font("Arial", 16.0F);
+                title.TitlePixelWidth = System.Windows.Forms.TextRenderer
+                    .MeasureText(title.TitleText, arialBold).Width;
+
+                pf.Titles.Add(title);
+            }
         }
+        private static void AnalyzeMetas(ref PageFragment pf, ref HtmlDocument htmlDocument)
+        {
+            List<HtmlNode> metas = htmlDocument.DocumentNode.Descendants("meta").ToList();
+            foreach (HtmlNode meta in metas)
+            {
+                if (meta.GetAttributeValue("name", "null") == "robots")
+                {
+                    if (meta.GetAttributeValue("content", "null") == "noindex")
+                    {
+                        pf.Indexability = "Non-Indexable";
+                        pf.IndexabilityStatus = "Noindex";
+                    }
+                }
+                else if (meta.GetAttributeValue("name", "null") == "description")
+                {
+                    MetaDescription metaDesc = new MetaDescription();
+                    metaDesc.MetaDescriptionText = meta.GetAttributeValue("content", "");
+                    metaDesc.MetaDescriptionLength = metaDesc.MetaDescriptionText.Length;
+
+                    Font arialBold = new Font("Arial", 13.0F);
+                    metaDesc.MetaDescriptionPixelWidth = System.Windows.Forms.TextRenderer
+                        .MeasureText(metaDesc.MetaDescriptionText, arialBold).Width;
+
+                    pf.MetaDescriptions.Add(metaDesc);
+                }
+                else if (meta.GetAttributeValue("name", "null") == "keywords")
+                {
+                    MetaKeywords metaKey = new MetaKeywords();
+                    metaKey.MetaKeywordsText = meta.GetAttributeValue("content", "");
+                    metaKey.MetaKeywordsLength = metaKey.MetaKeywordsText.Length;
+
+                    pf.MetaKeywords.Add(metaKey);
+                }
+            }
+        }
+
         public void AbortCrawl()
         {
             if (cts != null)
