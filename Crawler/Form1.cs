@@ -14,8 +14,8 @@ namespace Crawler
 {
     public partial class Form1 : Form
     {
-        bool isCrawling;
-        Crawler crawler;
+        private bool isCrawling;
+        private Crawler crawler;
         public Form1()
         {
             // Ustawienia ogólne forma
@@ -82,11 +82,7 @@ namespace Crawler
                 }
             }
         }
-        internal void pageFragments_ListChanged(object sender, ListChangedEventArgs e)
-        {
-            // Dynamiczna aktualizacja listy w postaci Listenera
-            dataGridView1.Update();
-        }
+
         private bool PageExists(string url)
         {
             // Jeśli nie dodano prefixu protokołu to dodaj go do adresu url

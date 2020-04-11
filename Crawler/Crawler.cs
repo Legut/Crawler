@@ -17,7 +17,7 @@ namespace Crawler
 {
     class Crawler
     {
-        private string baseUrl { get; set; }
+        private string BaseUrl { get; set; }
         private HashSet<string> crawledPages;
         private const int MaxSemaphores = 50;
         private readonly SemaphoreSlim semaphore;
@@ -45,7 +45,7 @@ namespace Crawler
         public Crawler(Form1 form1, string siteToCrawl)
         {
             MainForm = form1;
-            baseUrl = siteToCrawl;
+            BaseUrl = siteToCrawl;
 
             cts = new CancellationTokenSource();
             crawledPages = new HashSet<string>();
@@ -81,7 +81,7 @@ namespace Crawler
 
                     try
                     {
-                        if (Uri.Compare(new Uri(baseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
+                        if (Uri.Compare(new Uri(BaseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                         {
                             // Podstrona jest wewnętrzna
                             // Wyjmuję Html jako string
@@ -109,25 +109,32 @@ namespace Crawler
                             // Debug.Write(" strona: " + page + " wychodzi poza strone bazowa \n");
                         }
                     }
-                    catch (UriFormatException e)
+                    catch (UriFormatException ex)
                     {
-                        Debug.WriteLine(" Podstrona: " + page + " ma niepoprawnie sformatowany url ");
+                        Debug.WriteLine(" Podstrona: " + page + " ma niepoprawnie sformatowany url. Message: " + ex.Message);
                     }
-                    catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode ==
-                                                  HttpStatusCode.NotFound)
+                    catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
                     {
                         pf.StatusCode = "404";
                         Debug.WriteLine(" strona " + page + " jest niedostepna -> 404 NotFound");
                     }
                     catch (WebException ex)
                     {
-                        string status = (ex.Response as HttpWebResponse).StatusCode.ToString();
-                        pf.StatusCode = status;
-                        Debug.WriteLine(" strona " + page + " WebEx: " + status);
+                        try
+                        {
+                            string status = (ex.Response as HttpWebResponse).StatusCode.ToString();
+                            pf.StatusCode = status;
+                            Debug.WriteLine(" strona " + page + " WebEx: " + status);
+                        }
+                        catch (NullReferenceException e)
+                        {
+                            pf.StatusCode = "Undefined";
+                            Debug.WriteLine(" strona " + page + " WebEx: Undefined. Message: " + e );
+                        }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        Debug.WriteLine(" strona " + page + " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + e.Message);
+                        Debug.WriteLine(" strona " + page + " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + ex.Message);
                     }
 
                     UpdateDebugGui();
@@ -197,7 +204,7 @@ namespace Crawler
         public async void StartCrawl()
         {
             CreateDataTable();
-            await StartCrawlingPage(baseUrl, cts.Token);
+            await StartCrawlingPage(BaseUrl, cts.Token);
         }
         private static void NormalizeAddress(string baseUrl, ref string address)
         {
@@ -478,7 +485,7 @@ namespace Crawler
         {
             
             // Popraw adres tak aby był pełnym linkiem
-            NormalizeAddress(baseUrl, ref address);
+            NormalizeAddress(BaseUrl, ref address);
             // Sprawdzam czy adres jest poprawny
             if (address != null)
             {
@@ -493,7 +500,7 @@ namespace Crawler
                 } 
                 else
                 {
-                    if (Uri.Compare(new Uri(baseUrl), new Uri(address), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
+                    if (Uri.Compare(new Uri(BaseUrl), new Uri(address), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                     {
                         pf.OutLinks++;
                         if (!pf.OutLinksAdresses.Contains(address))
