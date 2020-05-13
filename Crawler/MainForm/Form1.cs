@@ -10,7 +10,7 @@ namespace Crawler.MainForm
     public partial class Form1 : Form
     {
         private bool isCrawling;
-        private Crawler crawler;
+        private Base.Crawler crawler;
 
         private bool resizing;
         private TableLayoutRowStyleCollection rowStyles;
@@ -58,7 +58,7 @@ namespace Crawler.MainForm
                     if (PageExists(siteAddress.Text))
                     {
                         siteToCrawlMsg.Text = PageHasCertificate(siteAddress.Text) ? "Istnieje i ma certyfikat" : "Istnieje i nie ma certyfikatu";
-                        crawler = new Crawler(this, siteAddress.Text);
+                        crawler = new Base.Crawler(this, siteAddress.Text);
                         crawler.StartCrawl();
                         crawlButton.Text = "Stop";
                     }
