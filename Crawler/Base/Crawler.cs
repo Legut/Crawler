@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Crawler.MainForm;
+using Crawler.Utilities;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace Crawler.Base
@@ -199,7 +200,7 @@ namespace Crawler.Base
                 adjustedSize /= 1024;
             }
 
-            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, SizeSuffixes[mag]);
+            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, Utils.SizeSuffixes[mag]);
         }
         public void AbortCrawl()
         {

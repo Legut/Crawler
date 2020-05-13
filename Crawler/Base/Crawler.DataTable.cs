@@ -29,37 +29,37 @@ namespace Crawler.Base
             dt = new DataTable();
             dt.Columns.Add(ADDRESS_COL).DefaultValue = "";
             dt.Columns.Add(CONTET_TYPE_COL).DefaultValue = "";
-            dt.Columns.Add(STATUS_CODE_COL).DefaultValue = "";
+            dt.Columns.Add(STATUS_CODE_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(STATUS_COL).DefaultValue = "";
             dt.Columns.Add(INDEXABILITY_COL).DefaultValue = "";
             dt.Columns.Add(INDEXABILITY_STATUS_COL).DefaultValue = "";
             dt.Columns.Add(ISINTERNAL_COL).DefaultValue = "";
 
             dt.Columns.Add(TITLE_COL + titleColumnsCount).DefaultValue = "";
-            dt.Columns.Add(TITLE_LENGTH_COL + titleColumnsCount).DefaultValue = "";
-            dt.Columns.Add(TITLE_PIXEL_WIDTH_COL + titleColumnsCount).DefaultValue = "";
+            dt.Columns.Add(TITLE_LENGTH_COL + titleColumnsCount, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(TITLE_PIXEL_WIDTH_COL + titleColumnsCount, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(META_DESC_COL + descColumnsCount).DefaultValue = "";
-            dt.Columns.Add(META_DESC_LENGTH_COL + descColumnsCount).DefaultValue = "";
-            dt.Columns.Add(META_DESC_PIXEL_WIDTH_COL + descColumnsCount).DefaultValue = "";
+            dt.Columns.Add(META_DESC_LENGTH_COL + descColumnsCount, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(META_DESC_PIXEL_WIDTH_COL + descColumnsCount, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(META_KEYWORDS_COL + keywordColumnsCount).DefaultValue = "";
-            dt.Columns.Add(META_KEYWORDS_LENGTH_COL + keywordColumnsCount).DefaultValue = "";
+            dt.Columns.Add(META_KEYWORDS_LENGTH_COL + keywordColumnsCount, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(H_ONE_COL + headOneColumnsCount).DefaultValue = "";
-            dt.Columns.Add(H_ONE_LENGTH_COL + headOneColumnsCount).DefaultValue = "";
+            dt.Columns.Add(H_ONE_LENGTH_COL + headOneColumnsCount, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(H_TWO_COL + headTwoColumnsCount).DefaultValue = "";
-            dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount).DefaultValue = "";
+            dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(SIZE_COL).DefaultValue = "";
 
-            dt.Columns.Add(OUTLINS_COL).DefaultValue = "";
-            dt.Columns.Add(UNIQUE_OUTLINKS_COL).DefaultValue = "";
+            dt.Columns.Add(OUTLINS_COL, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(UNIQUE_OUTLINKS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_OUTLINKS_OF_TOTAL_COL).DefaultValue = "";
 
-            dt.Columns.Add(EXTERNAL_OUTLIKNS_COL).DefaultValue = "";
-            dt.Columns.Add(UNIQUE_EXTERNAL_OUTLIKNS_COL).DefaultValue = "";
+            dt.Columns.Add(EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(UNIQUE_EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_EXTERNAL_OUTLINKS_OF_TOTAL_COL).DefaultValue = "";
 
             // Bind data to dataGridViews
@@ -110,8 +110,8 @@ namespace Crawler.Base
                 if (titleColumnsCount < i)
                 {
                     dt.Columns.Add(TITLE_COL + i).DefaultValue = "";
-                    dt.Columns.Add(TITLE_LENGTH_COL + i).DefaultValue = "";
-                    dt.Columns.Add(TITLE_PIXEL_WIDTH_COL + i).DefaultValue = "";
+                    dt.Columns.Add(TITLE_LENGTH_COL + i, typeof(int)).DefaultValue = null;
+                    dt.Columns.Add(TITLE_PIXEL_WIDTH_COL + i, typeof(int)).DefaultValue = null;
                     titleColumnsCount++;
                 }
                 row[TITLE_COL + i] = title.TitleText;
@@ -129,8 +129,8 @@ namespace Crawler.Base
                 if (descColumnsCount < i)
                 {
                     dt.Columns.Add(META_DESC_COL + i).DefaultValue = "";
-                    dt.Columns.Add(META_DESC_LENGTH_COL + i).DefaultValue = "";
-                    dt.Columns.Add(META_DESC_PIXEL_WIDTH_COL + i).DefaultValue = "";
+                    dt.Columns.Add(META_DESC_LENGTH_COL + i, typeof(int)).DefaultValue = null;
+                    dt.Columns.Add(META_DESC_PIXEL_WIDTH_COL + i, typeof(int)).DefaultValue = null;
                     descColumnsCount++;
                 }
                 row[META_DESC_COL + i] = desc.MetaDescriptionText;
@@ -148,7 +148,7 @@ namespace Crawler.Base
                 if (keywordColumnsCount < i)
                 {
                     dt.Columns.Add(META_KEYWORDS_COL + i).DefaultValue = "";
-                    dt.Columns.Add(META_KEYWORDS_LENGTH_COL + i).DefaultValue = "";
+                    dt.Columns.Add(META_KEYWORDS_LENGTH_COL + i, typeof(int)).DefaultValue = null;
                     keywordColumnsCount++;
                 }
                 row[META_KEYWORDS_COL + i] = keyword.MetaKeywordsText;
@@ -165,7 +165,7 @@ namespace Crawler.Base
                 if (headOneColumnsCount < i)
                 {
                     dt.Columns.Add(H_ONE_COL + i).DefaultValue = "";
-                    dt.Columns.Add(H_ONE_LENGTH_COL + i).DefaultValue = "";
+                    dt.Columns.Add(H_ONE_LENGTH_COL + i, typeof(int)).DefaultValue = null;
                     headOneColumnsCount++;
                 }
                 row[H_ONE_COL + i] = headOne.HeadingOneText;
@@ -182,7 +182,7 @@ namespace Crawler.Base
                 if (headTwoColumnsCount < i)
                 {
                     dt.Columns.Add(H_TWO_COL + i).DefaultValue = "";
-                    dt.Columns.Add(H_TWO_LENGTH_COL + i).DefaultValue = "";
+                    dt.Columns.Add(H_TWO_LENGTH_COL + i, typeof(int)).DefaultValue = null;
                     headTwoColumnsCount++;
                 }
                 row[H_TWO_COL + i] = headTwo.HeadingTwoText;
