@@ -1,4 +1,7 @@
-﻿namespace Crawler
+﻿using System;
+using System.Windows.Forms;
+
+namespace Crawler.MainForm
 {
     partial class Form1
     {
@@ -28,48 +31,48 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.siteToCrawl = new System.Windows.Forms.TextBox();
+            this.siteAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.crawlButton = new System.Windows.Forms.Button();
             this.siteToCrawlMsg = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.allDataGridView = new System.Windows.Forms.DataGridView();
             this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.internalDataGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.externalDataGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.crawlingStatusLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.crawledStatusLabel = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.dataGridView4 = new System.Windows.Forms.DataGridView();
+            this.singleDataGridView = new System.Windows.Forms.DataGridView();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).BeginInit();
             this.tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.internalDataGridView)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
-            // siteToCrawl
+            // siteAddress
             // 
-            this.siteToCrawl.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.siteToCrawl.Location = new System.Drawing.Point(115, 3);
-            this.siteToCrawl.Name = "siteToCrawl";
-            this.siteToCrawl.Size = new System.Drawing.Size(259, 29);
-            this.siteToCrawl.TabIndex = 0;
+            this.siteAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.siteAddress.Location = new System.Drawing.Point(115, 3);
+            this.siteAddress.Name = "siteAddress";
+            this.siteAddress.Size = new System.Drawing.Size(259, 29);
+            this.siteAddress.TabIndex = 0;
             // 
             // label1
             // 
@@ -81,16 +84,16 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Adres URL:";
             // 
-            // button1
+            // crawlButton
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.button1.Location = new System.Drawing.Point(380, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(121, 29);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Start";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.crawlButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.crawlButton.Location = new System.Drawing.Point(380, 3);
+            this.crawlButton.Name = "crawlButton";
+            this.crawlButton.Size = new System.Drawing.Size(121, 29);
+            this.crawlButton.TabIndex = 2;
+            this.crawlButton.Text = "Start";
+            this.crawlButton.UseVisualStyleBackColor = true;
+            this.crawlButton.Click += new System.EventHandler(this.Button1_Click);
             // 
             // siteToCrawlMsg
             // 
@@ -117,7 +120,7 @@
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
-            this.tabPage1.Controls.Add(this.dataGridView1);
+            this.tabPage1.Controls.Add(this.allDataGridView);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(889, 421);
@@ -125,16 +128,16 @@
             this.tabPage1.Text = "Wszystkie";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // dataGridView1
+            // allDataGridView
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.allDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.allDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Address});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(889, 421);
-            this.dataGridView1.TabIndex = 3;
+            this.allDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.allDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.allDataGridView.Name = "allDataGridView";
+            this.allDataGridView.Size = new System.Drawing.Size(889, 421);
+            this.allDataGridView.TabIndex = 3;
             // 
             // Address
             // 
@@ -144,24 +147,24 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.dataGridView2);
+            this.tabPage3.Controls.Add(this.internalDataGridView);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(886, 418);
+            this.tabPage3.Size = new System.Drawing.Size(889, 421);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Wewnętrzne";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // dataGridView2
+            // internalDataGridView
             // 
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.internalDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.internalDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1});
-            this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView2.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(886, 418);
-            this.dataGridView2.TabIndex = 4;
+            this.internalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.internalDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.internalDataGridView.Name = "internalDataGridView";
+            this.internalDataGridView.Size = new System.Drawing.Size(889, 421);
+            this.internalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -171,24 +174,24 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.dataGridView3);
+            this.tabPage2.Controls.Add(this.externalDataGridView);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(886, 418);
+            this.tabPage2.Size = new System.Drawing.Size(889, 421);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Zewnętrzne";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // dataGridView3
+            // externalDataGridView
             // 
-            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.externalDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.externalDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn2});
-            this.dataGridView3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView3.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.Size = new System.Drawing.Size(886, 418);
-            this.dataGridView3.TabIndex = 4;
+            this.externalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.externalDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.externalDataGridView.Name = "externalDataGridView";
+            this.externalDataGridView.Size = new System.Drawing.Size(889, 421);
+            this.externalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn2
             // 
@@ -205,14 +208,14 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Wolne wątki";
             // 
-            // label3
+            // crawlingStatusLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(73, 35);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(36, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "0 / 10";
+            this.crawlingStatusLabel.AutoSize = true;
+            this.crawlingStatusLabel.Location = new System.Drawing.Point(73, 35);
+            this.crawlingStatusLabel.Name = "crawlingStatusLabel";
+            this.crawlingStatusLabel.Size = new System.Drawing.Size(36, 13);
+            this.crawlingStatusLabel.TabIndex = 6;
+            this.crawlingStatusLabel.Text = "0 / 10";
             // 
             // label4
             // 
@@ -223,14 +226,14 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Strony do przeszukania:";
             // 
-            // label5
+            // crawledStatusLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(130, 52);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(30, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "0 / 0";
+            this.crawledStatusLabel.AutoSize = true;
+            this.crawledStatusLabel.Location = new System.Drawing.Point(130, 52);
+            this.crawledStatusLabel.Name = "crawledStatusLabel";
+            this.crawledStatusLabel.Size = new System.Drawing.Size(30, 13);
+            this.crawledStatusLabel.TabIndex = 8;
+            this.crawledStatusLabel.Text = "0 / 0";
             // 
             // label6
             // 
@@ -246,9 +249,10 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 900F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.dataGridView4, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.singleDataGridView, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
@@ -260,21 +264,21 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1290, 805);
             this.tableLayoutPanel1.TabIndex = 10;
-            this.tableLayoutPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanel1_MouseDown);
-            this.tableLayoutPanel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanel1_MouseMove);
-            this.tableLayoutPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanel1_MouseUp);
+            this.tableLayoutPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TableLayoutPanel1_MouseDown);
+            this.tableLayoutPanel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TableLayoutPanel1_MouseMove);
+            this.tableLayoutPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TableLayoutPanel1_MouseUp);
             // 
             // panel1
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.panel1, 2);
-            this.panel1.Controls.Add(this.siteToCrawl);
+            this.panel1.Controls.Add(this.siteAddress);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.crawledStatusLabel);
+            this.panel1.Controls.Add(this.crawlButton);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.crawlingStatusLabel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
@@ -282,17 +286,17 @@
             this.panel1.Size = new System.Drawing.Size(1287, 74);
             this.panel1.TabIndex = 5;
             // 
-            // dataGridView4
+            // singleDataGridView
             // 
-            this.dataGridView4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.singleDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView4.Location = new System.Drawing.Point(6, 536);
-            this.dataGridView4.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
-            this.dataGridView4.Name = "dataGridView4";
-            this.dataGridView4.Size = new System.Drawing.Size(891, 263);
-            this.dataGridView4.TabIndex = 6;
+            this.singleDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.singleDataGridView.Location = new System.Drawing.Point(6, 536);
+            this.singleDataGridView.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
+            this.singleDataGridView.Name = "singleDataGridView";
+            this.singleDataGridView.Size = new System.Drawing.Size(891, 263);
+            this.singleDataGridView.TabIndex = 6;
             // 
             // richTextBox1
             // 
@@ -314,47 +318,53 @@
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).EndInit();
             this.tabPage3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.internalDataGridView)).EndInit();
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
         #endregion
 
-        private System.Windows.Forms.TextBox siteToCrawl;
+        private System.Windows.Forms.TextBox siteAddress;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button crawlButton;
         private System.Windows.Forms.Label siteToCrawlMsg;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label crawlingStatusLabel;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label crawledStatusLabel;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView allDataGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridView internalDataGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.DataGridView externalDataGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.DataGridView dataGridView4;
+        private System.Windows.Forms.DataGridView singleDataGridView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.RichTextBox richTextBox1;
     }
