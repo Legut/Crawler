@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Crawler.MainForm;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
+using Crawler.Utilities;
+using System.Windows.Forms;
 
 namespace Crawler
 {
@@ -37,9 +39,6 @@ namespace Crawler
         private int metaKeywordsCounter;
         private int headingOneCounter;
         private int headingTwoCounter;
-
-        // TODO: sortowanie liczb w widoku jest alfabetyczne zamiast wielkościowego
-        private static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
@@ -235,42 +234,44 @@ namespace Crawler
             dt.Clear();
             dt.Columns.Add("Address").DefaultValue = "";
             dt.Columns.Add("Content Type").DefaultValue = "";
-            dt.Columns.Add("Status Code").DefaultValue = "";
+            dt.Columns.Add("Status Code",typeof(int)).DefaultValue = null;
             dt.Columns.Add("Status").DefaultValue = "";
             dt.Columns.Add("Indexability").DefaultValue = "";
             dt.Columns.Add("Indexability Status").DefaultValue = "";
             dt.Columns.Add("IsInternal").DefaultValue = "";
 
             dt.Columns.Add("Title 1").DefaultValue = "";
-            dt.Columns.Add("Title Length 1").DefaultValue = "";
-            dt.Columns.Add("Title Pixel Width 1").DefaultValue = "";
+            dt.Columns.Add("Title Length 1", typeof(int)).DefaultValue = null;
+            dt.Columns.Add("Title Pixel Width 1", typeof(int)).DefaultValue = null;
 
             dt.Columns.Add("Meta Description 1").DefaultValue = "";
-            dt.Columns.Add("Meta Description Length 1").DefaultValue = "";
-            dt.Columns.Add("Meta Description Pixel Width 1").DefaultValue = "";
+            dt.Columns.Add("Meta Description Length 1", typeof(int)).DefaultValue = null;
+            dt.Columns.Add("Meta Description Pixel Width 1", typeof(int)).DefaultValue = null;
 
             dt.Columns.Add("Meta Keywords 1").DefaultValue = "";
-            dt.Columns.Add("Meta Keywords Length 1").DefaultValue = "";
+            dt.Columns.Add("Meta Keywords Length 1", typeof(int)).DefaultValue = null;
 
             dt.Columns.Add("H1 1").DefaultValue = "";
-            dt.Columns.Add("H1 Length 1").DefaultValue = "";
+            dt.Columns.Add("H1 Length 1", typeof(int)).DefaultValue = null;
 
             dt.Columns.Add("H2 1").DefaultValue = "";
-            dt.Columns.Add("H2 Length 1").DefaultValue = "";
+            dt.Columns.Add("H2 Length 1", typeof(int)).DefaultValue = null;
 
             dt.Columns.Add("Size").DefaultValue = "";
 
-            dt.Columns.Add("OutLinks").DefaultValue = "";
-            dt.Columns.Add("UniqueOutLinks").DefaultValue = "";
+            dt.Columns.Add("OutLinks", typeof(int)).DefaultValue = null;
+            dt.Columns.Add("UniqueOutLinks", typeof(int)).DefaultValue = null;
             dt.Columns.Add("UniqueOutLinksOfTotal").DefaultValue = "";
 
-            dt.Columns.Add("ExternalOutLinks").DefaultValue = "";
-            dt.Columns.Add("UniqueExternalOutLinks").DefaultValue = "";
+            dt.Columns.Add("ExternalOutLinks", typeof(int)).DefaultValue = null;
+            dt.Columns.Add("UniqueExternalOutLinks", typeof(int)).DefaultValue = null;
             dt.Columns.Add("UniqueExternalOutLinksOfTotal").DefaultValue = "";
 
             MainForm.BindDataTableToWszystkie(dt);
             MainForm.BindDataTableToZewnetrzne(dt);
             MainForm.BindDataTableToWewnetrzne(dt);
+
+            
         }
         private void UpdateDataTable(PageFragment pf)
         {
@@ -299,8 +300,8 @@ namespace Crawler
                 if (titlesCounter < i)
                 {
                     dt.Columns.Add("Title " + i).DefaultValue = "";
-                    dt.Columns.Add("Title Length " + i).DefaultValue = "";
-                    dt.Columns.Add("Title Pixel Width " + i).DefaultValue = "";
+                    dt.Columns.Add("Title Length " + i, typeof(int)).DefaultValue = null;
+                    dt.Columns.Add("Title Pixel Width " + i, typeof(int)).DefaultValue = null;
                     titlesCounter++;
                 }
                 row["Title " + i] = title.TitleText;
@@ -316,8 +317,8 @@ namespace Crawler
                 if (metaDescriptionsCounter < i)
                 {
                     dt.Columns.Add("Meta Description " + i).DefaultValue = "";
-                    dt.Columns.Add("Meta Description Length " + i).DefaultValue = "";
-                    dt.Columns.Add("Meta Description Pixel Width " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Description Length " + i, typeof(int)).DefaultValue = null;
+                    dt.Columns.Add("Meta Description Pixel Width " + i, typeof(int)).DefaultValue = null;
                     metaDescriptionsCounter++;
                 }
                 row["Meta Description " + i] = desc.MetaDescriptionText;
@@ -333,7 +334,7 @@ namespace Crawler
                 if (metaKeywordsCounter < i)
                 {
                     dt.Columns.Add("Meta Keywords " + i).DefaultValue = "";
-                    dt.Columns.Add("Meta Keywords Length " + i).DefaultValue = "";
+                    dt.Columns.Add("Meta Keywords Length " + i, typeof(int)).DefaultValue = null;
                     metaKeywordsCounter++;
                 }
                 row["Meta Keywords " + i] = desc.MetaKeywordsText;
@@ -348,7 +349,7 @@ namespace Crawler
                 if (headingOneCounter < i)
                 {
                     dt.Columns.Add("H1 " + i).DefaultValue = "";
-                    dt.Columns.Add("H1 Length " + i).DefaultValue = "";
+                    dt.Columns.Add("H1 Length " + i, typeof(int)).DefaultValue = null;
                     headingOneCounter++;
                 }
                 row["H1 " + i] = headingOne.HeadingOneText;
@@ -364,7 +365,7 @@ namespace Crawler
                 if (headingTwoCounter < i)
                 {
                     dt.Columns.Add("H2 " + i).DefaultValue = "";
-                    dt.Columns.Add("H2 Length " + i).DefaultValue = "";
+                    dt.Columns.Add("H2 Length " + i, typeof(int)).DefaultValue = null;
                     headingTwoCounter++;
                 }
                 row["H2 " + i] = headingTwo.HeadingTwoText;
@@ -386,7 +387,7 @@ namespace Crawler
                 row["UniqueExternalOutLinks"] = pf.UniqueExternalOutLinks;
                 row["UniqueExternalOutLinksOfTotal"] = ((double)pf.UniqueExternalOutLinks / (double)pf.ExternalOutLinks) * 100;
             }
-
+            
             dt.Rows.Add(row);
         }
         private static string SizeSuffix(long value, int decimalPlaces = 1)
@@ -410,7 +411,7 @@ namespace Crawler
                 adjustedSize /= 1024;
             }
 
-            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, SizeSuffixes[mag]);
+            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, Utils.SizeSuffixes[mag]);
         }
 
         private void CrawlFurther(HtmlDocument htmlDocument, ref PageFragment pf)
@@ -610,5 +611,5 @@ namespace Crawler
                 Debug.WriteLine("CancelationToken is null, cannot abort!");
             }
         }
-    }
+    }   
 }
