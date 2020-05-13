@@ -1,17 +1,16 @@
 ﻿using HtmlAgilityPack;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Crawler.MainForm;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace Crawler
 {
@@ -19,7 +18,7 @@ namespace Crawler
     {
         private string BaseUrl { get; set; }
         private HashSet<string> crawledPages;
-        private const int MaxSemaphores = 50;
+        private const int MaxSemaphores = 10;
         private readonly SemaphoreSlim semaphore;
         private CancellationToken cancellationToken;
         private readonly CancellationTokenSource cts;
@@ -64,6 +63,7 @@ namespace Crawler
             przejrzaneStrony = 0;
             stronyDoPrzejrzenia = 1;
         }
+
         private async Task StartCrawlingPage(string page, CancellationToken ctsToken)
         {
             MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores); // Update GUI
@@ -83,11 +83,11 @@ namespace Crawler
                     {
                         if (Uri.Compare(new Uri(BaseUrl), new Uri(page), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                         {
-                            // Podstrona jest wewnętrzna
-                            // Wyjmuję Html jako string
-                            string html = await response.Content.ReadAsStringAsync();
+                            // Wyjmuję source Html jako string
+                            string sourceHtml = await response.Content.ReadAsStringAsync();
                             HtmlDocument htmlDocument = new HtmlDocument();
-                            htmlDocument.LoadHtml(html);
+
+                            htmlDocument.LoadHtml(sourceHtml);
 
                             // Głębsze crawlowanie znalezionych na podstronie linków, w osobnych wątkach
                             CrawlFurther(htmlDocument, ref pf);
@@ -206,6 +206,7 @@ namespace Crawler
             CreateDataTable();
             await StartCrawlingPage(BaseUrl, cts.Token);
         }
+
         private static void NormalizeAddress(string baseUrl, ref string address)
         {
             // Normalizacja adresu url. Wywalamy argumenty po znaku zapytania. Sprawdzamy, czy na początku jest prefix protokołu.
@@ -606,8 +607,7 @@ namespace Crawler
             }
             else
             {
-                //to nie powinno nigdy wyskoczyc ale kto wie xd
-                Debug.WriteLine("CancelationToken jest null, nie mozna anulowac");
+                Debug.WriteLine("CancelationToken is null, cannot abort!");
             }
         }
     }
