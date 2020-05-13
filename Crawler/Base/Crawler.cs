@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Crawler.MainForm;
 using Crawler.Utilities;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
+using Crawler.Utilities;
+using System.Windows.Forms;
 
 namespace Crawler.Base
 {
@@ -26,8 +28,6 @@ namespace Crawler.Base
         private int stronyDoPrzejrzenia;
 
         private DataTable dt;
-
-        private static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
 
         public Crawler(Form1 form1, string siteToCrawl)
         {
@@ -213,5 +213,5 @@ namespace Crawler.Base
                 Debug.WriteLine("CancelationToken is null, cannot abort!");
             }
         }
-    }
+    }   
 }

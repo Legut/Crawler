@@ -16,6 +16,8 @@ namespace Crawler.MainForm
         {
             allDataGridView.DataSource = dt;
             allDataGridView.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
+            
+
         }
         public void BindDataTableToWewnetrzne(DataTable dt)
         {
@@ -37,6 +39,7 @@ namespace Crawler.MainForm
             externalDataGridView.DataSource = src;
             externalDataGridView.Columns["Indexability"].Visible = false;
             externalDataGridView.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
+            
         }
     }
 }

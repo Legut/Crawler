@@ -9,6 +9,10 @@ namespace Crawler.Utilities
 {
     public static class Utils
     {
+        // TODO: sortowanie liczb w widoku jest alfabetyczne zamiast wielkościowego
+        public static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
+
+
         public static Task WhenMouseUp(this Control control)
         {
             var tcs = new TaskCompletionSource<object>();

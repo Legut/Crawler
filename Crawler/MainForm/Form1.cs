@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using Crawler.Utilities;
 
@@ -22,6 +25,8 @@ namespace Crawler.MainForm
         private int middleRowMinHeight;
         private int firstColumnMinWidth;
         private int lastColumnMinWidth;
+
+        private bool singleDataGridViewPrepared = false;
 
         public Form1()
         {
@@ -45,7 +50,28 @@ namespace Crawler.MainForm
             lastColumnMinWidth = 100;
             rowStyles = tableLayoutPanel1.RowStyles;
             columnStyles = tableLayoutPanel1.ColumnStyles;
+
         }
+
+        private void PrepareSingleDataGridView()
+        {
+            singleDataGridView.Dock = DockStyle.Fill;
+            singleDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            singleDataGridView.ColumnCount = 2;
+            singleDataGridView.Columns[0].Name = "Nazwa";
+            singleDataGridView.Columns[0].Width = 100;
+            singleDataGridView.Columns[1].Name = "Wartosc";
+
+            foreach(DataGridViewColumn column in allDataGridView.Columns)
+            {
+                string[] row = new string[] { column.Name, ""};
+                singleDataGridView.Rows.Add(row);
+            }
+
+            singleDataGridViewPrepared = true;
+
+        }
+
         private void Button1_Click(object sender, EventArgs e)
         {
             crawlButton.Enabled = false;
@@ -86,21 +112,43 @@ namespace Crawler.MainForm
 
         private void DataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            DataGridView view = sender as DataGridView;
             // TODO: display selected row in singleDataGridView
-            if (view == null) return;
-            if (view.SelectedCells.Count > 0)
+            if (!singleDataGridViewPrepared)
             {
-                if (Mouse.LeftButton == MouseButtonState.Pressed)
-                {
-                    Debug.WriteLine("sadasdasd " + view.SelectedCells[0]);
-                }
+                PrepareSingleDataGridView();
             }
-            /*foreach (DataGridViewRow row in view.SelectedRows)
+
+            DataGridView view = sender as DataGridView;
+            //Debug.WriteLine("Selected Cells Count " + view.SelectedCells.Count);
+            //Debug.WriteLine("Selected Columns Count " + view.SelectedColumns.Count);
+            //Debug.WriteLine("Selected Rows Count " + view.SelectedRows.Count);
+            //Debug.WriteLine("Selected Row Cell count " + allDataGridView.Rows[view.SelectedCells[0].RowIndex].Cells.Count);
+            //Debug.WriteLine("columns count " + allDataGridView.Columns.Count);
+                        
+            if (view == null) return;
+            int a = 0;
+            if (view.SelectedCells.Count == 1)
             {
-                string value1 = row.Cells[0].Value.ToString();
-                string value2 = row.Cells[1].Value.ToString();
-            }*/
+                
+                DataGridViewRow selectedRow = allDataGridView.Rows[view.SelectedCells[0].RowIndex];
+
+                //Debug.WriteLine("selected row cells count " + selectedRow.Cells.Count);
+                //Debug.WriteLine("single data rows count " + singleDataGridView.Rows.Count);
+
+                //allDataGridView.Rows[view.SelectedCells[0].RowIndex].Cells.Count) -> static 34?
+                for (a = 0; a < selectedRow.Cells.Count; a++)
+                {
+                    try
+                    {
+                        singleDataGridView.Rows[a].Cells[1].Value = selectedRow.Cells[a].Value;
+                    }
+                    catch (Exception ex)
+                    {
+                        break;
+                        //Debug.WriteLine("INdex: " + a + " error: "+ex.Message);
+                    }
+                }                         
+            }
         }
 
         private void EnsureThatProtocolIsProvided(string url)
@@ -171,5 +219,6 @@ namespace Crawler.MainForm
         {
             crawledStatusLabel.Text = left + " / " + all;
         }
+
     }
 }
