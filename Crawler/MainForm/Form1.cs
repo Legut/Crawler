@@ -11,6 +11,7 @@ using Crawler.Base;
 using System.Drawing;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Crawler.MainForm
 {
@@ -31,6 +32,8 @@ namespace Crawler.MainForm
         private int lastColumnMinWidth;
 
         private bool singleDataGridViewPrepared = false;
+        private bool pageExists;
+        private bool pageHasCerificate;
 
         public Form1()
         {
@@ -88,7 +91,7 @@ namespace Crawler.MainForm
 
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private async void Button1_ClickAsync(object sender, EventArgs e)
         {
             crawlButton.Enabled = false;
             if (isCrawling == false)
@@ -97,9 +100,11 @@ namespace Crawler.MainForm
                 if (siteAddress.Text.Length > 0)
                 {
                     EnsureThatProtocolIsProvided(siteAddress.Text);
-                    if (PageExists(siteAddress.Text))
+                    await PageExists(siteAddress.Text);
+                    if (pageExists)
                     {
-                        siteToCrawlMsg.Text = PageHasCertificate(siteAddress.Text) ? "Istnieje i ma certyfikat" : "Istnieje i nie ma certyfikatu";
+                        await PageHasCertificate(siteAddress.Text);
+                        siteToCrawlMsg.Text = pageHasCerificate ? "Istnieje i ma certyfikat" : "Istnieje i nie ma certyfikatu";
                         crawler = new Base.Crawler(this, siteAddress.Text);
                         crawler.StartCrawl();
                         crawlButton.Text = "Stop";
@@ -168,7 +173,7 @@ namespace Crawler.MainForm
                     catch (Exception ex)
                     {
                         break;
-                        //Debug.WriteLine("INdex: " + a + " error: "+ex.Message);
+                        // Debug.WriteLine("INdex: " + a + " error: " + ex.Message);
                     }
                 }                         
             }
@@ -199,7 +204,7 @@ namespace Crawler.MainForm
             }
         }
 
-        private bool PageExists(string url)
+        private async Task PageExists(string url)
         {
             try
             {
@@ -207,21 +212,21 @@ namespace Crawler.MainForm
                 if (WebRequest.Create(url) is HttpWebRequest request)
                 {
                     request.Method = "HEAD";
-                    HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                    HttpWebResponse response = await request.GetResponseAsync() as HttpWebResponse;
                     response?.Close();
                 }
 
-                return true;
+                pageExists = true;
             }
             catch
             {
                 CustomMessages.DisplayPageDoesntExistMsg();
                 isCrawling = false;
-                return false;
+                pageExists = false;
             }
         }
 
-        private bool PageHasCertificate(string url)
+        private async Task PageHasCertificate(string url)
         {
             // if site has certificate than it will load by https://
             url = url.Replace("http://", "https://");
@@ -230,22 +235,22 @@ namespace Crawler.MainForm
                 if (WebRequest.Create(url) is HttpWebRequest request)
                 {
                     request.Method = "HEAD";
-                    HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                    HttpWebResponse response = await request.GetResponseAsync() as HttpWebResponse;
                     response?.Close();
                 }
 
                 siteAddress.Text = url;
-                return true;
+                pageHasCerificate = true;
             }
             catch (NullReferenceException exception)
             {
                 CustomMessages.DisplayCustomErrorMsg("NullReferenceException", exception.Message);
-                return false;
+                pageHasCerificate = false;
             }
             catch (Exception exception)
             {
                 CustomMessages.DisplayCustomErrorMsg("UnrecognizedException", exception.Message);
-                return false;
+                pageHasCerificate = false;
             }
 
             // TODO: Obsługa poszczególnych wyjątków, tak aby poinformować użytkownika nie tylko o tym, że nie udało się nawiązać połączenia, ale również czemu to się nie udało 

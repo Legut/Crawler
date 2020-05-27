@@ -8,7 +8,7 @@ namespace Crawler.MainForm
 
     partial class Form1
     {
-        private void TableLayoutPanel1_MouseDown(object sender, MouseEventArgs e)
+        /*private void TableLayoutPanel1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -339,6 +339,6 @@ namespace Crawler.MainForm
                     }
                 }
             }
-        }
+        }*/
     }
 }

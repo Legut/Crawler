@@ -51,6 +51,8 @@ namespace Crawler.MainForm
             this.crawledStatusLabel = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.plikToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,7 +64,10 @@ namespace Crawler.MainForm
             this.pomocToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oProgramieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.singleDataGridView = new System.Windows.Forms.DataGridView();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.label3 = new System.Windows.Forms.Label();
@@ -74,9 +79,22 @@ namespace Crawler.MainForm
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
             this.panel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // siteAddress
@@ -106,7 +124,7 @@ namespace Crawler.MainForm
             this.crawlButton.TabIndex = 2;
             this.crawlButton.Text = "Start";
             this.crawlButton.UseVisualStyleBackColor = true;
-            this.crawlButton.Click += new System.EventHandler(this.Button1_Click);
+            this.crawlButton.Click += new System.EventHandler(this.Button1_ClickAsync);
             // 
             // siteToCrawlMsg
             // 
@@ -126,8 +144,9 @@ namespace Crawler.MainForm
             this.tabControl1.Location = new System.Drawing.Point(3, 99);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             this.tabControl1.Name = "tabControl1";
+            this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(897, 431);
+            this.tabControl1.Size = new System.Drawing.Size(1030, 506);
             this.tabControl1.TabIndex = 4;
             // 
             // tabPage1
@@ -136,20 +155,21 @@ namespace Crawler.MainForm
             this.tabPage1.Controls.Add(this.allDataGridView);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(889, 405);
+            this.tabPage1.Size = new System.Drawing.Size(1022, 480);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Wszystkie";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // allDataGridView
             // 
+            this.allDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.allDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.allDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Address});
             this.allDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.allDataGridView.Location = new System.Drawing.Point(0, 0);
             this.allDataGridView.Name = "allDataGridView";
-            this.allDataGridView.Size = new System.Drawing.Size(889, 405);
+            this.allDataGridView.Size = new System.Drawing.Size(1022, 480);
             this.allDataGridView.TabIndex = 3;
             this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.allDataGridView_MouseClick);
             // 
@@ -164,20 +184,21 @@ namespace Crawler.MainForm
             this.tabPage3.Controls.Add(this.internalDataGridView);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(889, 405);
+            this.tabPage3.Size = new System.Drawing.Size(1022, 480);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Wewnętrzne";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // internalDataGridView
             // 
+            this.internalDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.internalDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.internalDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1});
             this.internalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.internalDataGridView.Location = new System.Drawing.Point(0, 0);
             this.internalDataGridView.Name = "internalDataGridView";
-            this.internalDataGridView.Size = new System.Drawing.Size(889, 405);
+            this.internalDataGridView.Size = new System.Drawing.Size(1022, 480);
             this.internalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn1
@@ -191,20 +212,21 @@ namespace Crawler.MainForm
             this.tabPage2.Controls.Add(this.externalDataGridView);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(889, 405);
+            this.tabPage2.Size = new System.Drawing.Size(1022, 480);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Zewnętrzne";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // externalDataGridView
             // 
+            this.externalDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.externalDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.externalDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn2});
             this.externalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.externalDataGridView.Location = new System.Drawing.Point(0, 0);
             this.externalDataGridView.Name = "externalDataGridView";
-            this.externalDataGridView.Size = new System.Drawing.Size(889, 405);
+            this.externalDataGridView.Size = new System.Drawing.Size(1022, 480);
             this.externalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn2
@@ -260,32 +282,109 @@ namespace Crawler.MainForm
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 900F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 936F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 164F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.singleDataGridView, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 96F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 434F));
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 450F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1290, 805);
             this.tableLayoutPanel1.TabIndex = 10;
-            this.tableLayoutPanel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TableLayoutPanel1_MouseDown);
-            this.tableLayoutPanel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TableLayoutPanel1_MouseMove);
-            this.tableLayoutPanel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TableLayoutPanel1_MouseUp);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 83);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer4);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer5);
+            this.splitContainer1.Size = new System.Drawing.Size(1284, 719);
+            this.splitContainer1.SplitterDistance = 1030;
+            this.splitContainer1.TabIndex = 8;
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            this.splitContainer4.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.tabControl1);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.singleDataGridView);
+            this.splitContainer4.Panel2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.splitContainer4.Size = new System.Drawing.Size(1030, 719);
+            this.splitContainer4.SplitterDistance = 506;
+            this.splitContainer4.TabIndex = 9;
+            // 
+            // singleDataGridView
+            // 
+            this.singleDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.singleDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.singleDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.singleDataGridView.Location = new System.Drawing.Point(3, 0);
+            this.singleDataGridView.Name = "singleDataGridView";
+            this.singleDataGridView.Size = new System.Drawing.Size(1024, 206);
+            this.singleDataGridView.TabIndex = 6;
+            // 
+            // splitContainer5
+            // 
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer5.Name = "splitContainer5";
+            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.richTextBox1);
+            this.splitContainer5.Panel1.Padding = new System.Windows.Forms.Padding(0, 3, 3, 3);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.richTextBox2);
+            this.splitContainer5.Panel2.Padding = new System.Windows.Forms.Padding(0, 0, 3, 3);
+            this.splitContainer5.Size = new System.Drawing.Size(250, 719);
+            this.splitContainer5.SplitterDistance = 459;
+            this.splitContainer5.TabIndex = 10;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Location = new System.Drawing.Point(0, 3);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(247, 453);
+            this.richTextBox1.TabIndex = 7;
+            this.richTextBox1.Text = "";
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox2.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.Size = new System.Drawing.Size(247, 253);
+            this.richTextBox2.TabIndex = 8;
+            this.richTextBox2.Text = "";
             // 
             // panel1
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.panel1, 2);
-            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.siteAddress);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label1);
@@ -416,7 +515,6 @@ namespace Crawler.MainForm
             this.Text = "Form1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).EndInit();
@@ -425,6 +523,19 @@ namespace Crawler.MainForm
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).EndInit();
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            this.splitContainer5.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
@@ -467,6 +578,10 @@ namespace Crawler.MainForm
         private System.Windows.Forms.RichTextBox richTextBox1;
         private FolderBrowserDialog folderBrowserDialog1;
         private SaveFileDialog saveFileDialog1;
+        private SplitContainer splitContainer1;
+        private SplitContainer splitContainer4;
+        private SplitContainer splitContainer5;
+        private RichTextBox richTextBox2;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem plikToolStripMenuItem;
         private ToolStripMenuItem nowyToolStripMenuItem;
