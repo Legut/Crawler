@@ -53,6 +53,10 @@ namespace Crawler.MainForm
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.singleDataGridView = new System.Windows.Forms.DataGridView();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.plikToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,11 +67,6 @@ namespace Crawler.MainForm
             this.widokToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pomocToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.oProgramieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.singleDataGridView = new System.Windows.Forms.DataGridView();
-            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.label3 = new System.Windows.Forms.Label();
@@ -87,14 +86,13 @@ namespace Crawler.MainForm
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // siteAddress
@@ -141,7 +139,7 @@ namespace Crawler.MainForm
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(3, 99);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
@@ -283,7 +281,7 @@ namespace Crawler.MainForm
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 936F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1290F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 164F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 1);
@@ -329,6 +327,7 @@ namespace Crawler.MainForm
             // 
             // splitContainer4.Panel2
             // 
+            this.splitContainer4.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer4.Panel2.Controls.Add(this.singleDataGridView);
             this.splitContainer4.Panel2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.splitContainer4.Size = new System.Drawing.Size(1030, 719);
@@ -337,12 +336,15 @@ namespace Crawler.MainForm
             // 
             // singleDataGridView
             // 
+            this.singleDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.singleDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.singleDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.singleDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.singleDataGridView.Location = new System.Drawing.Point(3, 0);
+            this.singleDataGridView.Location = new System.Drawing.Point(6, 536);
+            this.singleDataGridView.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
             this.singleDataGridView.Name = "singleDataGridView";
-            this.singleDataGridView.Size = new System.Drawing.Size(1024, 206);
+            this.singleDataGridView.Size = new System.Drawing.Size(891, 263);
             this.singleDataGridView.TabIndex = 6;
             // 
             // splitContainer5
@@ -398,7 +400,7 @@ namespace Crawler.MainForm
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1287, 90);
+            this.panel1.Size = new System.Drawing.Size(1287, 74);
             this.panel1.TabIndex = 5;
             // 
             // menuStrip1
@@ -447,7 +449,7 @@ namespace Crawler.MainForm
             // ustawieniaToolStripMenuItem
             // 
             this.ustawieniaToolStripMenuItem.Name = "ustawieniaToolStripMenuItem";
-            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.ustawieniaToolStripMenuItem.Text = "Ustawienia";
             this.ustawieniaToolStripMenuItem.Click += new System.EventHandler(this.ustawieniaToolStripMenuItem_Click);
             // 
@@ -470,28 +472,6 @@ namespace Crawler.MainForm
             this.oProgramieToolStripMenuItem.Name = "oProgramieToolStripMenuItem";
             this.oProgramieToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.oProgramieToolStripMenuItem.Text = "O programie";
-            // 
-            // singleDataGridView
-            // 
-            this.singleDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.singleDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.singleDataGridView.Location = new System.Drawing.Point(6, 536);
-            this.singleDataGridView.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
-            this.singleDataGridView.Name = "singleDataGridView";
-            this.singleDataGridView.Size = new System.Drawing.Size(891, 263);
-            this.singleDataGridView.TabIndex = 6;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(903, 99);
-            this.richTextBox1.Name = "richTextBox1";
-            this.tableLayoutPanel1.SetRowSpan(this.richTextBox1, 2);
-            this.richTextBox1.Size = new System.Drawing.Size(384, 703);
-            this.richTextBox1.TabIndex = 7;
-            this.richTextBox1.Text = "";
             // 
             // label3
             // 
@@ -540,7 +520,6 @@ namespace Crawler.MainForm
             this.panel1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

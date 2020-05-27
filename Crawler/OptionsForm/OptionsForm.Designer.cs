@@ -83,7 +83,7 @@
             this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(122, 46);
+            this.groupBox1.Size = new System.Drawing.Size(128, 45);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Co wolisz";

@@ -385,5 +385,26 @@ namespace Crawler.MainForm
 
             Debug.WriteLine("xd");
         }
+
+        internal void ZmienPreferencje(bool pref)
+        {
+            if (pref)
+            {
+                label3.Text = "Wolę cycki";
+            }
+            else
+            {
+                label3.Text = "Wolę dupę";
+            }
+        }
+
+        internal bool WczytajPreferencje()
+        {
+            if (label3.Text.Contains("cycki"))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
