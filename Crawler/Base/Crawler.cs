@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using Crawler.MainForm;
 using Crawler.Utilities;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
-using Crawler.Utilities;
-using System.Windows.Forms;
 using Crawler.Elements;
 
 namespace Crawler.Base
