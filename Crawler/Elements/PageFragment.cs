@@ -26,30 +26,26 @@ namespace Crawler
 
         private Int64 size; // rozmiar elementu na dysku. W sensie w MB kb itd. Kod html waży, obrazki ważą, załączone arkusze stylów (css) ważą, załączone JS (.js) ważą.
         private int wordCount; // Ilość słów na podstronie. Chodzi o treść samą, we wszystkich nagłówkach i paragrafach itd. Tylko dla kontentu typu html, bo nie liczymy słów w cssie, czy js, czy na zdjęciach.
-        private int textRatio; // Number of non-HTML characters found in the HTML body tag on a page (the text), divided by the total number of characters the HTML page is made up of, and displayed as a percentage.
+        private float textRatio; // Number of non-HTML characters found in the HTML body tag on a page (the text), divided by the total number of characters the HTML page is made up of, and displayed as a percentage.
 
-        private int crawlDepth; // "Głębokość" przecrawlowanego elementu. Np. obrazek znajdujący się pod adresem https://bcd.pl/obrazki/2020/01/obrazek.jpg ma głębokość 4. Innymi słowy jest to ilość slashy ("/") w linku, po jego baseURL (https://bcd.pl)
-
-        private long inLinks; // Ilość linków linkujących do tej (aktualnie crawlowanej) podstrony na wszystkich podstronach w serwisie (czyli trzeba przecrawlować wszystko inne żeby mieć ostateczną wartośc tutaj)
-        private long uniqueInLinks; // Ilość unikalnych linków linkujących do tej (aktualnie crawlowanej) podstrony. Czyli po prostu ilość podstron, które linkują chociaż raz do tej podstrony
-        private int uniqueInLinksOfTotal; // Procentowa ilość unikalnych linków do tej podstrony względem ilości podstron w serwisie. Czyli inaczej, ilość podstron linkujących chociaż raz do tej podstrony podzielona przez ilość podstron w serwisie * 100%
-        private HashSet<string> inLinksAdresses; // kolekcja adresów, które linkują do tej podstrony. Adresy znajdują się w hashsecie po to, żeby zebrać listę unikalnych podstron linkujących do tej jednej podstrony.
+        private int urlDepth; // "Głębokość" przecrawlowanego elementu. Np. obrazek znajdujący się pod adresem https://bcd.pl/obrazki/2020/01/obrazek.jpg ma głębokość 4. Innymi słowy jest to ilość slashy ("/") w linku, po jego baseURL (https://bcd.pl)
 
         private long outLinks; // Ilość wewnętrznych linków na danej podstronie
         private long uniqueOutLinks; // ilość unikalnych wewnętrznych linków na danej podstronie
-        private int uniqueOutLinksOfTotal; // Wartość w procentach. Jeśli na stronie bcd.pl jest 50 podstron, a na crawlowanej podstronie są linki do 30 unikalnych podstron, to ta wartość wynosi: 30/50 * 100% 
+        // private int uniqueOutLinksOfTotal; // Wartość w procentach. Jeśli na stronie bcd.pl jest 50 podstron, a na crawlowanej podstronie są linki do 30 unikalnych podstron, to ta wartość wynosi: 30/50 * 100% 
         private HashSet<string> outLinksAdresses; // kolekcja adresów z tej podstrony, które linkują do innej podstrony w obrębie danej domeny. Adresy znajdują się w hashsecie po to, żeby zebrać listę unikalnych podstron.
 
         private long externalOutLinks; // To samo co wyżej tylko dla linków zewnętrznych
         private long uniqueExternalOutLinks; // To samo co wyżej tylko dla linków zewnętrznych
-        private int uniqueExternalOutLinksOfTotal; // To samo co wyżej tylko dla linków zewnętrznych
+        // private int uniqueExternalOutLinksOfTotal; // To samo co wyżej tylko dla linków zewnętrznych
         private HashSet<string> externalOutLinksAdresses; // kolekcja adresów z tej podstrony, które linkują do innej podstrony poza obrębem danej domeny. Adresy znajdują się w hashsecie po to, żeby zebrać listę unikalnych podstron.
 
-        private string hash; // Treść HTML przekształcona w hash w celu zweryfikowania duplicate content;
+        private int hash; // Treść HTML przekształcona w hash w celu zweryfikowania duplicate content;
         private int responseTime; // Czas w sekundach od początku nawiązywania połączenia z podstroną do pobrania jej zawartości (jak masz już var htmlDocument to koniec liczenia czasu)
         private string redirectURL; // na co zostałeś przekierowany, jeśli było przekierowanie.
         private string redirectType; // jaki rodzaj przekierowania słownie.
         private bool isInternal;
+        private bool isDuplicate;
 
         public string Address
         {
@@ -116,35 +112,15 @@ namespace Crawler
             get { return wordCount; }
             set { wordCount = value; }
         }
-        public int TextRatio
+        public float TextRatio
         {
             get { return textRatio; }
             set { textRatio = value; }
         }
-        public int CrawlDepth
+        public int UrlDepth
         {
-            get { return crawlDepth; }
-            set { crawlDepth = value; }
-        }
-        public long InLinks
-        {
-            get { return inLinks; }
-            set { inLinks = value; }
-        }
-        public long UniqueInLinks
-        {
-            get { return uniqueInLinks; }
-            set { uniqueInLinks = value; }
-        }
-        public int UniqueInLinksOfTotal
-        {
-            get { return uniqueInLinksOfTotal; }
-            set { uniqueInLinksOfTotal = value; }
-        }
-        public HashSet<string> InLinksAdresses
-        {
-            get { return inLinksAdresses; }
-            set { inLinksAdresses = value; }
+            get { return urlDepth; }
+            set { urlDepth = value; }
         }
         public long OutLinks
         {
@@ -155,11 +131,6 @@ namespace Crawler
         {
             get { return uniqueOutLinks; }
             set { uniqueOutLinks = value; }
-        }
-        public int UniqueOutLinksOfTotal
-        {
-            get { return uniqueOutLinksOfTotal; }
-            set { uniqueOutLinksOfTotal = value; }
         }
         public HashSet<string> OutLinksAdresses
         {
@@ -176,17 +147,12 @@ namespace Crawler
             get { return uniqueExternalOutLinks; }
             set { uniqueExternalOutLinks = value; }
         }
-        public int UniqueExternalOutLinksOfTotal
-        {
-            get { return uniqueExternalOutLinksOfTotal; }
-            set { uniqueExternalOutLinksOfTotal = value; }
-        }
         public HashSet<string> ExternalOutLinksAdresses
         {
             get { return externalOutLinksAdresses; }
             set { externalOutLinksAdresses = value; }
         }
-        public string Hash
+        public int Hash
         {
             get { return hash; }
             set { hash = value; }
@@ -211,6 +177,11 @@ namespace Crawler
             get { return isInternal; }
             set { isInternal = value; }
         }
+        public bool IsDuplicate
+        {
+            get { return isDuplicate; }
+            set { isDuplicate = value; }
+        }
 
         public PageFragment()
         {
@@ -228,24 +199,19 @@ namespace Crawler
             this.Size = 0;
             this.WordCount = 0;
             this.TextRatio = 0;
-            this.CrawlDepth = 0;
-            this.InLinks = 0;
-            this.UniqueInLinks = 0;
-            this.UniqueInLinksOfTotal = 0;
-            this.InLinksAdresses = new HashSet<string>();
+            this.UrlDepth = 0;
             this.OutLinks = 0;
             this.UniqueOutLinks = 0;
-            this.UniqueOutLinksOfTotal = 0;
             this.OutLinksAdresses = new HashSet<string>();
             this.ExternalOutLinks = 0;
             this.UniqueExternalOutLinks = 0;
-            this.UniqueExternalOutLinksOfTotal = 0;
             this.ExternalOutLinksAdresses = new HashSet<string>();
-            this.Hash = "";
+            this.Hash = 0;
             this.ResponseTime = 0;
             this.RedirectURL = "";
             this.RedirectType = "";
             this.IsInternal = false;
+            this.isDuplicate = false;
         }
     }
 }

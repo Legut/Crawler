@@ -50,7 +50,6 @@ namespace Crawler.MainForm
             lastColumnMinWidth = 100;
             rowStyles = tableLayoutPanel1.RowStyles;
             columnStyles = tableLayoutPanel1.ColumnStyles;
-
         }
 
         private void PrepareSingleDataGridView()
@@ -108,6 +107,13 @@ namespace Crawler.MainForm
                 this.crawlButton.Text = "Start";
             }
             crawlButton.Enabled = true;
+        }
+
+        public void makeButtonReady()
+        {
+            this.isCrawling = false;
+            this.crawlButton.Text = "Start";
+            this.crawlButton.Enabled = true;
         }
 
         private void DataGridView_SelectionChanged(object sender, EventArgs e)
@@ -215,9 +221,9 @@ namespace Crawler.MainForm
         {
             crawlingStatusLabel.Text = status + " / " + max;
         }
-        public void UpdateCrawledStatus(int left, int all)
+        public void UpdateCrawledStatus(int crawled, int all)
         {
-            crawledStatusLabel.Text = left + " / " + all;
+            crawledStatusLabel.Text = crawled + " / " + all;
         }
 
     }

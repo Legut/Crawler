@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Crawler.Utilities;
 using HtmlAgilityPack;
 
 namespace Crawler.Base
@@ -28,7 +31,7 @@ namespace Crawler.Base
             pf.StatusCode = ((int)response.StatusCode).ToString();
             pf.Status = response.StatusCode.ToString();
         }
-        private static void ManagePageFragment(ref PageFragment pf, ref HttpResponseMessage response, ref HtmlDocument htmlDocument, Uri page)
+        private void ManagePageFragment(ref PageFragment pf, ref HttpResponseMessage response, ref HtmlDocument htmlDocument, Uri page)
         {
             pf.Address = page.AbsoluteUri;
             pf.IsInternal = true;
@@ -36,6 +39,34 @@ namespace Crawler.Base
             pf.StatusCode = ((int)response.StatusCode).ToString();
             pf.Status = response.StatusCode.ToString();
             pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
+            pf.Hash = htmlDocument.Text.GetHashCode();
+            string hash = htmlDocument.Text.GetHashCode().ToString();
+            var k = (from row in dt.Rows.OfType<DataRow>() where row[HASH_VALUE_COL].ToString() == hash select row).FirstOrDefault();
+            if (k != null)
+            {
+                k[ISDUPLICATE_COL] = true;
+                pf.IsDuplicate = true;
+            }
+
+            List<HtmlNode> bodies = htmlDocument.DocumentNode.Descendants("body").ToList();
+            int nonHtmlCharsCount = 0;
+            foreach (HtmlNode body in bodies)
+            {
+                pf.WordCount += Utils.CountWords(body.InnerText);
+                nonHtmlCharsCount += body.InnerText.Length;
+            }
+
+            if (htmlDocument.Text.Length != 0)
+                pf.TextRatio = (float) nonHtmlCharsCount / (float) htmlDocument.Text.Length;
+            else
+                pf.TextRatio = 0;
+
+            pf.UrlDepth = -1;
+            foreach (string segment in page.Segments)
+            {
+                pf.UrlDepth++;
+            }
+
 
             if (pf.StatusCode != "200")
             {
