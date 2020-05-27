@@ -36,7 +36,7 @@ namespace Crawler.Base
             pf.StatusCode = ((int)response.StatusCode).ToString();
             pf.Status = response.StatusCode.ToString();
             pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
-
+            
             if (pf.StatusCode != "200")
             {
                 pf.Indexability = "Non-indexable";

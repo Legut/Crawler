@@ -27,7 +27,7 @@ namespace Crawler.Base
         private const string H_ONE_LENGTH_COL = "H1 Length ";
         private const string H_TWO_COL = "H2 ";
         private const string H_TWO_LENGTH_COL = "H2 Length ";
-        private const string SIZE_COL = "Size";
+        public const string SIZE_COL = "Size";
         private const string OUTLINS_COL = "OutLinks";
         private const string UNIQUE_OUTLINKS_COL = "UniqueOutLinks";
         private const string UNIQUE_OUTLINKS_OF_TOTAL_COL = "UniqueOutLinksOfTotal";

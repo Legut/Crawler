@@ -7,6 +7,10 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using Crawler.Utilities;
+using Crawler.Base;
+using System.Drawing;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Crawler.MainForm
 {
@@ -51,10 +55,22 @@ namespace Crawler.MainForm
             rowStyles = tableLayoutPanel1.RowStyles;
             columnStyles = tableLayoutPanel1.ColumnStyles;
 
+            allDataGridView.CellFormatting +=
+            new System.Windows.Forms.DataGridViewCellFormattingEventHandler(
+            this.allDataGridViewCellFormating);
+
+            allDataGridView.ReadOnly = true;
+
+        }
+
+        private void allDataGridViewCellFormating(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            HumanReadableSizes(sender, e);
         }
 
         private void PrepareSingleDataGridView()
         {
+            singleDataGridView.ReadOnly = true;
             singleDataGridView.Dock = DockStyle.Fill;
             singleDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             singleDataGridView.ColumnCount = 2;
@@ -151,6 +167,22 @@ namespace Crawler.MainForm
             }
         }
 
+        private void HumanReadableSizes(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (allDataGridView.Columns[e.ColumnIndex].Name.Equals(Base.Crawler.SIZE_COL))
+            {
+                e.Value = ShownSize(true, e.Value.ToString());
+                e.FormattingApplied = true;
+            }
+        }
+
+        public object ShownSize(bool isInternal, string size)
+        {
+            long temp = long.Parse(size);
+
+            return isInternal ? Base.Crawler.SizeSuffix(temp, 2) : String.Empty;
+        }
+
         private void EnsureThatProtocolIsProvided(string url)
         {
             // Ensure there is protocol provided at the begining of url
@@ -220,5 +252,147 @@ namespace Crawler.MainForm
             crawledStatusLabel.Text = left + " / " + all;
         }
 
+        private void allDataGridView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right)
+            {
+                if (allDataGridView.SelectedCells.Count > 0)
+                {
+                    ContextMenuStrip cellClickMenu = new System.Windows.Forms.ContextMenuStrip();
+                    int hit_row = allDataGridView.HitTest(e.X, e.Y).RowIndex;
+                    //int hit_cell = allDataGridView.HitTest(e.X, e.Y).ColumnIndex;
+
+                    if (hit_row >= 0)
+                    {
+                        cellClickMenu.Items.Add("Kopiuj komórkę").Tag = "1";
+                        cellClickMenu.Items.Add("Kopiuj zaznaczenie").Tag = "2";
+                        cellClickMenu.Items.Add("Otwórz w przeglądarce").Tag = "3";
+                        //cellClickMenu.Items.Add("Zapisz komórki do CSV").Tag = "4";
+                        cellClickMenu.Items.Add("Zapisz rzędy do CSV").Tag = "5";
+                    }
+
+                    cellClickMenu.Show(allDataGridView, new Point(e.X, e.Y));
+
+                    cellClickMenu.ItemClicked += new ToolStripItemClickedEventHandler(allDataCellClicked);
+
+                }
+            }
+        }
+
+        private void allDataCellClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            string temp = "";
+            int lastrow = 0;
+
+            switch (e.ClickedItem.Tag.ToString())
+            {
+                case "1":
+                    temp = allDataGridView.SelectedCells[0].Value.ToString();                    
+                    Clipboard.SetText(temp);
+                    break;
+
+                case "2":
+                    foreach(DataGridViewCell cell in allDataGridView.SelectedCells)
+                    {
+                        temp += cell.Value.ToString() + ";";
+                        Clipboard.SetText(temp);
+                    }
+                    break;
+
+                case "3":
+                    foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
+                    {
+                        List<int> openedRows = new List<int>();
+
+                        if (!openedRows.Contains(cell.RowIndex))
+                        {
+                            openedRows.Add(cell.RowIndex);
+                            temp += allDataGridView.Rows[cell.RowIndex].Cells[0].Value.ToString();
+                            System.Diagnostics.Process.Start(temp);
+                        }
+                    }
+                    break;
+
+                case "4":
+
+                    lastrow = allDataGridView.SelectedCells[0].RowIndex;
+
+                    temp = "";
+
+                    SaveFileDialog saveFileDialog1 =  new SaveFileDialog();
+                    saveFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+                    saveFileDialog1.FilterIndex = 1;
+                    saveFileDialog1.RestoreDirectory = true;
+
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        temp = saveFileDialog1.FileName;
+
+                        using (StreamWriter sw = new StreamWriter(temp))
+                        {      
+                            foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
+                            {
+                                if (lastrow != cell.RowIndex)
+                                {
+                                    sw.WriteLine("\n");
+                                    lastrow = cell.RowIndex;
+                                }
+                                sw.WriteLine(cell.Value.ToString() + ";");
+                            }
+                        }
+
+                    }
+
+                    break;
+
+                case "5":
+                                        
+                    lastrow = allDataGridView.SelectedCells[0].RowIndex;
+
+                    temp = "";
+
+                    SaveFileDialog saveFileDialog2 = new SaveFileDialog();
+                    saveFileDialog2.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+                    saveFileDialog2.FilterIndex = 1;
+                    saveFileDialog2.RestoreDirectory = true;
+
+                    if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+                    {
+                        temp = saveFileDialog2.FileName;
+
+                        using (StreamWriter sw = new StreamWriter(temp))
+                        {
+                            foreach(DataRow row in allDataGridView.Rows)
+                            {
+                                foreach(DataGridViewCell cell in row.ItemArray)
+                                {
+                                    sw.WriteLine(cell.Value.ToString() + ";");
+                                }
+                                sw.WriteLine("\n");
+                            }
+
+
+                            foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
+                            {
+                                if (lastrow != cell.RowIndex)
+                                {
+                                    sw.WriteLine("\n");
+                                    lastrow = cell.RowIndex;
+                                }
+                                sw.WriteLine(cell.Value.ToString() + ";");
+                            }
+                        }
+
+                    }
+
+                    break;
+
+                default:
+                    temp = allDataGridView.SelectedCells[0].Value.ToString();
+                    temp += "\n" + e.ClickedItem.Tag.ToString();
+                    MessageBox.Show(temp, "kurwa");
+                    break;
+            }
+        }
     }
 }
