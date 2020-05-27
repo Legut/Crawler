@@ -17,6 +17,7 @@ namespace Crawler.Base
         private int keywordColumnsCount;
         private int headOneColumnsCount;
         private int headTwoColumnsCount;
+
         private void CreateDataTable()
         {
             // Initalize columns counters
@@ -54,10 +55,14 @@ namespace Crawler.Base
             dt.Columns.Add(H_TWO_COL + headTwoColumnsCount).DefaultValue = "";
             dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount, typeof(int)).DefaultValue = null;
 
+            dt.Columns.Add(SIZE_COL, typeof(long)).DefaultValue = null;
+            //dt.Columns.Add(SIZE_COL).DefaultValue = "";
+
             dt.Columns.Add(SIZE_COL).DefaultValue = "";
             dt.Columns.Add(WORD_COUNT_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(TEXT_RATIO_COL).DefaultValue = "";
             dt.Columns.Add(URL_DEPTH_COL, typeof(int)).DefaultValue = null;
+
 
             dt.Columns.Add(OUTLINKS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_OUTLINKS_COL, typeof(int)).DefaultValue = null;
@@ -69,6 +74,8 @@ namespace Crawler.Base
             dt.Columns.Add(EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(HASH_VALUE_COL, typeof(int)).DefaultValue = null;
+
+            
 
             // Bind data to dataGridViews
             MainForm.BindDataTableToAll(dt);
@@ -86,20 +93,24 @@ namespace Crawler.Base
             row[INDEXABILITY_COL] = pf.Indexability;
             row[INDEXABILITY_STATUS_COL] = pf.IndexabilityStatus;
             row[ISINTERNAL_COL] = pf.IsInternal;
+
+            //row[SIZE_COL] = ShownSize(pf.IsInternal, pf.Size);
+            row[SIZE_COL] = pf.Size;
+
             row[ISDUPLICATE_COL] = pf.IsDuplicate;
-            row[SIZE_COL] = GetSize(pf.IsInternal, pf.Size);
             if(pf.WordCount != 0)
                 row[WORD_COUNT_COL] = pf.WordCount;
             if(pf.TextRatio != 0)
                 row[TEXT_RATIO_COL] = pf.TextRatio.ToString("F");
             if(pf.IsInternal)
                 row[URL_DEPTH_COL] = pf.UrlDepth;
+
             HandleTitles(ref row, pf.Titles);
             HandleDesc(ref row, pf.MetaDescriptions);
             HandleKeywords(ref row, pf.MetaKeywords);
             HandleHeadsOne(ref row, pf.HeadingsOne);
             HandleHeadsTwo(ref row, pf.HeadingsTwo);
-
+            
             if (pf.OutLinks > 0)
             {
                 row[OUTLINKS_COL] = pf.OutLinks;
@@ -121,6 +132,7 @@ namespace Crawler.Base
             }
 
             row[HASH_VALUE_COL] = pf.Hash;
+
             dt.Rows.Add(row);
         }
         private void HandleTitles(ref DataRow row, List<Title> titles)
@@ -212,7 +224,7 @@ namespace Crawler.Base
                 i++;
             }
         }
-        private object GetSize(bool isInternal, long size)
+        public object ShownSize(bool isInternal, long size)
         {
             return isInternal ? SizeSuffix(size, 2) : String.Empty;
         }

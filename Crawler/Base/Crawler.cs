@@ -140,6 +140,7 @@ namespace Crawler.Base
 
             this.semaphore.Release();
         }
+
         private void UpdateDebugGui()
         {
             MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores);
@@ -188,7 +189,7 @@ namespace Crawler.Base
                     address = null;
             }
         }
-        private static string SizeSuffix(long value, int decimalPlaces = 1)
+        public static string SizeSuffix(long value, int decimalPlaces = 1)
         {
             if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
             if (value < 0) { return "-" + SizeSuffix(-value); }

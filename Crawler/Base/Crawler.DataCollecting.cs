@@ -39,6 +39,7 @@ namespace Crawler.Base
             pf.StatusCode = ((int)response.StatusCode).ToString();
             pf.Status = response.StatusCode.ToString();
             pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
+
             pf.Hash = htmlDocument.Text.GetHashCode();
             string hash = htmlDocument.Text.GetHashCode().ToString();
             var k = (from row in dt.Rows.OfType<DataRow>() where row[HASH_VALUE_COL].ToString() == hash select row).FirstOrDefault();
@@ -66,8 +67,7 @@ namespace Crawler.Base
             {
                 pf.UrlDepth++;
             }
-
-
+          
             if (pf.StatusCode != "200")
             {
                 pf.Indexability = "Non-indexable";

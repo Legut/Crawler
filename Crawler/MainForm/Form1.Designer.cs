@@ -54,6 +54,8 @@ namespace Crawler.MainForm
             this.panel1 = new System.Windows.Forms.Panel();
             this.singleDataGridView = new System.Windows.Forms.DataGridView();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).BeginInit();
@@ -138,6 +140,7 @@ namespace Crawler.MainForm
             this.allDataGridView.Name = "allDataGridView";
             this.allDataGridView.Size = new System.Drawing.Size(889, 421);
             this.allDataGridView.TabIndex = 3;
+            this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.allDataGridView_MouseClick);
             // 
             // Address
             // 
@@ -367,6 +370,8 @@ namespace Crawler.MainForm
         private System.Windows.Forms.DataGridView singleDataGridView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private FolderBrowserDialog folderBrowserDialog1;
+        private SaveFileDialog saveFileDialog1;
     }
 }
 
