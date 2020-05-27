@@ -307,14 +307,13 @@ namespace Crawler.MainForm
                     break;
 
                 case "3":
+                    List<int> openedRows = new List<int>();
                     foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
-                    {
-                        List<int> openedRows = new List<int>();
-
+                    {         
                         if (!openedRows.Contains(cell.RowIndex))
                         {
                             openedRows.Add(cell.RowIndex);
-                            temp += allDataGridView.Rows[cell.RowIndex].Cells[0].Value.ToString();
+                            temp = allDataGridView.Rows[cell.RowIndex].Cells[0].Value.ToString();
                             System.Diagnostics.Process.Start(temp);
                         }
                     }

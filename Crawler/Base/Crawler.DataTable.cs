@@ -58,7 +58,6 @@ namespace Crawler.Base
             dt.Columns.Add(SIZE_COL, typeof(long)).DefaultValue = null;
             //dt.Columns.Add(SIZE_COL).DefaultValue = "";
 
-            dt.Columns.Add(SIZE_COL).DefaultValue = "";
             dt.Columns.Add(WORD_COUNT_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(TEXT_RATIO_COL).DefaultValue = "";
             dt.Columns.Add(URL_DEPTH_COL, typeof(int)).DefaultValue = null;
