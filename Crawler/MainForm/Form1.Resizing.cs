@@ -105,6 +105,27 @@ namespace Crawler.MainForm
             }
         }
 
+        internal void ZmienPreferencje(bool pref)
+        {
+            if (pref)
+            {
+                label3.Text = "Wolę cycki";
+            }
+            else
+            {
+                label3.Text = "Wolę dupę";
+            }
+        }
+
+        internal bool WczytajPreferencje()
+        {
+            if (label3.Text.Contains("cycki"))
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void TableLayoutPanel1_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left) return;

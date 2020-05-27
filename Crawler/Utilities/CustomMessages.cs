@@ -28,5 +28,10 @@ namespace Crawler.Utilities
         {
             MessageBox.Show(message, caption, Buttons);
         }
+        internal static void DisplayCustomInfoMsg(string message, string caption)
+        {
+            MessageBox.Show(message, caption, Buttons);
+        }
+
     }
 }
