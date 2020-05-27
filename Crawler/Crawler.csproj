@@ -144,6 +144,7 @@
     <Compile Include="Base\Crawler.DataCollecting.cs" />
     <Compile Include="Base\Crawler.DataTable.cs" />
     <Compile Include="Base\Crawler.Strings.cs" />
+    <Compile Include="Elements\InLinksCounter.cs" />
     <Compile Include="Elements\MetaKeywords.cs" />
     <Compile Include="Elements\MetaDescription.cs" />
     <Compile Include="Elements\HeadingTwo.cs" />

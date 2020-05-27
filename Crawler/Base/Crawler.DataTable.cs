@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,6 +36,7 @@ namespace Crawler.Base
             dt.Columns.Add(INDEXABILITY_COL).DefaultValue = "";
             dt.Columns.Add(INDEXABILITY_STATUS_COL).DefaultValue = "";
             dt.Columns.Add(ISINTERNAL_COL).DefaultValue = "";
+            dt.Columns.Add(ISDUPLICATE_COL).DefaultValue = "";
 
             dt.Columns.Add(TITLE_COL + titleColumnsCount).DefaultValue = "";
             dt.Columns.Add(TITLE_LENGTH_COL + titleColumnsCount, typeof(int)).DefaultValue = null;
@@ -52,24 +54,33 @@ namespace Crawler.Base
 
             dt.Columns.Add(H_TWO_COL + headTwoColumnsCount).DefaultValue = "";
             dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount, typeof(int)).DefaultValue = null;
-        
+
             dt.Columns.Add(SIZE_COL, typeof(long)).DefaultValue = null;
             //dt.Columns.Add(SIZE_COL).DefaultValue = "";
 
-            dt.Columns.Add(OUTLINS_COL, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(SIZE_COL).DefaultValue = "";
+            dt.Columns.Add(WORD_COUNT_COL, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(TEXT_RATIO_COL).DefaultValue = "";
+            dt.Columns.Add(URL_DEPTH_COL, typeof(int)).DefaultValue = null;
+
+
+            dt.Columns.Add(OUTLINKS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_OUTLINKS_COL, typeof(int)).DefaultValue = null;
-            dt.Columns.Add(UNIQUE_OUTLINKS_OF_TOTAL_COL).DefaultValue = "";
+
+            dt.Columns.Add(INLINKS_COL, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(UNIQUE_INLINKS_COL, typeof(int)).DefaultValue = null;
+            dt.Columns.Add(UNIQUE_INLINKS_OF_TOTAL_COL).DefaultValue = "";
 
             dt.Columns.Add(EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
-            dt.Columns.Add(UNIQUE_EXTERNAL_OUTLINKS_OF_TOTAL_COL).DefaultValue = "";
+            dt.Columns.Add(HASH_VALUE_COL, typeof(int)).DefaultValue = null;
 
             
 
             // Bind data to dataGridViews
-            MainForm.BindDataTableToWszystkie(dt);
-            MainForm.BindDataTableToZewnetrzne(dt);
-            MainForm.BindDataTableToWewnetrzne(dt);
+            MainForm.BindDataTableToAll(dt);
+            MainForm.BindDataTableToExternal(dt);
+            MainForm.BindDataTableToInternal(dt);
         }
         private void UpdateDataTable(PageFragment pf)
         {
@@ -82,8 +93,18 @@ namespace Crawler.Base
             row[INDEXABILITY_COL] = pf.Indexability;
             row[INDEXABILITY_STATUS_COL] = pf.IndexabilityStatus;
             row[ISINTERNAL_COL] = pf.IsInternal;
+
             //row[SIZE_COL] = ShownSize(pf.IsInternal, pf.Size);
             row[SIZE_COL] = pf.Size;
+
+            row[ISDUPLICATE_COL] = pf.IsDuplicate;
+            if(pf.WordCount != 0)
+                row[WORD_COUNT_COL] = pf.WordCount;
+            if(pf.TextRatio != 0)
+                row[TEXT_RATIO_COL] = pf.TextRatio.ToString("F");
+            if(pf.IsInternal)
+                row[URL_DEPTH_COL] = pf.UrlDepth;
+
             HandleTitles(ref row, pf.Titles);
             HandleDesc(ref row, pf.MetaDescriptions);
             HandleKeywords(ref row, pf.MetaKeywords);
@@ -92,19 +113,25 @@ namespace Crawler.Base
             
             if (pf.OutLinks > 0)
             {
-                row[OUTLINS_COL] = pf.OutLinks;
+                row[OUTLINKS_COL] = pf.OutLinks;
                 row[UNIQUE_OUTLINKS_COL] = pf.UniqueOutLinks;
-                row[UNIQUE_OUTLINKS_OF_TOTAL_COL] = (((double)pf.UniqueOutLinks / (double)pf.OutLinks) * 100).ToString("F");
             }
 
             if (pf.ExternalOutLinks > 0)
             {
                 row[EXTERNAL_OUTLIKNS_COL] = pf.ExternalOutLinks;
                 row[UNIQUE_EXTERNAL_OUTLIKNS_COL] = pf.UniqueExternalOutLinks;
-                row[UNIQUE_EXTERNAL_OUTLINKS_OF_TOTAL_COL] = (((double)pf.UniqueExternalOutLinks / (double)pf.ExternalOutLinks) * 100).ToString("F");
             }
 
-            
+            if (inLinksData.ContainsKey(pf.Address))
+            {
+                row[INLINKS_COL] = inLinksData[pf.Address].InLinksCount;
+                row[UNIQUE_INLINKS_COL] = inLinksData[pf.Address].UniqueInLinks.Count;
+                float temp = ((float)inLinksData[pf.Address].UniqueInLinks.Count / (float)inLinksData[pf.Address].InLinksCount) * 100;
+                row[UNIQUE_INLINKS_OF_TOTAL_COL] = temp.ToString("F");
+            }
+
+            row[HASH_VALUE_COL] = pf.Hash;
 
             dt.Rows.Add(row);
         }

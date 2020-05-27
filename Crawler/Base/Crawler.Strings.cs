@@ -28,11 +28,17 @@ namespace Crawler.Base
         private const string H_TWO_COL = "H2 ";
         private const string H_TWO_LENGTH_COL = "H2 Length ";
         public const string SIZE_COL = "Size";
-        private const string OUTLINS_COL = "OutLinks";
+        private const string OUTLINKS_COL = "OutLinks";
         private const string UNIQUE_OUTLINKS_COL = "UniqueOutLinks";
-        private const string UNIQUE_OUTLINKS_OF_TOTAL_COL = "UniqueOutLinksOfTotal";
         private const string EXTERNAL_OUTLIKNS_COL = "ExternalOutLinks";
         private const string UNIQUE_EXTERNAL_OUTLIKNS_COL = "UniqueExternalOutLinks";
-        private const string UNIQUE_EXTERNAL_OUTLINKS_OF_TOTAL_COL = "UniqueExternalOutLinksOfTotal";
+        private const string ISDUPLICATE_COL = "IsDuplicate";
+        private const string HASH_VALUE_COL = "Hash";
+        private const string WORD_COUNT_COL = "Word count";
+        private const string URL_DEPTH_COL = "URL Depth";
+        private const string TEXT_RATIO_COL = "Text ratio";
+        private const string INLINKS_COL = "InLinks";
+        private const string UNIQUE_INLINKS_COL = "Unique InLinks";
+        private const string UNIQUE_INLINKS_OF_TOTAL_COL = "Unique InLinks of Total";
     }
 }

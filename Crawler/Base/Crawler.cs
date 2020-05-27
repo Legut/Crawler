@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -11,6 +13,7 @@ using Crawler.Utilities;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 using Crawler.Utilities;
 using System.Windows.Forms;
+using Crawler.Elements;
 
 namespace Crawler.Base
 {
@@ -18,7 +21,9 @@ namespace Crawler.Base
     {
         private Uri BaseUrl { get; set; }
         private HashSet<Uri> crawledPages;
-        private const int MaxSemaphores = 10;
+        private static Dictionary<string, InLinksCounter> inLinksData;
+
+        private const int MaxSemaphores = 50;
         private readonly SemaphoreSlim semaphore;
         private CancellationToken cancellationToken;
         private readonly CancellationTokenSource cts;
@@ -36,6 +41,7 @@ namespace Crawler.Base
 
             cts = new CancellationTokenSource();
             crawledPages = new HashSet<Uri>();
+            inLinksData = new Dictionary<string, InLinksCounter>();
             semaphore = new SemaphoreSlim(MaxSemaphores);
             cancellationToken = default;
 
@@ -65,14 +71,16 @@ namespace Crawler.Base
                     try
                     {
                         // Check whether page is internal or external 
-                        if (Uri.Compare(BaseUrl, page, UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
+                        if (Uri.Compare(BaseUrl, page, UriComponents.Host, 
+                            UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                         {
                             // Get page source
                             string sourceHtml = await response.Content.ReadAsStringAsync();
                             HtmlDocument htmlDocument = new HtmlDocument();
                             htmlDocument.LoadHtml(sourceHtml);
 
-                            // Crawl deeper through urls found on this page (it happens in separate threades simultanously)
+                            // Crawl deeper through urls found on this page
+                            // (it happens in separate threads simultanously)
                             CrawlFurther(htmlDocument, ref pf);
 
                             // Fulfill PageFragment with data
@@ -135,14 +143,15 @@ namespace Crawler.Base
 
         private void UpdateDebugGui()
         {
-            przejrzaneStrony++;
             MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores);
             MainForm.UpdateCrawledStatus(przejrzaneStrony, stronyDoPrzejrzenia);
+            przejrzaneStrony++;
         }
         public async void StartCrawl()
         {
             CreateDataTable();
             await StartCrawlingPage(BaseUrl, cts.Token);
+            await onAbortionComplete();
         }
         private static void NormalizeAddress(Uri baseUrl, ref string address, string pfAddress)
         {
@@ -212,6 +221,33 @@ namespace Crawler.Base
             else
             {
                 Debug.WriteLine("CancelationToken is null, cannot abort!");
+            }
+        }
+
+        private async Task onAbortionComplete()
+        {
+            while (semaphore.CurrentCount != MaxSemaphores)
+            {
+                await Task.Delay(1000);
+            }
+
+            UpdateInLinks();
+            UpdateDebugGui();
+            MainForm.makeButtonReady();
+        }
+
+        private void UpdateInLinks()
+        {
+            foreach (var item in inLinksData)
+            {
+                var singleRow = (from row in dt.Rows.OfType<DataRow>() where row[ADDRESS_COL].ToString() == item.Key select row).FirstOrDefault();
+                if (singleRow != null)
+                {
+                    singleRow[INLINKS_COL] = item.Value.InLinksCount;
+                    singleRow[UNIQUE_INLINKS_COL] = item.Value.UniqueInLinks.Count;
+                    float temp = ((float)item.Value.UniqueInLinks.Count / (float)item.Value.InLinksCount) * 100;
+                    singleRow[UNIQUE_INLINKS_OF_TOTAL_COL] = temp.ToString("F");
+                }
             }
         }
     }   

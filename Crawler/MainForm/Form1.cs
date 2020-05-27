@@ -126,6 +126,13 @@ namespace Crawler.MainForm
             crawlButton.Enabled = true;
         }
 
+        public void makeButtonReady()
+        {
+            this.isCrawling = false;
+            this.crawlButton.Text = "Start";
+            this.crawlButton.Enabled = true;
+        }
+
         private void DataGridView_SelectionChanged(object sender, EventArgs e)
         {
             // TODO: display selected row in singleDataGridView
@@ -247,9 +254,9 @@ namespace Crawler.MainForm
         {
             crawlingStatusLabel.Text = status + " / " + max;
         }
-        public void UpdateCrawledStatus(int left, int all)
+        public void UpdateCrawledStatus(int crawled, int all)
         {
-            crawledStatusLabel.Text = left + " / " + all;
+            crawledStatusLabel.Text = crawled + " / " + all;
         }
 
         private void allDataGridView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
