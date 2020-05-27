@@ -382,29 +382,14 @@ namespace Crawler.MainForm
         {
             OptionsForm.OptionsForm form2 = new OptionsForm.OptionsForm(this);
             form2.Show();
-
-            Debug.WriteLine("xd");
         }
 
-        internal void ZmienPreferencje(bool pref)
+        public void IncreaseErrorCount()
         {
-            if (pref)
-            {
-                label3.Text = "Wolę cycki";
-            }
-            else
-            {
-                label3.Text = "Wolę dupę";
-            }
+            Utilities.Utils.iloscBledow++;
+            label7.Text = Utils.iloscBledow.ToString();
+            Invalidate();
         }
 
-        internal bool WczytajPreferencje()
-        {
-            if (label3.Text.Contains("cycki"))
-            {
-                return true;
-            }
-            return false;
-        }
     }
 }

@@ -55,7 +55,9 @@ namespace Crawler.MainForm
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.singleDataGridView = new System.Windows.Forms.DataGridView();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -98,7 +100,7 @@ namespace Crawler.MainForm
             // siteAddress
             // 
             this.siteAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.siteAddress.Location = new System.Drawing.Point(121, 23);
+            this.siteAddress.Location = new System.Drawing.Point(121, 24);
             this.siteAddress.Name = "siteAddress";
             this.siteAddress.Size = new System.Drawing.Size(259, 29);
             this.siteAddress.TabIndex = 0;
@@ -116,7 +118,7 @@ namespace Crawler.MainForm
             // crawlButton
             // 
             this.crawlButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.crawlButton.Location = new System.Drawing.Point(386, 22);
+            this.crawlButton.Location = new System.Drawing.Point(386, 24);
             this.crawlButton.Name = "crawlButton";
             this.crawlButton.Size = new System.Drawing.Size(121, 29);
             this.crawlButton.TabIndex = 2;
@@ -144,7 +146,7 @@ namespace Crawler.MainForm
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.Padding = new System.Drawing.Point(0, 0);
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1030, 506);
+            this.tabControl1.Size = new System.Drawing.Size(1030, 516);
             this.tabControl1.TabIndex = 4;
             // 
             // tabPage1
@@ -153,7 +155,7 @@ namespace Crawler.MainForm
             this.tabPage1.Controls.Add(this.allDataGridView);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(1022, 480);
+            this.tabPage1.Size = new System.Drawing.Size(1022, 490);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Wszystkie";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -167,7 +169,7 @@ namespace Crawler.MainForm
             this.allDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.allDataGridView.Location = new System.Drawing.Point(0, 0);
             this.allDataGridView.Name = "allDataGridView";
-            this.allDataGridView.Size = new System.Drawing.Size(1022, 480);
+            this.allDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.allDataGridView.TabIndex = 3;
             this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.allDataGridView_MouseClick);
             // 
@@ -182,7 +184,7 @@ namespace Crawler.MainForm
             this.tabPage3.Controls.Add(this.internalDataGridView);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1022, 480);
+            this.tabPage3.Size = new System.Drawing.Size(1022, 490);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Wewnętrzne";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -196,7 +198,7 @@ namespace Crawler.MainForm
             this.internalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.internalDataGridView.Location = new System.Drawing.Point(0, 0);
             this.internalDataGridView.Name = "internalDataGridView";
-            this.internalDataGridView.Size = new System.Drawing.Size(1022, 480);
+            this.internalDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.internalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn1
@@ -210,7 +212,7 @@ namespace Crawler.MainForm
             this.tabPage2.Controls.Add(this.externalDataGridView);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(1022, 480);
+            this.tabPage2.Size = new System.Drawing.Size(1022, 490);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Zewnętrzne";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -224,7 +226,7 @@ namespace Crawler.MainForm
             this.externalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.externalDataGridView.Location = new System.Drawing.Point(0, 0);
             this.externalDataGridView.Name = "externalDataGridView";
-            this.externalDataGridView.Size = new System.Drawing.Size(1022, 480);
+            this.externalDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.externalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn2
@@ -236,7 +238,7 @@ namespace Crawler.MainForm
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 56);
+            this.label2.Location = new System.Drawing.Point(8, 8);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 5;
@@ -245,7 +247,7 @@ namespace Crawler.MainForm
             // crawlingStatusLabel
             // 
             this.crawlingStatusLabel.AutoSize = true;
-            this.crawlingStatusLabel.Location = new System.Drawing.Point(79, 56);
+            this.crawlingStatusLabel.Location = new System.Drawing.Point(172, 8);
             this.crawlingStatusLabel.Name = "crawlingStatusLabel";
             this.crawlingStatusLabel.Size = new System.Drawing.Size(36, 13);
             this.crawlingStatusLabel.TabIndex = 6;
@@ -263,7 +265,7 @@ namespace Crawler.MainForm
             // crawledStatusLabel
             // 
             this.crawledStatusLabel.AutoSize = true;
-            this.crawledStatusLabel.Location = new System.Drawing.Point(136, 73);
+            this.crawledStatusLabel.Location = new System.Drawing.Point(172, 34);
             this.crawledStatusLabel.Name = "crawledStatusLabel";
             this.crawledStatusLabel.Size = new System.Drawing.Size(30, 13);
             this.crawledStatusLabel.TabIndex = 8;
@@ -272,7 +274,7 @@ namespace Crawler.MainForm
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(161, 56);
+            this.label6.Location = new System.Drawing.Point(8, 21);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 13);
             this.label6.TabIndex = 9;
@@ -291,8 +293,8 @@ namespace Crawler.MainForm
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 450F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 65F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 465F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1290, 805);
             this.tableLayoutPanel1.TabIndex = 10;
@@ -300,7 +302,7 @@ namespace Crawler.MainForm
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 83);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 68);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -310,7 +312,7 @@ namespace Crawler.MainForm
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer1.Size = new System.Drawing.Size(1284, 719);
+            this.splitContainer1.Size = new System.Drawing.Size(1284, 734);
             this.splitContainer1.SplitterDistance = 1030;
             this.splitContainer1.TabIndex = 8;
             // 
@@ -330,8 +332,8 @@ namespace Crawler.MainForm
             this.splitContainer4.Panel2.BackColor = System.Drawing.SystemColors.Window;
             this.splitContainer4.Panel2.Controls.Add(this.singleDataGridView);
             this.splitContainer4.Panel2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.splitContainer4.Size = new System.Drawing.Size(1030, 719);
-            this.splitContainer4.SplitterDistance = 506;
+            this.splitContainer4.Size = new System.Drawing.Size(1030, 734);
+            this.splitContainer4.SplitterDistance = 516;
             this.splitContainer4.TabIndex = 9;
             // 
             // singleDataGridView
@@ -344,7 +346,7 @@ namespace Crawler.MainForm
             this.singleDataGridView.Location = new System.Drawing.Point(6, 536);
             this.singleDataGridView.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
             this.singleDataGridView.Name = "singleDataGridView";
-            this.singleDataGridView.Size = new System.Drawing.Size(891, 263);
+            this.singleDataGridView.Size = new System.Drawing.Size(891, 268);
             this.singleDataGridView.TabIndex = 6;
             // 
             // splitContainer5
@@ -356,51 +358,71 @@ namespace Crawler.MainForm
             // 
             // splitContainer5.Panel1
             // 
-            this.splitContainer5.Panel1.Controls.Add(this.richTextBox1);
+            this.splitContainer5.Panel1.Controls.Add(this.label9);
+            this.splitContainer5.Panel1.Controls.Add(this.crawledStatusLabel);
+            this.splitContainer5.Panel1.Controls.Add(this.label7);
+            this.splitContainer5.Panel1.Controls.Add(this.label5);
+            this.splitContainer5.Panel1.Controls.Add(this.label2);
+            this.splitContainer5.Panel1.Controls.Add(this.label6);
+            this.splitContainer5.Panel1.Controls.Add(this.crawlingStatusLabel);
             this.splitContainer5.Panel1.Padding = new System.Windows.Forms.Padding(0, 3, 3, 3);
             // 
             // splitContainer5.Panel2
             // 
             this.splitContainer5.Panel2.Controls.Add(this.richTextBox2);
             this.splitContainer5.Panel2.Padding = new System.Windows.Forms.Padding(0, 0, 3, 3);
-            this.splitContainer5.Size = new System.Drawing.Size(250, 719);
-            this.splitContainer5.SplitterDistance = 459;
+            this.splitContainer5.Size = new System.Drawing.Size(250, 734);
+            this.splitContainer5.SplitterDistance = 468;
             this.splitContainer5.TabIndex = 10;
             // 
-            // richTextBox1
+            // label9
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 3);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(247, 453);
-            this.richTextBox1.TabIndex = 7;
-            this.richTextBox1.Text = "";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 47);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(68, 13);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Ilość błędów";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(172, 47);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(13, 13);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(8, 34);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(117, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Ilość przejrzanych stron";
             // 
             // richTextBox2
             // 
             this.richTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox2.Location = new System.Drawing.Point(0, 0);
             this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(247, 253);
+            this.richTextBox2.Size = new System.Drawing.Size(247, 259);
             this.richTextBox2.TabIndex = 8;
             this.richTextBox2.Text = "";
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.siteAddress);
-            this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.crawledStatusLabel);
             this.panel1.Controls.Add(this.crawlButton);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.crawlingStatusLabel);
             this.panel1.Controls.Add(this.menuStrip1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1287, 74);
+            this.panel1.Size = new System.Drawing.Size(1287, 59);
             this.panel1.TabIndex = 5;
             // 
             // menuStrip1
@@ -513,6 +535,7 @@ namespace Crawler.MainForm
             this.splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).EndInit();
             this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel1.PerformLayout();
             this.splitContainer5.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
@@ -554,7 +577,6 @@ namespace Crawler.MainForm
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.DataGridView singleDataGridView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private FolderBrowserDialog folderBrowserDialog1;
         private SaveFileDialog saveFileDialog1;
         private SplitContainer splitContainer1;
@@ -571,6 +593,9 @@ namespace Crawler.MainForm
         private ToolStripMenuItem oProgramieToolStripMenuItem;
         private ToolStripMenuItem ustawieniaToolStripMenuItem;
         private Label label3;
+        private Label label7;
+        private Label label5;
+        private Label label9;
     }
 }
 
