@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Crawler.Elements;
 using HtmlAgilityPack;
 
 namespace Crawler.Base
@@ -81,40 +84,40 @@ namespace Crawler.Base
         }
         private void TryCrawlingNextPage(string address, ref PageFragment pf)
         {
-            // Popraw adres tak aby był pełnym linkiem
+            // Refactor addres to make it a full absolute URL
             NormalizeAddress(BaseUrl, ref address, pf.Address);
-            // Sprawdzam czy adres jest poprawny
+            // Check whether address is correct or not
             if (address != null)
             {
-                // Sprawdzam czy adres podstrony został już przecrawlowany zanim zacznę go crawlować
-                if (!crawledPages.Contains(new Uri(address)))
+                if (Uri.Compare(BaseUrl, new Uri(address), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
                 {
-                    // Zaczynam rekurencyjne crawlowanie kolejnej podstrony
-                    stronyDoPrzejrzenia++;
+                    pf.OutLinks++;
+                    if (!pf.OutLinksAdresses.Contains(address))
+                    {
+                        pf.OutLinksAdresses.Add(address);
+                        pf.UniqueOutLinks++;
+                    }
+                    if (!inLinksData.ContainsKey(address))
+                        inLinksData.Add(address, new InLinksCounter());
 
-                    StartCrawlingPage(new Uri(address), cts.Token);
-                    //StartCrawlingPage(address);
+                    inLinksData[address].InLinksCount++;
+                    inLinksData[address].UniqueInLinks.Add(pf.Address);
                 }
                 else
                 {
-                    if (Uri.Compare(BaseUrl, new Uri(address), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
+                    pf.ExternalOutLinks++;
+                    if (!pf.ExternalOutLinksAdresses.Contains(address))
                     {
-                        pf.OutLinks++;
-                        if (!pf.OutLinksAdresses.Contains(address))
-                        {
-                            pf.OutLinksAdresses.Add(address);
-                            pf.UniqueOutLinks++;
-                        }
+                        pf.ExternalOutLinksAdresses.Add(address);
+                        pf.UniqueExternalOutLinks++;
                     }
-                    else
-                    {
-                        pf.ExternalOutLinks++;
-                        if (!pf.ExternalOutLinksAdresses.Contains(address))
-                        {
-                            pf.ExternalOutLinksAdresses.Add(address);
-                            pf.UniqueExternalOutLinks++;
-                        }
-                    }
+                }
+
+                // Check whether address had been crawled before or not
+                if (!crawledPages.Contains(new Uri(address)))
+                {
+                    stronyDoPrzejrzenia++;
+                    _ = StartCrawlingPage(new Uri(address), cts.Token);
                 }
             }
         }

@@ -12,14 +12,12 @@ namespace Crawler.MainForm
     public class Dummy2 { }
     partial class Form1
     {
-        public void BindDataTableToWszystkie(DataTable dt)
+        public void BindDataTableToAll(DataTable dt)
         {
             allDataGridView.DataSource = dt;
             allDataGridView.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
-            
-
         }
-        public void BindDataTableToWewnetrzne(DataTable dt)
+        public void BindDataTableToInternal(DataTable dt)
         {
             BindingSource src = new BindingSource
             {
@@ -29,7 +27,7 @@ namespace Crawler.MainForm
             internalDataGridView.DataSource = src;
             internalDataGridView.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
         }
-        public void BindDataTableToZewnetrzne(DataTable dt)
+        public void BindDataTableToExternal(DataTable dt)
         {
             BindingSource src = new BindingSource
             {
