@@ -274,14 +274,17 @@ namespace Crawler.MainForm
                         cellClickMenu.Items.Add("Kopiuj komórkę").Tag = "1";
                         cellClickMenu.Items.Add("Kopiuj zaznaczenie").Tag = "2";
                         cellClickMenu.Items.Add("Otwórz w przeglądarce").Tag = "3";
-                        //cellClickMenu.Items.Add("Zapisz komórki do CSV").Tag = "4";
-                        cellClickMenu.Items.Add("Zapisz rzędy do CSV").Tag = "5";
+                        if (allDataGridView.SelectedRows.Count > 0)
+                        {
+                            cellClickMenu.Items.Add("Zapisz rzędy do CSV").Tag = "4";
+                        }
+                        
                     }
 
                     cellClickMenu.Show(allDataGridView, new Point(e.X, e.Y));
 
                     cellClickMenu.ItemClicked += new ToolStripItemClickedEventHandler(allDataCellClicked);
-
+                    
                 }
             }
         }
@@ -289,7 +292,9 @@ namespace Crawler.MainForm
         private void allDataCellClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string temp = "";
-            int lastrow = 0;
+
+            ContextMenuStrip menustrip = (ContextMenuStrip)sender;
+            menustrip.Close();
 
             switch (e.ClickedItem.Tag.ToString())
             {
@@ -320,85 +325,60 @@ namespace Crawler.MainForm
                     break;
 
                 case "4":
-
-                    lastrow = allDataGridView.SelectedCells[0].RowIndex;
-
-                    temp = "";
-
-                    SaveFileDialog saveFileDialog1 =  new SaveFileDialog();
-                    saveFileDialog1.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
-                    saveFileDialog1.FilterIndex = 1;
-                    saveFileDialog1.RestoreDirectory = true;
-
-                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                    {
-                        temp = saveFileDialog1.FileName;
-
-                        using (StreamWriter sw = new StreamWriter(temp))
-                        {      
-                            foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
-                            {
-                                if (lastrow != cell.RowIndex)
-                                {
-                                    sw.WriteLine("\n");
-                                    lastrow = cell.RowIndex;
-                                }
-                                sw.WriteLine(cell.Value.ToString() + ";");
-                            }
-                        }
-
-                    }
-
-                    break;
-
-                case "5":
-                                        
-                    lastrow = allDataGridView.SelectedCells[0].RowIndex;
-
-                    temp = "";
-
-                    SaveFileDialog saveFileDialog2 = new SaveFileDialog();
-                    saveFileDialog2.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
-                    saveFileDialog2.FilterIndex = 1;
-                    saveFileDialog2.RestoreDirectory = true;
-
-                    if (saveFileDialog2.ShowDialog() == DialogResult.OK)
-                    {
-                        temp = saveFileDialog2.FileName;
-
-                        using (StreamWriter sw = new StreamWriter(temp))
-                        {
-                            foreach(DataRow row in allDataGridView.Rows)
-                            {
-                                foreach(DataGridViewCell cell in row.ItemArray)
-                                {
-                                    sw.WriteLine(cell.Value.ToString() + ";");
-                                }
-                                sw.WriteLine("\n");
-                            }
-
-
-                            foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
-                            {
-                                if (lastrow != cell.RowIndex)
-                                {
-                                    sw.WriteLine("\n");
-                                    lastrow = cell.RowIndex;
-                                }
-                                sw.WriteLine(cell.Value.ToString() + ";");
-                            }
-                        }
-
-                    }
-
+                    zapiszRzedyDoCsv();
                     break;
 
                 default:
                     temp = allDataGridView.SelectedCells[0].Value.ToString();
                     temp += "\n" + e.ClickedItem.Tag.ToString();
-                    MessageBox.Show(temp, "kurwa");
+                    MessageBox.Show(temp, "pan bug");
                     break;
             }
+        }
+
+        public void zapiszRzedyDoCsv()
+        {
+            SaveFileDialog saveFileDialog2 = new SaveFileDialog();
+            saveFileDialog2.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
+            saveFileDialog2.FilterIndex = 1;
+            saveFileDialog2.RestoreDirectory = true;
+
+            if (saveFileDialog2.ShowDialog() == DialogResult.OK)
+            {
+                string temp = saveFileDialog2.FileName;
+
+                using (StreamWriter sw = new StreamWriter(temp))
+                {
+                    foreach (DataGridViewRow row in allDataGridView.SelectedRows)
+                    {
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            string cellval = "";
+                            if (cell.Value != null)
+                            {
+                                cellval = cell.Value.ToString();
+                            }
+
+                            sw.Write(cellval + ";");
+                        }
+                        sw.Write('\n');
+                    }
+                }
+            }
+        }
+
+        private void zapiszToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            allDataGridView.SelectAll();
+            zapiszRzedyDoCsv();
+        }
+
+        private void ustawieniaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OptionsForm.OptionsForm form2 = new OptionsForm.OptionsForm(this);
+            form2.Show();
+
+            Debug.WriteLine("xd");
         }
     }
 }

@@ -52,10 +52,20 @@ namespace Crawler.MainForm
             this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.plikToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nowyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zapiszToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.opcjeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ustawieniaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.widokToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pomocToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oProgramieToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.singleDataGridView = new System.Windows.Forms.DataGridView();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.label3 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).BeginInit();
@@ -65,13 +75,14 @@ namespace Crawler.MainForm
             ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // siteAddress
             // 
             this.siteAddress.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.siteAddress.Location = new System.Drawing.Point(115, 3);
+            this.siteAddress.Location = new System.Drawing.Point(121, 23);
             this.siteAddress.Name = "siteAddress";
             this.siteAddress.Size = new System.Drawing.Size(259, 29);
             this.siteAddress.TabIndex = 0;
@@ -80,7 +91,7 @@ namespace Crawler.MainForm
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label1.Location = new System.Drawing.Point(3, 6);
+            this.label1.Location = new System.Drawing.Point(9, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(106, 24);
             this.label1.TabIndex = 1;
@@ -89,7 +100,7 @@ namespace Crawler.MainForm
             // crawlButton
             // 
             this.crawlButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.crawlButton.Location = new System.Drawing.Point(380, 3);
+            this.crawlButton.Location = new System.Drawing.Point(386, 22);
             this.crawlButton.Name = "crawlButton";
             this.crawlButton.Size = new System.Drawing.Size(121, 29);
             this.crawlButton.TabIndex = 2;
@@ -112,11 +123,11 @@ namespace Crawler.MainForm
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(3, 83);
+            this.tabControl1.Location = new System.Drawing.Point(3, 99);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(897, 447);
+            this.tabControl1.Size = new System.Drawing.Size(897, 431);
             this.tabControl1.TabIndex = 4;
             // 
             // tabPage1
@@ -125,7 +136,7 @@ namespace Crawler.MainForm
             this.tabPage1.Controls.Add(this.allDataGridView);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(889, 421);
+            this.tabPage1.Size = new System.Drawing.Size(889, 405);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Wszystkie";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -138,7 +149,7 @@ namespace Crawler.MainForm
             this.allDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.allDataGridView.Location = new System.Drawing.Point(0, 0);
             this.allDataGridView.Name = "allDataGridView";
-            this.allDataGridView.Size = new System.Drawing.Size(889, 421);
+            this.allDataGridView.Size = new System.Drawing.Size(889, 405);
             this.allDataGridView.TabIndex = 3;
             this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.allDataGridView_MouseClick);
             // 
@@ -153,7 +164,7 @@ namespace Crawler.MainForm
             this.tabPage3.Controls.Add(this.internalDataGridView);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(889, 421);
+            this.tabPage3.Size = new System.Drawing.Size(889, 405);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Wewnętrzne";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -166,7 +177,7 @@ namespace Crawler.MainForm
             this.internalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.internalDataGridView.Location = new System.Drawing.Point(0, 0);
             this.internalDataGridView.Name = "internalDataGridView";
-            this.internalDataGridView.Size = new System.Drawing.Size(889, 421);
+            this.internalDataGridView.Size = new System.Drawing.Size(889, 405);
             this.internalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn1
@@ -180,7 +191,7 @@ namespace Crawler.MainForm
             this.tabPage2.Controls.Add(this.externalDataGridView);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(889, 421);
+            this.tabPage2.Size = new System.Drawing.Size(889, 405);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Zewnętrzne";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -193,7 +204,7 @@ namespace Crawler.MainForm
             this.externalDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.externalDataGridView.Location = new System.Drawing.Point(0, 0);
             this.externalDataGridView.Name = "externalDataGridView";
-            this.externalDataGridView.Size = new System.Drawing.Size(889, 421);
+            this.externalDataGridView.Size = new System.Drawing.Size(889, 405);
             this.externalDataGridView.TabIndex = 4;
             // 
             // dataGridViewTextBoxColumn2
@@ -205,7 +216,7 @@ namespace Crawler.MainForm
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 35);
+            this.label2.Location = new System.Drawing.Point(10, 56);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 5;
@@ -214,7 +225,7 @@ namespace Crawler.MainForm
             // crawlingStatusLabel
             // 
             this.crawlingStatusLabel.AutoSize = true;
-            this.crawlingStatusLabel.Location = new System.Drawing.Point(73, 35);
+            this.crawlingStatusLabel.Location = new System.Drawing.Point(79, 56);
             this.crawlingStatusLabel.Name = "crawlingStatusLabel";
             this.crawlingStatusLabel.Size = new System.Drawing.Size(36, 13);
             this.crawlingStatusLabel.TabIndex = 6;
@@ -223,7 +234,7 @@ namespace Crawler.MainForm
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 52);
+            this.label4.Location = new System.Drawing.Point(10, 73);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(120, 13);
             this.label4.TabIndex = 7;
@@ -232,7 +243,7 @@ namespace Crawler.MainForm
             // crawledStatusLabel
             // 
             this.crawledStatusLabel.AutoSize = true;
-            this.crawledStatusLabel.Location = new System.Drawing.Point(130, 52);
+            this.crawledStatusLabel.Location = new System.Drawing.Point(136, 73);
             this.crawledStatusLabel.Name = "crawledStatusLabel";
             this.crawledStatusLabel.Size = new System.Drawing.Size(30, 13);
             this.crawledStatusLabel.TabIndex = 8;
@@ -241,7 +252,7 @@ namespace Crawler.MainForm
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(155, 35);
+            this.label6.Location = new System.Drawing.Point(161, 56);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(67, 13);
             this.label6.TabIndex = 9;
@@ -262,8 +273,8 @@ namespace Crawler.MainForm
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 450F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 96F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 434F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1290, 805);
             this.tableLayoutPanel1.TabIndex = 10;
@@ -274,6 +285,7 @@ namespace Crawler.MainForm
             // panel1
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.panel1, 2);
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.siteAddress);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label1);
@@ -282,12 +294,83 @@ namespace Crawler.MainForm
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.crawlingStatusLabel);
+            this.panel1.Controls.Add(this.menuStrip1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1287, 74);
+            this.panel1.Size = new System.Drawing.Size(1287, 90);
             this.panel1.TabIndex = 5;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.plikToolStripMenuItem,
+            this.opcjeToolStripMenuItem,
+            this.widokToolStripMenuItem,
+            this.pomocToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1287, 24);
+            this.menuStrip1.TabIndex = 10;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // plikToolStripMenuItem
+            // 
+            this.plikToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.nowyToolStripMenuItem,
+            this.zapiszToolStripMenuItem});
+            this.plikToolStripMenuItem.Name = "plikToolStripMenuItem";
+            this.plikToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
+            this.plikToolStripMenuItem.Text = "Plik";
+            // 
+            // nowyToolStripMenuItem
+            // 
+            this.nowyToolStripMenuItem.Name = "nowyToolStripMenuItem";
+            this.nowyToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.nowyToolStripMenuItem.Text = "Nowy";
+            // 
+            // zapiszToolStripMenuItem
+            // 
+            this.zapiszToolStripMenuItem.Name = "zapiszToolStripMenuItem";
+            this.zapiszToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.zapiszToolStripMenuItem.Text = "Zapisz";
+            this.zapiszToolStripMenuItem.Click += new System.EventHandler(this.zapiszToolStripMenuItem_Click);
+            // 
+            // opcjeToolStripMenuItem
+            // 
+            this.opcjeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ustawieniaToolStripMenuItem});
+            this.opcjeToolStripMenuItem.Name = "opcjeToolStripMenuItem";
+            this.opcjeToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.opcjeToolStripMenuItem.Text = "Opcje";
+            // 
+            // ustawieniaToolStripMenuItem
+            // 
+            this.ustawieniaToolStripMenuItem.Name = "ustawieniaToolStripMenuItem";
+            this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ustawieniaToolStripMenuItem.Text = "Ustawienia";
+            this.ustawieniaToolStripMenuItem.Click += new System.EventHandler(this.ustawieniaToolStripMenuItem_Click);
+            // 
+            // widokToolStripMenuItem
+            // 
+            this.widokToolStripMenuItem.Name = "widokToolStripMenuItem";
+            this.widokToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
+            this.widokToolStripMenuItem.Text = "Widok";
+            // 
+            // pomocToolStripMenuItem
+            // 
+            this.pomocToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.oProgramieToolStripMenuItem});
+            this.pomocToolStripMenuItem.Name = "pomocToolStripMenuItem";
+            this.pomocToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.pomocToolStripMenuItem.Text = "Pomoc";
+            // 
+            // oProgramieToolStripMenuItem
+            // 
+            this.oProgramieToolStripMenuItem.Name = "oProgramieToolStripMenuItem";
+            this.oProgramieToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.oProgramieToolStripMenuItem.Text = "O programie";
             // 
             // singleDataGridView
             // 
@@ -304,12 +387,21 @@ namespace Crawler.MainForm
             // richTextBox1
             // 
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(903, 83);
+            this.richTextBox1.Location = new System.Drawing.Point(903, 99);
             this.richTextBox1.Name = "richTextBox1";
             this.tableLayoutPanel1.SetRowSpan(this.richTextBox1, 2);
-            this.richTextBox1.Size = new System.Drawing.Size(384, 719);
+            this.richTextBox1.Size = new System.Drawing.Size(384, 703);
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = "";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(535, 22);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(61, 13);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Preferencje";
             // 
             // Form1
             // 
@@ -318,6 +410,7 @@ namespace Crawler.MainForm
             this.ClientSize = new System.Drawing.Size(1290, 805);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.siteToCrawlMsg);
+            this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -334,6 +427,8 @@ namespace Crawler.MainForm
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -372,6 +467,16 @@ namespace Crawler.MainForm
         private System.Windows.Forms.RichTextBox richTextBox1;
         private FolderBrowserDialog folderBrowserDialog1;
         private SaveFileDialog saveFileDialog1;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem plikToolStripMenuItem;
+        private ToolStripMenuItem nowyToolStripMenuItem;
+        private ToolStripMenuItem zapiszToolStripMenuItem;
+        private ToolStripMenuItem opcjeToolStripMenuItem;
+        private ToolStripMenuItem widokToolStripMenuItem;
+        private ToolStripMenuItem pomocToolStripMenuItem;
+        private ToolStripMenuItem oProgramieToolStripMenuItem;
+        private ToolStripMenuItem ustawieniaToolStripMenuItem;
+        private Label label3;
     }
 }
 
