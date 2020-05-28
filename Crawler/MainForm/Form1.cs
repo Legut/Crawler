@@ -38,6 +38,7 @@ namespace Crawler.MainForm
         public Form1()
         {
             InitializeComponent();
+            Utils.ZaladujOpcje();
         }
 
         private void Form1_Load(object sender, EventArgs e)

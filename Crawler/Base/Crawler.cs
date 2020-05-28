@@ -14,6 +14,7 @@ using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 using Crawler.Elements;
 using static Crawler.Utilities.Utils;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Crawler.Base
 {
@@ -23,7 +24,7 @@ namespace Crawler.Base
         private HashSet<Uri> crawledPages;
         private static Dictionary<string, InLinksCounter> inLinksData;
 
-        private int MaxSemaphores = 50;
+
         private readonly SemaphoreSlim semaphore;
         private CancellationToken cancellationToken;
         private readonly CancellationTokenSource cts;
@@ -34,34 +35,6 @@ namespace Crawler.Base
 
         private DataTable dt;
 
-        private int ImgSizeMax = 0;
-        private int ImgAltCharMax = 0;
-        private int H2CharMax = 0;
-        private int H1CharMax = 0;
-        private int UrlCharMax = 0;
-        private int DescCharMax = 0;
-        private int DescCharMin = 0;
-        private int DescPixMax = 0;
-        private int DescPixMin = 0;
-        private int PagenameCharMax = 0;
-        private int PagenameCharMin = 0;
-        private int PagenamePixMax = 0;
-        private int PagenamePixMin = 1;
-        private bool ExtractPageSize=false;
-        private bool ExtractHash = false;
-        private bool ExtractTxtCodeRatio = false;
-        private bool ExtractWordCount = false;
-        private bool ExtractIndexability = false;
-        private bool ExtractH2 = false;
-        private bool ExtractH1 = false;
-        private bool ExtractMetaKeywords = false;
-        private bool ExtractMetadataDesc = false;
-        private bool ExtractPageTitle = false;
-        private bool CrawlSWF = false;
-        private bool CrawlJavaScript = false;
-        private bool CrawlCss = false;
-        private bool CrawlImages = false;
-
         public Crawler(Form1 form1, string siteToCrawl)
         {
             MainForm = form1;
@@ -69,50 +42,23 @@ namespace Crawler.Base
             LoadCrawlingOptions();
 
             BaseUrl = new Uri(siteToCrawl);
-
+            semaphore = new SemaphoreSlim(MaxSemaphores);
             cts = new CancellationTokenSource();
             crawledPages = new HashSet<Uri>();
-            inLinksData = new Dictionary<string, InLinksCounter>();
-            semaphore = new SemaphoreSlim(MaxSemaphores);
+            inLinksData = new Dictionary<string, InLinksCounter>();            
             cancellationToken = default;
-
-            MainForm.UpdateCrawlingStatus(MaxSemaphores, MaxSemaphores);
+            
             przejrzaneStrony = 0;
             stronyDoPrzejrzenia = 1;
         }
 
         private void LoadCrawlingOptions()
         {
-            WczytajOpcje();
+            
+            //TODO: updateGui
+            MainForm.Invalidate();
+            MainForm.Update();
 
-            foreach (NumericUpDown nud in numericUpDowns)
-            {
-                Debug.WriteLine(nud.Name + " "+nud.Value);
-                switch (nud.Name)
-                {
-                    case "PagenamePixMin":
-                        PagenamePixMin = (int) nud.Value;
-                    break;
-                    case "PagenamePixMax":
-                        PagenamePixMax = (int)nud.Value;
-                        break;
-                    case "PagenameCharMin":
-                        PagenameCharMin = (int)nud.Value;
-                        break;
-                    case "PagenameCharMax":
-                        PagenameCharMax = (int)nud.Value;
-                        break;
-                    case "MaxSemaphores":
-                        MaxSemaphores = (int)nud.Value;
-                        //TODO: updateGui
-                        break;
-                }
-            }
-
-            foreach (System.Windows.Forms.CheckBox cb in checkBoxes)
-            {
-
-            }
         }
 
         private async Task StartCrawlingPage(Uri page, CancellationToken ctsToken)
@@ -128,12 +74,13 @@ namespace Crawler.Base
                 {
                     PageFragment pf = new PageFragment();
                     pf.Address = page.AbsoluteUri;
-                                     
+
+                    //TODO: Dobrze zaznaczyc błędy/*
                     if (pf.Address.Length < PagenameCharMin || pf.Address.Length > PagenameCharMax)
                     {
                         MainForm.IncreaseErrorCount();
-                    }
-                    
+                    }*/
+
                     // Download page
                     HttpClient httpClient = new HttpClient();
                     HttpResponseMessage response = await httpClient.GetAsync(page);

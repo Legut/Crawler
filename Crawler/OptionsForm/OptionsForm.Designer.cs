@@ -873,7 +873,6 @@
             this.Controls.Add(this.button1);
             this.Name = "OptionsForm";
             this.Text = "Opcje";
-            this.Load += new System.EventHandler(this.OptionsForm_Load);
             this.Preferencje.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
