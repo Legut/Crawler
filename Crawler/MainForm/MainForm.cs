@@ -15,30 +15,19 @@ using System.Threading.Tasks;
 
 namespace Crawler.MainForm
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private bool isCrawling;
         private Base.Crawler crawler;
-
-        private bool resizing;
-        private TableLayoutRowStyleCollection rowStyles;
-        private TableLayoutColumnStyleCollection columnStyles;
-        private int colindex;
-        private int rowindex; 
-        private int firstRowHeight;
-        private int lastRowMinHeight;
-        private int middleRowMinHeight;
-        private int firstColumnMinWidth;
-        private int lastColumnMinWidth;
 
         private bool singleDataGridViewPrepared = false;
         private bool pageExists;
         private bool pageHasCerificate;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
-            Utils.ZaladujOpcje();
+            Utils.LoadSettingsFromFile();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -48,26 +37,11 @@ namespace Crawler.MainForm
             externalDataGridView.ColumnCount = 0;
             isCrawling = false;
 
-            colindex = -1;
-            rowindex = -1;
-            resizing = false;
-            firstRowHeight = 80;
-            lastRowMinHeight = 50;
-            middleRowMinHeight = 80;
-            firstColumnMinWidth = 100;
-            lastColumnMinWidth = 100;
-            rowStyles = tableLayoutPanel1.RowStyles;
-            columnStyles = tableLayoutPanel1.ColumnStyles;
-
-            allDataGridView.CellFormatting +=
-            new System.Windows.Forms.DataGridViewCellFormattingEventHandler(
-            this.allDataGridViewCellFormating);
-
+            allDataGridView.CellFormatting += this.AllDataGridViewCellFormating;
             allDataGridView.ReadOnly = true;
-
         }
 
-        private void allDataGridViewCellFormating(object sender, DataGridViewCellFormattingEventArgs e)
+        private void AllDataGridViewCellFormating(object sender, DataGridViewCellFormattingEventArgs e)
         {
             HumanReadableSizes(sender, e);
         }
@@ -132,7 +106,7 @@ namespace Crawler.MainForm
             crawlButton.Enabled = true;
         }
 
-        public void makeButtonReady()
+        public void MakeButtonReady()
         {
             this.isCrawling = false;
             this.crawlButton.Text = "Start";
@@ -155,7 +129,6 @@ namespace Crawler.MainForm
             //Debug.WriteLine("columns count " + allDataGridView.Columns.Count);
                         
             if (view == null) return;
-            int a = 0;
             if (view.SelectedCells.Count == 1)
             {
                 
@@ -165,13 +138,13 @@ namespace Crawler.MainForm
                 //Debug.WriteLine("single data rows count " + singleDataGridView.Rows.Count);
 
                 //allDataGridView.Rows[view.SelectedCells[0].RowIndex].Cells.Count) -> static 34?
-                for (a = 0; a < selectedRow.Cells.Count; a++)
+                for (int a = 0; a < selectedRow.Cells.Count; a++)
                 {
                     try
                     {
                         singleDataGridView.Rows[a].Cells[1].Value = selectedRow.Cells[a].Value;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         break;
                         // Debug.WriteLine("INdex: " + a + " error: " + ex.Message);
@@ -265,7 +238,7 @@ namespace Crawler.MainForm
             crawledStatusLabel.Text = crawled + " / " + all;
         }
 
-        private void allDataGridView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void AllDataGridView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if(e.Button == MouseButtons.Right)
             {
@@ -289,13 +262,13 @@ namespace Crawler.MainForm
 
                     cellClickMenu.Show(allDataGridView, new Point(e.X, e.Y));
 
-                    cellClickMenu.ItemClicked += new ToolStripItemClickedEventHandler(allDataCellClicked);
+                    cellClickMenu.ItemClicked += new ToolStripItemClickedEventHandler(AllDataCellClicked);
                     
                 }
             }
         }
 
-        private void allDataCellClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void AllDataCellClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string temp = "";
 
@@ -331,7 +304,7 @@ namespace Crawler.MainForm
                     break;
 
                 case "4":
-                    zapiszRzedyDoCsv();
+                    SaveRowsToCsv();
                     break;
 
                 default:
@@ -342,12 +315,14 @@ namespace Crawler.MainForm
             }
         }
 
-        public void zapiszRzedyDoCsv()
+        public void SaveRowsToCsv()
         {
-            SaveFileDialog saveFileDialog2 = new SaveFileDialog();
-            saveFileDialog2.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
-            saveFileDialog2.FilterIndex = 1;
-            saveFileDialog2.RestoreDirectory = true;
+            SaveFileDialog saveFileDialog2 = new SaveFileDialog
+            {
+                Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true
+            };
 
             if (saveFileDialog2.ShowDialog() == DialogResult.OK)
             {
@@ -373,22 +348,22 @@ namespace Crawler.MainForm
             }
         }
 
-        private void zapiszToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Save_StripMenuItem_Click(object sender, EventArgs e)
         {
             allDataGridView.SelectAll();
-            zapiszRzedyDoCsv();
+            SaveRowsToCsv();
         }
 
-        private void ustawieniaToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Settings_StripMenuItem_Click(object sender, EventArgs e)
         {
-            OptionsForm.OptionsForm form2 = new OptionsForm.OptionsForm(this);
-            form2.Show();
+            OptionsForm.OptionsForm optionsForm = new OptionsForm.OptionsForm();
+            optionsForm.Show();
         }
 
         public void IncreaseErrorCount()
         {
-            Utilities.Utils.iloscBledow++;
-            label7.Text = Utils.iloscBledow.ToString();
+            Utils.ErrorsCounter++;
+            label7.Text = Utils.ErrorsCounter.ToString();
             Invalidate();
         }
 

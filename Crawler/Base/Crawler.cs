@@ -21,7 +21,7 @@ namespace Crawler.Base
     partial class Crawler
     {
         private Uri BaseUrl { get; set; }
-        private HashSet<Uri> crawledPages;
+        private readonly HashSet<Uri> crawledPages;
         private static Dictionary<string, InLinksCounter> inLinksData;
 
 
@@ -29,15 +29,15 @@ namespace Crawler.Base
         private CancellationToken cancellationToken;
         private readonly CancellationTokenSource cts;
 
-        public readonly Form1 MainForm;
+        public readonly MainForm.MainForm MainForm;
         private int przejrzaneStrony;
         private int stronyDoPrzejrzenia;
 
         private DataTable dt;
 
-        public Crawler(Form1 form1, string siteToCrawl)
+        public Crawler(MainForm.MainForm mainForm, string siteToCrawl)
         {
-            MainForm = form1;
+            MainForm = mainForm;
 
             LoadCrawlingOptions();
 
@@ -72,14 +72,13 @@ namespace Crawler.Base
                 // Checking cancelation token (checking whether stop button has been pressed)
                 if (!cts.IsCancellationRequested)
                 {
-                    PageFragment pf = new PageFragment();
-                    pf.Address = page.AbsoluteUri;
+                    PageFragment pf = new PageFragment {Address = page.AbsoluteUri};
 
                     //TODO: Dobrze zaznaczyc błędy/*
                     if (pf.Address.Length < PagenameCharMin || pf.Address.Length > PagenameCharMax)
                     {
                         MainForm.IncreaseErrorCount();
-                    }*/
+                    }
 
                     // Download page
                     HttpClient httpClient = new HttpClient();
@@ -168,7 +167,7 @@ namespace Crawler.Base
         {
             CreateDataTable();
             await StartCrawlingPage(BaseUrl, cts.Token);
-            await onAbortionComplete();
+            await OnAbortionComplete();
         }
         private static void NormalizeAddress(Uri baseUrl, ref string address, string pfAddress)
         {
@@ -241,7 +240,7 @@ namespace Crawler.Base
             }
         }
 
-        private async Task onAbortionComplete()
+        private async Task OnAbortionComplete()
         {
             while (semaphore.CurrentCount != MaxSemaphores)
             {
@@ -250,7 +249,7 @@ namespace Crawler.Base
 
             UpdateInLinks();
             UpdateDebugGui();
-            MainForm.makeButtonReady();
+            MainForm.MakeButtonReady();
         }
 
         private void UpdateInLinks()

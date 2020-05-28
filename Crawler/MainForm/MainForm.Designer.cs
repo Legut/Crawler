@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Crawler.MainForm
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Wymagana zmienna projektanta.
@@ -171,7 +171,7 @@ namespace Crawler.MainForm
             this.allDataGridView.Name = "allDataGridView";
             this.allDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.allDataGridView.TabIndex = 3;
-            this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.allDataGridView_MouseClick);
+            this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AllDataGridView_MouseClick);
             // 
             // Address
             // 
@@ -458,7 +458,7 @@ namespace Crawler.MainForm
             this.zapiszToolStripMenuItem.Name = "zapiszToolStripMenuItem";
             this.zapiszToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.zapiszToolStripMenuItem.Text = "Zapisz";
-            this.zapiszToolStripMenuItem.Click += new System.EventHandler(this.zapiszToolStripMenuItem_Click);
+            this.zapiszToolStripMenuItem.Click += new System.EventHandler(this.Save_StripMenuItem_Click);
             // 
             // opcjeToolStripMenuItem
             // 
@@ -473,7 +473,7 @@ namespace Crawler.MainForm
             this.ustawieniaToolStripMenuItem.Name = "ustawieniaToolStripMenuItem";
             this.ustawieniaToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.ustawieniaToolStripMenuItem.Text = "Ustawienia";
-            this.ustawieniaToolStripMenuItem.Click += new System.EventHandler(this.ustawieniaToolStripMenuItem_Click);
+            this.ustawieniaToolStripMenuItem.Click += new System.EventHandler(this.Settings_StripMenuItem_Click);
             // 
             // widokToolStripMenuItem
             // 
@@ -513,7 +513,7 @@ namespace Crawler.MainForm
             this.Controls.Add(this.siteToCrawlMsg);
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(800, 600);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);

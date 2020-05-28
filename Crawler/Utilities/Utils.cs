@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,13 @@ namespace Crawler.Utilities
 {
     public static class Utils
     {
-        // TODO: sortowanie liczb w widoku jest alfabetyczne zamiast wielkościowego
         public static readonly string[] SizeSuffixes = { "B", "KB", "MB", "GB", "TB" };
-
+        public static readonly string ConfigPath = Application.StartupPath + "\\opcjeCrawleraConfig.cfg";
         #region crawlerOptions
 
         //--here be options for crawler and stuff--//        
-        public static string configPath = Application.StartupPath + "\\opcjeCrawleraConfig.cfg";
+        public static string ConfigFilePath = Application.StartupPath + "\\opcjeCrawleraConfig.cfg";
         
-        public static List<NumericUpDown> numericUpDowns = new List<NumericUpDown>();
-        public static List<System.Windows.Forms.CheckBox> checkBoxes = new List<System.Windows.Forms.CheckBox>();
         public static int ImgSizeMax = 100;
         public static int ImgAltCharMax = 100;
         public static int H2CharMax = 70;
@@ -44,7 +42,7 @@ namespace Crawler.Utilities
         public static bool ExtractMetaKeywords = false;
         public static bool ExtractMetadataDesc = false;
         public static bool ExtractPageTitle = false;
-        public static bool CrawlSWF = false;
+        public static bool CrawlSwf = false;
         public static bool CrawlJavaScript = false;
         public static bool CrawlCss = false;
         public static bool CrawlImages = false;
@@ -54,22 +52,8 @@ namespace Crawler.Utilities
         public static int TotalCrawlLimit = 100000000;
         //-----------------------------------------//
         public static int MaxSemaphores = 50;
-        public static int iloscBledow = 0;
-
+        public static int ErrorsCounter = 0;
         #endregion
-
-        public static Task WhenMouseUp(this Control control)
-        {
-            var tcs = new TaskCompletionSource<object>();
-            MouseEventHandler onMouseUp = null;
-            onMouseUp = (sender, e) =>
-            {
-                control.MouseUp -= onMouseUp;
-                tcs.TrySetResult(null);
-            };
-            control.MouseUp += onMouseUp;
-            return tcs.Task;
-        }
 
         public static int CountWords(string text)
         {
@@ -95,10 +79,11 @@ namespace Crawler.Utilities
             return wordCount;
         }
 
-        public static void GenerujDefaultoweOpcje()
+        public static void SetDefaultSettings()
         {
-            using (StreamWriter sw = new StreamWriter(configPath))
+            using (StreamWriter sw = new StreamWriter(ConfigFilePath))
             {
+                // TODO: declare constant strings for names 
                 sw.WriteLine("ImgSizeMax=102");
                 sw.WriteLine("ImgAltCharMax=100");
                 sw.WriteLine("H2CharMax=70");
@@ -120,15 +105,15 @@ namespace Crawler.Utilities
             }
         }
 
-        public static void ZaladujOpcje()
+        public static void LoadSettingsFromFile()
         {
-            if (!File.Exists(configPath))
+            if (!File.Exists(ConfigFilePath))
             {
-                MessageBox.Show("Plik konfiguracyjny nie istnieje, stwórz konfigurację crawlera w opcjach!\n Załadowano domyślne opcje crawlingu.", "Brak opcji", MessageBoxButtons.OK);
-                GenerujDefaultoweOpcje();
+                // MessageBox.Show("Plik konfiguracyjny nie istnieje, stwórz konfigurację crawlera w opcjach!\n Załadowano domyślne opcje crawlingu.", "Brak opcji", MessageBoxButtons.OK);
+                SetDefaultSettings();
             }
 
-            using (StreamReader sr = new StreamReader(Utils.configPath))
+            using (StreamReader sr = new StreamReader(Utils.ConfigFilePath))
             {
                 string line = "";
                 while ((line = sr.ReadLine()) != null)
@@ -222,7 +207,7 @@ namespace Crawler.Utilities
                             bool.TryParse(temp[1].ToLower(), out ExtractPageTitle);
                             break;
                         case "CrawlSWF":
-                            bool.TryParse(temp[1].ToLower(), out CrawlSWF);
+                            bool.TryParse(temp[1].ToLower(), out CrawlSwf);
                             break;
                         case "CrawlJavaScript":
                             bool.TryParse(temp[1].ToLower(), out CrawlJavaScript);
@@ -233,11 +218,12 @@ namespace Crawler.Utilities
                         case "CrawlImages":
                             bool.TryParse(temp[1].ToLower(), out CrawlImages);
                             break;
+                        default:
+                            Debug.WriteLine("Unrecognised settings element");
+                            break;
                     }
                 }
             }
-
         }
-   
     }
 }

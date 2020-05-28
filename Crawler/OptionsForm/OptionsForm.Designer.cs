@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.Preferencje = new System.Windows.Forms.TabControl();
+            this.SaveButton = new System.Windows.Forms.Button();
+            this.CloseButton = new System.Windows.Forms.Button();
+            this.Preferences = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.ImgSizeMax = new System.Windows.Forms.NumericUpDown();
@@ -79,22 +79,22 @@
             this.ExtractPageTitle = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.MaxSemaphores = new System.Windows.Forms.NumericUpDown();
             this.CrawlSWF = new System.Windows.Forms.CheckBox();
             this.CrawlJavaScript = new System.Windows.Forms.CheckBox();
             this.CrawlCss = new System.Windows.Forms.CheckBox();
             this.CrawlImages = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.label18 = new System.Windows.Forms.Label();
-            this.TotalCrawlLimit = new System.Windows.Forms.NumericUpDown();
-            this.CrawlDepthLimit = new System.Windows.Forms.NumericUpDown();
-            this.label19 = new System.Windows.Forms.Label();
-            this.MaxLinksPerUrl = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
             this.MaxPageSize = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
-            this.MaxSemaphores = new System.Windows.Forms.NumericUpDown();
-            this.label22 = new System.Windows.Forms.Label();
-            this.Preferencje.SuspendLayout();
+            this.MaxLinksPerUrl = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.CrawlDepthLimit = new System.Windows.Forms.NumericUpDown();
+            this.label19 = new System.Windows.Forms.Label();
+            this.TotalCrawlLimit = new System.Windows.Forms.NumericUpDown();
+            this.label18 = new System.Windows.Forms.Label();
+            this.Preferences.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ImgSizeMax)).BeginInit();
@@ -116,44 +116,45 @@
             this.groupBox4.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TotalCrawlLimit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CrawlDepthLimit)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxLinksPerUrl)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxPageSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MaxSemaphores)).BeginInit();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxPageSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxLinksPerUrl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CrawlDepthLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TotalCrawlLimit)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // SaveButton
             // 
-            this.button1.Location = new System.Drawing.Point(336, 504);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Zapisz";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.SaveButton.Location = new System.Drawing.Point(336, 504);
+            this.SaveButton.Name = "SaveButton";
+            this.SaveButton.Size = new System.Drawing.Size(75, 23);
+            this.SaveButton.TabIndex = 0;
+            this.SaveButton.Text = "Zapisz";
+            this.SaveButton.UseVisualStyleBackColor = true;
+            this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
-            // button2
+            // CloseButton
             // 
-            this.button2.Location = new System.Drawing.Point(255, 504);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Anuluj";
-            this.button2.UseVisualStyleBackColor = true;
+            this.CloseButton.Location = new System.Drawing.Point(255, 504);
+            this.CloseButton.Name = "CloseButton";
+            this.CloseButton.Size = new System.Drawing.Size(75, 23);
+            this.CloseButton.TabIndex = 1;
+            this.CloseButton.Text = "Anuluj";
+            this.CloseButton.UseVisualStyleBackColor = true;
+            this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
             // 
-            // Preferencje
+            // Preferences
             // 
-            this.Preferencje.Controls.Add(this.tabPage1);
-            this.Preferencje.Controls.Add(this.tabPage2);
-            this.Preferencje.Controls.Add(this.tabPage3);
-            this.Preferencje.Controls.Add(this.tabPage4);
-            this.Preferencje.Location = new System.Drawing.Point(12, 12);
-            this.Preferencje.Name = "Preferencje";
-            this.Preferencje.SelectedIndex = 0;
-            this.Preferencje.Size = new System.Drawing.Size(399, 486);
-            this.Preferencje.TabIndex = 2;
+            this.Preferences.Controls.Add(this.tabPage1);
+            this.Preferences.Controls.Add(this.tabPage2);
+            this.Preferences.Controls.Add(this.tabPage3);
+            this.Preferences.Controls.Add(this.tabPage4);
+            this.Preferences.Location = new System.Drawing.Point(12, 12);
+            this.Preferences.Name = "Preferences";
+            this.Preferences.SelectedIndex = 0;
+            this.Preferences.Size = new System.Drawing.Size(399, 486);
+            this.Preferences.TabIndex = 2;
             // 
             // tabPage1
             // 
@@ -690,6 +691,37 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Linki zasobów";
             // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(7, 130);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(99, 13);
+            this.label22.TabIndex = 5;
+            this.label22.Text = "Max wątków na raz";
+            // 
+            // MaxSemaphores
+            // 
+            this.MaxSemaphores.Location = new System.Drawing.Point(252, 130);
+            this.MaxSemaphores.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.MaxSemaphores.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.MaxSemaphores.Name = "MaxSemaphores";
+            this.MaxSemaphores.Size = new System.Drawing.Size(120, 20);
+            this.MaxSemaphores.TabIndex = 4;
+            this.MaxSemaphores.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            // 
             // CrawlSWF
             // 
             this.CrawlSWF.AutoSize = true;
@@ -748,47 +780,26 @@
             this.tabPage4.Text = "Limity";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
-            // label18
+            // MaxPageSize
             // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(7, 7);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(152, 13);
-            this.label18.TabIndex = 0;
-            this.label18.Text = "Limit całkowitego crawlowania";
-            // 
-            // TotalCrawlLimit
-            // 
-            this.TotalCrawlLimit.Location = new System.Drawing.Point(265, 5);
-            this.TotalCrawlLimit.Maximum = new decimal(new int[] {
+            this.MaxPageSize.Location = new System.Drawing.Point(265, 83);
+            this.MaxPageSize.Maximum = new decimal(new int[] {
             100000000,
             0,
             0,
             0});
-            this.TotalCrawlLimit.Name = "TotalCrawlLimit";
-            this.TotalCrawlLimit.Size = new System.Drawing.Size(120, 20);
-            this.TotalCrawlLimit.TabIndex = 1;
+            this.MaxPageSize.Name = "MaxPageSize";
+            this.MaxPageSize.Size = new System.Drawing.Size(120, 20);
+            this.MaxPageSize.TabIndex = 7;
             // 
-            // CrawlDepthLimit
+            // label21
             // 
-            this.CrawlDepthLimit.Location = new System.Drawing.Point(265, 31);
-            this.CrawlDepthLimit.Maximum = new decimal(new int[] {
-            100000000,
-            0,
-            0,
-            0});
-            this.CrawlDepthLimit.Name = "CrawlDepthLimit";
-            this.CrawlDepthLimit.Size = new System.Drawing.Size(120, 20);
-            this.CrawlDepthLimit.TabIndex = 3;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(7, 33);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(146, 13);
-            this.label19.TabIndex = 2;
-            this.label19.Text = "Limit głębokości crawlowania";
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(7, 85);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(101, 13);
+            this.label21.TabIndex = 6;
+            this.label21.Text = "Limit rozmiaru strony";
             // 
             // MaxLinksPerUrl
             // 
@@ -811,69 +822,59 @@
             this.label20.TabIndex = 4;
             this.label20.Text = "Limit linków na strone";
             // 
-            // MaxPageSize
+            // CrawlDepthLimit
             // 
-            this.MaxPageSize.Location = new System.Drawing.Point(265, 83);
-            this.MaxPageSize.Maximum = new decimal(new int[] {
+            this.CrawlDepthLimit.Location = new System.Drawing.Point(265, 31);
+            this.CrawlDepthLimit.Maximum = new decimal(new int[] {
             100000000,
             0,
             0,
             0});
-            this.MaxPageSize.Name = "MaxPageSize";
-            this.MaxPageSize.Size = new System.Drawing.Size(120, 20);
-            this.MaxPageSize.TabIndex = 7;
+            this.CrawlDepthLimit.Name = "CrawlDepthLimit";
+            this.CrawlDepthLimit.Size = new System.Drawing.Size(120, 20);
+            this.CrawlDepthLimit.TabIndex = 3;
             // 
-            // label21
+            // label19
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(7, 85);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(101, 13);
-            this.label21.TabIndex = 6;
-            this.label21.Text = "Limit rozmiaru strony";
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(7, 33);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(146, 13);
+            this.label19.TabIndex = 2;
+            this.label19.Text = "Limit głębokości crawlowania";
             // 
-            // MaxSemaphores
+            // TotalCrawlLimit
             // 
-            this.MaxSemaphores.Location = new System.Drawing.Point(252, 130);
-            this.MaxSemaphores.Maximum = new decimal(new int[] {
-            1000,
+            this.TotalCrawlLimit.Location = new System.Drawing.Point(265, 5);
+            this.TotalCrawlLimit.Maximum = new decimal(new int[] {
+            100000000,
             0,
             0,
             0});
-            this.MaxSemaphores.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.MaxSemaphores.Name = "MaxSemaphores";
-            this.MaxSemaphores.Size = new System.Drawing.Size(120, 20);
-            this.MaxSemaphores.TabIndex = 4;
-            this.MaxSemaphores.Value = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
+            this.TotalCrawlLimit.Name = "TotalCrawlLimit";
+            this.TotalCrawlLimit.Size = new System.Drawing.Size(120, 20);
+            this.TotalCrawlLimit.TabIndex = 1;
             // 
-            // label22
+            // label18
             // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(7, 130);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(99, 13);
-            this.label22.TabIndex = 5;
-            this.label22.Text = "Max wątków na raz";
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(7, 7);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(152, 13);
+            this.label18.TabIndex = 0;
+            this.label18.Text = "Limit całkowitego crawlowania";
             // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(423, 539);
-            this.Controls.Add(this.Preferencje);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.Preferences);
+            this.Controls.Add(this.CloseButton);
+            this.Controls.Add(this.SaveButton);
             this.Name = "OptionsForm";
             this.Text = "Opcje";
-            this.Preferencje.ResumeLayout(false);
+            this.Preferences.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -900,22 +901,22 @@
             this.tabPage3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxSemaphores)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TotalCrawlLimit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CrawlDepthLimit)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxLinksPerUrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MaxPageSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxSemaphores)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxLinksPerUrl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CrawlDepthLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TotalCrawlLimit)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TabControl Preferencje;
+        private System.Windows.Forms.Button SaveButton;
+        private System.Windows.Forms.Button CloseButton;
+        private System.Windows.Forms.TabControl Preferences;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.NumericUpDown ImgSizeMax;

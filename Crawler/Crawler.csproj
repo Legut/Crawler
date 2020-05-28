@@ -151,19 +151,16 @@
     <Compile Include="Elements\HeadingOne.cs" />
     <Compile Include="Elements\Title.cs" />
     <Compile Include="Base\Crawler.cs" />
-    <Compile Include="MainForm\Form1.cs">
+    <Compile Include="MainForm\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm\Form1.DataBinding.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MainForm\MainForm.DataBinding.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MainForm\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Elements\PageFragment.cs" />
-    <Compile Include="MainForm\Form1.Resizing.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="OptionsForm\OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,8 +171,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\CustomMessages.cs" />
     <Compile Include="Utilities\Utils.cs" />
-    <EmbeddedResource Include="MainForm\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OptionsForm\OptionsForm.resx">
       <DependentUpon>OptionsForm.cs</DependentUpon>

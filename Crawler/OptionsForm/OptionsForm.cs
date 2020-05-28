@@ -1,194 +1,163 @@
-﻿using Crawler.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows.Forms;
 using static Crawler.Utilities.Utils;
+using CheckBox = System.Windows.Forms.CheckBox;
 
 namespace Crawler.OptionsForm
 {
     public partial class OptionsForm : Form
     {
-        private static string configPath = Application.StartupPath + "\\opcjeCrawleraConfig.cfg";
+        private List<NumericUpDown> numericUpDowns;
+        private List<CheckBox> checkBoxes;
+        private bool madeChanges;
 
-        MainForm.Form1 mainform;
-        public bool closePls = false;
-
-        private bool madeChanges = false;
-
-        public OptionsForm(MainForm.Form1 form1)
+        public OptionsForm()
         {
             InitializeComponent();
-            mainform = form1;
-            WczytajKontrolki();
-            WczytajOpcje();
+        }
+        protected override void OnLoad(EventArgs e)
+        {
+            this.madeChanges = false;
+            this.numericUpDowns = new List<NumericUpDown>();
+            this.checkBoxes = new List<CheckBox>();
+
+            LoadControlsFromForm();
+            LoadSettings();
+            ApplyListeners();
         }
 
-        private void WczytajKontrolki()
+        private void ApplyListeners()
         {
-            foreach (Control nud in this.Preferencje.Controls)
-            {
-                RecursiveLoadControls(nud);
-            }
-
             foreach (NumericUpDown nud in numericUpDowns)
             {
-                nud.ValueChanged += ChangesWereMade;
+                nud.ValueChanged += ChangesListener;
             }
 
-            foreach (System.Windows.Forms.CheckBox cb in checkBoxes)
+            foreach (CheckBox cb in checkBoxes)
             {
-                cb.CheckedChanged += ChangesWereMade;
+                cb.CheckedChanged += ChangesListener;
             }
         }
 
-        private void RecursiveLoadControls(Control contrl)
+        private void LoadControlsFromForm()
         {
-            foreach (Control nud in contrl.Controls)
+            foreach (Control control in this.Preferences.Controls)
             {
-                if (nud.GetType() == typeof(GroupBox))
+                LoadSingleControlFromForm(control);
+            }
+        }
+
+        private void LoadSingleControlFromForm(Control control)
+        {
+            foreach (Control element in control.Controls)
+            {
+                if (element.GetType() == typeof(GroupBox))
                 {
-                    RecursiveLoadControls(nud);
+                    LoadSingleControlFromForm(element);
                 }
-                if (nud.GetType() == typeof(NumericUpDown))
+                if (element.GetType() == typeof(NumericUpDown))
                 {
-                    numericUpDowns.Add((NumericUpDown)nud);
+                    numericUpDowns.Add((NumericUpDown)element);
                 }
-                if (nud.GetType() == typeof(System.Windows.Forms.CheckBox))
+                if (element.GetType() == typeof(CheckBox))
                 {
-                    checkBoxes.Add((System.Windows.Forms.CheckBox)nud);
+                    checkBoxes.Add((CheckBox)element);
                 }
             }
         }       
 
-        private void ChangesWereMade(object sender, EventArgs e)
+        private void ChangesListener(object sender, EventArgs e)
         {
-            madeChanges = true;
-            Debug.WriteLine("CHANGES WERE MADE");
+            this.madeChanges = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void SaveButton_Click(object sender, EventArgs e)
         {
             if (madeChanges)
             {
-                //save changes
-                string message;
-                string caption;
+                // Save changes
+                string message, caption;
                 if (SaveData())
                 {
-                    message = "Zmiany zostały zapisane";
+                    message = "Zmiany zostały zapisane!";
                     caption = "OK";
                 }
                 else
                 {
-                    message = "nie dało rady zapisać";
+                    message = "Nie udało się zapisać wprowadzonych zmian.";
                     caption = "ERROR";
                 }
 
-                //reload options
-                ReloadOptions();
-                                               
-                MessageBoxButtons buttons = MessageBoxButtons.OK;
-                DialogResult result;
-
                 // Displays the MessageBox.
-                result = MessageBox.Show(message, caption, buttons);
-                if (result == System.Windows.Forms.DialogResult.OK)
+                DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.OK);
+                if (result == DialogResult.OK)
                 {
-                    //reload options
-                    ZaladujOpcje();
-                    // Closes the parent form.
+                    // Reload options
+                    LoadSettingsFromFile();
                     this.Close();
                 }
             }
-        }
-
-        private void ReloadOptions()
-        {
-            numericUpDowns.Clear();
-            checkBoxes.Clear();
-            WczytajKontrolki();
-            WczytajOpcje();
-        }
-
-        private void WczytajOpcje()
-        {
-            if (File.Exists(configPath))
+            else
             {
-                WczytajPlikOpcji();
+                this.Close();
+            }
+        }
+
+        private void LoadSettings()
+        {
+            if (File.Exists(ConfigPath))
+            {
+                LoadSettingsFile();
             }
             else
             {
-                MessageBox.Show("Plik konfiguracyjny nie istnieje, paniętaj aby zapisać opcje po ich ustawieniu!", "Brak opcji", MessageBoxButtons.OK);
-                GenerujDefaultoweOpcje();
-                WczytajPlikOpcji();
+                // MessageBox.Show("Plik konfiguracyjny nie istnieje, pamiętaj aby zapisać opcje po ich ustawieniu!", "Brak opcji", MessageBoxButtons.OK);
+                SetDefaultSettings();
+                LoadSettingsFile();
             }
         }
 
-        private static void WczytajPlikOpcji()
+        private void LoadSettingsFile()
         {
-            using (StreamReader sr = new StreamReader(configPath))
+            using (StreamReader sr = new StreamReader(ConfigPath))
             {
                 string line = "";
                 while ((line = sr.ReadLine()) != null)
                 {
                     string[] temp = line.Split('=');
-                    bool found = false;
 
                     foreach (NumericUpDown nud in numericUpDowns)
                     {
-                        if (!found)
+                        if (!nud.Name.Equals(temp[0])) continue;
+                        try
                         {
-                            if (nud.Name.Equals(temp[0]))
-                            {
-                                try
-                                {
-                                    nud.Value = int.Parse(temp[1]);
-                                }
-                                catch (Exception e)
-                                {
-                                    nud.Value = 0;
-                                }
-                                found = true;
-                            }
+                            nud.Value = int.Parse(temp[1]);
                         }
+                        catch
+                        {
+                            nud.Value = 0;
+                        }
+
+                        break;
                     }
 
                     foreach (System.Windows.Forms.CheckBox cb in checkBoxes)
                     {
-                        if (!found)
+                        if (!cb.Name.Equals(temp[0])) continue;
+                        try
                         {
-                            if (cb.Name.Equals(temp[0]))
-                            {
-                                try
-                                {
-                                    if (temp[1] == "True")
-                                    {
-                                        cb.Checked = true;
-                                    }
-                                    else
-                                    {
-                                        cb.Checked = false;
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    cb.Checked = false;
-                                }
-                                found = true;
-                            }
+                            cb.Checked = temp[1] == "True";
                         }
-                    }
+                        catch
+                        {
+                            cb.Checked = false;
+                        }
 
+                        break;
+                    }
                 }
             }
         }
@@ -201,17 +170,18 @@ namespace Crawler.OptionsForm
 
                 foreach (NumericUpDown nud in numericUpDowns)
                 {
-                    nodes.Add(nud.Name + "=" + nud.Value.ToString());
+                    nodes.Add(nud.Name + "=" + nud.Value);
                 }
 
-                foreach (System.Windows.Forms.CheckBox cb in checkBoxes)
+                foreach (CheckBox cb in checkBoxes)
                 {
-                    nodes.Add(cb.Name + "=" + cb.Checked.ToString());
+                    nodes.Add(cb.Name + "=" + cb.Checked);
                 }
 
-                using (StreamWriter sw = new StreamWriter(configPath))
+                using (StreamWriter sw = new StreamWriter(ConfigPath))
                 {
-                    foreach(string line in nodes)
+                    Debug.WriteLine("Saved data:");
+                    foreach (string line in nodes)
                     {
                         sw.WriteLine(line);
                         Debug.WriteLine(line);
@@ -225,6 +195,11 @@ namespace Crawler.OptionsForm
                 MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK);
                 return false;
             }            
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

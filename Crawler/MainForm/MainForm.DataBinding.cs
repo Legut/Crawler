@@ -10,7 +10,7 @@ namespace Crawler.MainForm
 {
     [System.ComponentModel.DesignerCategory("Code")]
     public class Dummy2 { }
-    partial class Form1
+    partial class MainForm
     {
         public void BindDataTableToAll(DataTable dt)
         {
