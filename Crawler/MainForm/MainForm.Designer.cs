@@ -148,6 +148,8 @@ namespace Crawler.MainForm
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1030, 516);
             this.tabControl1.TabIndex = 4;
+            this.tabControl1.Tag = "all";
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -171,7 +173,7 @@ namespace Crawler.MainForm
             this.allDataGridView.Name = "allDataGridView";
             this.allDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.allDataGridView.TabIndex = 3;
-            this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AllDataGridView_MouseClick);
+            this.allDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
             // 
             // Address
             // 
@@ -200,6 +202,8 @@ namespace Crawler.MainForm
             this.internalDataGridView.Name = "internalDataGridView";
             this.internalDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.internalDataGridView.TabIndex = 4;
+            this.internalDataGridView.Tag = "internal";
+            this.internalDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -228,6 +232,8 @@ namespace Crawler.MainForm
             this.externalDataGridView.Name = "externalDataGridView";
             this.externalDataGridView.Size = new System.Drawing.Size(1022, 490);
             this.externalDataGridView.TabIndex = 4;
+            this.externalDataGridView.Tag = "external";
+            this.externalDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
             // 
             // dataGridViewTextBoxColumn2
             // 
@@ -338,15 +344,13 @@ namespace Crawler.MainForm
             // 
             // singleDataGridView
             // 
-            this.singleDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.singleDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.singleDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.singleDataGridView.Location = new System.Drawing.Point(6, 536);
+            this.singleDataGridView.Dock = System.Windows.Forms.DockStyle.Top;
+            this.singleDataGridView.Location = new System.Drawing.Point(3, 0);
             this.singleDataGridView.Margin = new System.Windows.Forms.Padding(6, 6, 3, 6);
             this.singleDataGridView.Name = "singleDataGridView";
-            this.singleDataGridView.Size = new System.Drawing.Size(891, 268);
+            this.singleDataGridView.Size = new System.Drawing.Size(1024, 268);
             this.singleDataGridView.TabIndex = 6;
             // 
             // splitContainer5
@@ -504,7 +508,7 @@ namespace Crawler.MainForm
             this.label3.TabIndex = 11;
             this.label3.Text = "Preferencje";
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

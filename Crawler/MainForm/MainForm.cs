@@ -20,7 +20,7 @@ namespace Crawler.MainForm
         private bool isCrawling;
         private Base.Crawler crawler;
 
-        private bool singleDataGridViewPrepared = false;
+        private DataTable singleRowDataTable;
         private bool pageExists;
         private bool pageHasCerificate;
 
@@ -35,37 +35,18 @@ namespace Crawler.MainForm
             allDataGridView.ColumnCount = 0;
             internalDataGridView.ColumnCount = 0;
             externalDataGridView.ColumnCount = 0;
-            isCrawling = false;
 
-            allDataGridView.CellFormatting += this.AllDataGridViewCellFormating;
+            allDataGridView.CellFormatting += this.DataGridViewCellFormating;
+            internalDataGridView.CellFormatting += this.DataGridViewCellFormating;
+            externalDataGridView.CellFormatting += this.DataGridViewCellFormating;
+
             allDataGridView.ReadOnly = true;
+            internalDataGridView.ReadOnly = true;
+            externalDataGridView.ReadOnly = true;
+
+            ConfigureSingleDataGridView();
+            isCrawling = false;
         }
-
-        private void AllDataGridViewCellFormating(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            HumanReadableSizes(sender, e);
-        }
-
-        private void PrepareSingleDataGridView()
-        {
-            singleDataGridView.ReadOnly = true;
-            singleDataGridView.Dock = DockStyle.Fill;
-            singleDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            singleDataGridView.ColumnCount = 2;
-            singleDataGridView.Columns[0].Name = "Nazwa";
-            singleDataGridView.Columns[0].Width = 100;
-            singleDataGridView.Columns[1].Name = "Wartosc";
-
-            foreach(DataGridViewColumn column in allDataGridView.Columns)
-            {
-                string[] row = new string[] { column.Name, ""};
-                singleDataGridView.Rows.Add(row);
-            }
-
-            singleDataGridViewPrepared = true;
-
-        }
-
         private async void Button1_ClickAsync(object sender, EventArgs e)
         {
             crawlButton.Enabled = false;
@@ -105,70 +86,6 @@ namespace Crawler.MainForm
             }
             crawlButton.Enabled = true;
         }
-
-        public void MakeButtonReady()
-        {
-            this.isCrawling = false;
-            this.crawlButton.Text = "Start";
-            this.crawlButton.Enabled = true;
-        }
-
-        private void DataGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            // TODO: display selected row in singleDataGridView
-            if (!singleDataGridViewPrepared)
-            {
-                PrepareSingleDataGridView();
-            }
-
-            DataGridView view = sender as DataGridView;
-            //Debug.WriteLine("Selected Cells Count " + view.SelectedCells.Count);
-            //Debug.WriteLine("Selected Columns Count " + view.SelectedColumns.Count);
-            //Debug.WriteLine("Selected Rows Count " + view.SelectedRows.Count);
-            //Debug.WriteLine("Selected Row Cell count " + allDataGridView.Rows[view.SelectedCells[0].RowIndex].Cells.Count);
-            //Debug.WriteLine("columns count " + allDataGridView.Columns.Count);
-                        
-            if (view == null) return;
-            if (view.SelectedCells.Count == 1)
-            {
-                
-                DataGridViewRow selectedRow = allDataGridView.Rows[view.SelectedCells[0].RowIndex];
-
-                //Debug.WriteLine("selected row cells count " + selectedRow.Cells.Count);
-                //Debug.WriteLine("single data rows count " + singleDataGridView.Rows.Count);
-
-                //allDataGridView.Rows[view.SelectedCells[0].RowIndex].Cells.Count) -> static 34?
-                for (int a = 0; a < selectedRow.Cells.Count; a++)
-                {
-                    try
-                    {
-                        singleDataGridView.Rows[a].Cells[1].Value = selectedRow.Cells[a].Value;
-                    }
-                    catch
-                    {
-                        break;
-                        // Debug.WriteLine("INdex: " + a + " error: " + ex.Message);
-                    }
-                }                         
-            }
-        }
-
-        private void HumanReadableSizes(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (allDataGridView.Columns[e.ColumnIndex].Name.Equals(Base.Crawler.SIZE_COL))
-            {
-                e.Value = ShownSize(true, e.Value.ToString());
-                e.FormattingApplied = true;
-            }
-        }
-
-        public object ShownSize(bool isInternal, string size)
-        {
-            long temp = long.Parse(size);
-
-            return isInternal ? Base.Crawler.SizeSuffix(temp, 2) : String.Empty;
-        }
-
         private void EnsureThatProtocolIsProvided(string url)
         {
             // Ensure there is protocol provided at the begining of url
@@ -177,7 +94,6 @@ namespace Crawler.MainForm
                 siteAddress.Text = "http://" + url;
             }
         }
-
         private async Task PageExists(string url)
         {
             try
@@ -199,7 +115,6 @@ namespace Crawler.MainForm
                 pageExists = false;
             }
         }
-
         private async Task PageHasCertificate(string url)
         {
             // if site has certificate than it will load by https://
@@ -237,85 +152,167 @@ namespace Crawler.MainForm
         {
             crawledStatusLabel.Text = crawled + " / " + all;
         }
-
-        private void AllDataGridView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        public void MakeButtonReady()
         {
-            if(e.Button == MouseButtons.Right)
+            this.isCrawling = false;
+            this.crawlButton.Text = "Start";
+            this.crawlButton.Enabled = true;
+        }
+        private void DataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            // recognize whether selection changed and make changes to singleDataGridView
+            DataGridView view = sender as DataGridView;
+            PrepareSingleDataGridView(view);
+
+            if (view == null) return;
+            if (view.SelectedCells.Count >= 1)
             {
-                if (allDataGridView.SelectedCells.Count > 0)
+                DataGridViewRow selectedRow = view.Rows[view.SelectedCells[0].RowIndex];
+
+                int corrector = 0; 
+                for (int index = 0; index < selectedRow.Cells.Count; index++)
                 {
-                    ContextMenuStrip cellClickMenu = new System.Windows.Forms.ContextMenuStrip();
-                    int hit_row = allDataGridView.HitTest(e.X, e.Y).RowIndex;
-                    //int hit_cell = allDataGridView.HitTest(e.X, e.Y).ColumnIndex;
+                    try
+                    {
+                        if (selectedRow.Cells[index].OwningColumn.Visible)
+                        {
+                            singleRowDataTable.Rows[index-corrector].SetField(1, selectedRow.Cells[index].Value);
+                        }
+                        else
+                        {
+                            corrector++;
+                        }
+                    }
+                    catch
+                    {
+                        CustomMessages.DisplayCustomErrorMsg("Something went wrong while displaying selected row in single row view -> DataGridView_SelectionChanged()", "Single row view Error");
+                        break;
+                    }
+                }                         
+            }
+        }
+        private void DataGridViewCellFormating(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            HumanReadableSizes(sender, e);
+        }
+        private void PrepareSingleDataGridView(DataGridView view)
+        {
+            singleRowDataTable.Clear();
+            foreach (DataGridViewColumn column in view.Columns)
+            {
+                if (column.Visible)
+                {
+                    string[] row = { column.Name, "" };
+                    singleRowDataTable.Rows.Add(row);
+                }
+            }
+        }
+        private void ConfigureSingleDataGridView()
+        {
+            Padding margin = new Padding(6, 6, 3, 6);
+            singleDataGridView.ReadOnly = true;
+            singleDataGridView.Dock = DockStyle.Fill;
+            singleDataGridView.Margin = margin;
+            singleDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            singleDataGridView.RowHeadersWidth = 41;
+            singleDataGridView.ScrollBars = ScrollBars.Both;
+
+            singleRowDataTable = new DataTable();
+            singleRowDataTable.Columns.Add("Nazwa").DefaultValue = "";
+            singleRowDataTable.Columns.Add("Wartość").DefaultValue = "";
+            singleDataGridView.DataSource = singleRowDataTable;
+            singleDataGridView.Columns[0].Width = 100;
+        }
+        private void HumanReadableSizes(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Convert sizes in bytes to readable sizes in kb, mg, gb etc.
+            DataGridView view = sender as DataGridView;
+            if (view.Columns[e.ColumnIndex].Name.Equals(Base.Crawler.SIZE_COL))
+            {
+                e.Value = ShownSize(true, e.Value.ToString());
+                e.FormattingApplied = true;
+            }
+        }
+        public object ShownSize(bool isInternal, string size)
+        {
+            long temp = long.Parse(size);
+            return isInternal ? Base.Crawler.SizeSuffix(temp, 2) : String.Empty;
+        }
+        private void DataGridView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            DataGridView view = sender as DataGridView;
+            if (e.Button == MouseButtons.Right)
+            {
+                if (view.SelectedCells.Count > 0)
+                {
+                    ContextMenuStrip cellClickMenu = new ContextMenuStrip();
+                    int hit_row = view.HitTest(e.X, e.Y).RowIndex;
 
                     if (hit_row >= 0)
                     {
-                        cellClickMenu.Items.Add("Kopiuj komórkę").Tag = "1";
-                        cellClickMenu.Items.Add("Kopiuj zaznaczenie").Tag = "2";
-                        cellClickMenu.Items.Add("Otwórz w przeglądarce").Tag = "3";
-                        if (allDataGridView.SelectedRows.Count > 0)
+                        cellClickMenu.Items.Add("Kopiuj komórkę").Tag = "Copy cell";
+                        cellClickMenu.Items.Add("Kopiuj zaznaczenie").Tag = "Copy selected";
+                        cellClickMenu.Items.Add("Otwórz w przeglądarce").Tag = "Open in browser";
+                        if (view.SelectedRows.Count > 0)
                         {
-                            cellClickMenu.Items.Add("Zapisz rzędy do CSV").Tag = "4";
+                            cellClickMenu.Items.Add("Zapisz rzędy do CSV").Tag = "Save to csv";
                         }
                         
                     }
 
-                    cellClickMenu.Show(allDataGridView, new Point(e.X, e.Y));
-
-                    cellClickMenu.ItemClicked += new ToolStripItemClickedEventHandler(AllDataCellClicked);
+                    cellClickMenu.Show(view, new Point(e.X, e.Y));
+                    cellClickMenu.ItemClicked += DataViewCellClicked;
                     
                 }
             }
         }
 
-        private void AllDataCellClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void DataViewCellClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string temp = "";
-
-            ContextMenuStrip menustrip = (ContextMenuStrip)sender;
-            menustrip.Close();
+            ContextMenuStrip menuStrip = (ContextMenuStrip) sender;
+            DataGridView view = (DataGridView) menuStrip.SourceControl;
+            menuStrip.Close();
 
             switch (e.ClickedItem.Tag.ToString())
             {
-                case "1":
-                    temp = allDataGridView.SelectedCells[0].Value.ToString();                    
+                case "Copy cell":
+                    temp = view.SelectedCells[0].Value.ToString();                    
                     Clipboard.SetText(temp);
                     break;
 
-                case "2":
-                    foreach(DataGridViewCell cell in allDataGridView.SelectedCells)
+                case "Copy selected":
+                    foreach(DataGridViewCell cell in view.SelectedCells)
                     {
-                        temp += cell.Value.ToString() + ";";
+                        temp += cell.Value + ";";
                         Clipboard.SetText(temp);
                     }
                     break;
 
-                case "3":
+                case "Open in browser":
                     List<int> openedRows = new List<int>();
-                    foreach (DataGridViewCell cell in allDataGridView.SelectedCells)
-                    {         
-                        if (!openedRows.Contains(cell.RowIndex))
-                        {
-                            openedRows.Add(cell.RowIndex);
-                            temp = allDataGridView.Rows[cell.RowIndex].Cells[0].Value.ToString();
-                            System.Diagnostics.Process.Start(temp);
-                        }
+                    foreach (DataGridViewCell cell in view.SelectedCells)
+                    {
+                        if (openedRows.Contains(cell.RowIndex)) continue;
+                        openedRows.Add(cell.RowIndex);
+                        temp = view.Rows[cell.RowIndex].Cells[0].Value.ToString();
+                        Process.Start(temp);
                     }
                     break;
 
-                case "4":
-                    SaveRowsToCsv();
+                case "Save to csv":
+                    SaveRowsToCsv(view);
                     break;
 
                 default:
-                    temp = allDataGridView.SelectedCells[0].Value.ToString();
-                    temp += "\n" + e.ClickedItem.Tag.ToString();
-                    MessageBox.Show(temp, "pan bug");
+                    temp = view.SelectedCells[0].Value.ToString();
+                    temp += "\n" + e.ClickedItem.Tag;
+                    MessageBox.Show(temp, "Error");
                     break;
             }
         }
 
-        public void SaveRowsToCsv()
+        public void SaveRowsToCsv(DataGridView view)
         {
             SaveFileDialog saveFileDialog2 = new SaveFileDialog
             {
@@ -330,7 +327,7 @@ namespace Crawler.MainForm
 
                 using (StreamWriter sw = new StreamWriter(temp))
                 {
-                    foreach (DataGridViewRow row in allDataGridView.SelectedRows)
+                    foreach (DataGridViewRow row in view.SelectedRows)
                     {
                         foreach (DataGridViewCell cell in row.Cells)
                         {
@@ -350,8 +347,16 @@ namespace Crawler.MainForm
 
         private void Save_StripMenuItem_Click(object sender, EventArgs e)
         {
-            allDataGridView.SelectAll();
-            SaveRowsToCsv();
+            DataGridView view;
+            foreach (Control control in tabControl1.SelectedTab.Controls)
+            {
+                if (control is DataGridView)
+                {
+                    view = (DataGridView) control;
+                    view.SelectAll();
+                    SaveRowsToCsv(view);
+                }
+            }
         }
 
         private void Settings_StripMenuItem_Click(object sender, EventArgs e)
@@ -367,5 +372,17 @@ namespace Crawler.MainForm
             Invalidate();
         }
 
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (Control control in tabControl1.SelectedTab.Controls)
+            {
+                if(control is DataGridView)
+                {
+                    singleRowDataTable.Rows.Clear();
+                    DataGridView view = (DataGridView) control;
+                    PrepareSingleDataGridView(view);
+                }
+            }
+        }
     }
 }

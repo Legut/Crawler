@@ -16,6 +16,7 @@ namespace Crawler.MainForm
         {
             allDataGridView.DataSource = dt;
             allDataGridView.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
+            PrepareSingleDataGridView(allDataGridView);
         }
         public void BindDataTableToInternal(DataTable dt)
         {
@@ -35,7 +36,7 @@ namespace Crawler.MainForm
                 Filter = "IsInternal = 'False'"
             };
             externalDataGridView.DataSource = src;
-            externalDataGridView.Columns["Indexability"].Visible = false;
+            externalDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = false;
             externalDataGridView.SelectionChanged += new System.EventHandler(this.DataGridView_SelectionChanged);
             
         }

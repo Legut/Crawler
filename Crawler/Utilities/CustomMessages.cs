@@ -32,6 +32,5 @@ namespace Crawler.Utilities
         {
             MessageBox.Show(message, caption, Buttons);
         }
-
     }
 }
