@@ -56,12 +56,9 @@ namespace Crawler.Base
             dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(SIZE_COL, typeof(long)).DefaultValue = null;
-            //dt.Columns.Add(SIZE_COL).DefaultValue = "";
-
             dt.Columns.Add(WORD_COUNT_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(TEXT_RATIO_COL).DefaultValue = "";
             dt.Columns.Add(URL_DEPTH_COL, typeof(int)).DefaultValue = null;
-
 
             dt.Columns.Add(OUTLINKS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_OUTLINKS_COL, typeof(int)).DefaultValue = null;
@@ -80,6 +77,12 @@ namespace Crawler.Base
             MainForm.BindDataTableToAll(dt);
             MainForm.BindDataTableToExternal(dt);
             MainForm.BindDataTableToInternal(dt);
+            MainForm.BindDataTableToPageTitles(dt);
+            MainForm.BindDataTableToMetaDescs(dt);
+            MainForm.BindDataTableToKeywords(dt);
+            MainForm.BindDataTableToHeadingsOne(dt);
+            MainForm.BindDataTableToHeadingsTwo(dt);
+            MainForm.BindDataTableToImages(dt);
         }
         private void UpdateDataTable(PageFragment pf)
         {
@@ -92,8 +95,6 @@ namespace Crawler.Base
             row[INDEXABILITY_COL] = pf.Indexability;
             row[INDEXABILITY_STATUS_COL] = pf.IndexabilityStatus;
             row[ISINTERNAL_COL] = pf.IsInternal;
-
-            //row[SIZE_COL] = ShownSize(pf.IsInternal, pf.Size);
             row[SIZE_COL] = pf.Size;
 
             row[ISDUPLICATE_COL] = pf.IsDuplicate;
@@ -145,6 +146,7 @@ namespace Crawler.Base
                     dt.Columns.Add(TITLE_COL + i).DefaultValue = "";
                     dt.Columns.Add(TITLE_LENGTH_COL + i, typeof(int)).DefaultValue = null;
                     dt.Columns.Add(TITLE_PIXEL_WIDTH_COL + i, typeof(int)).DefaultValue = null;
+                    MainForm.HandleNewTitleCol(i);
                     titleColumnsCount++;
                 }
                 row[TITLE_COL + i] = title.TitleText;
@@ -164,6 +166,7 @@ namespace Crawler.Base
                     dt.Columns.Add(META_DESC_COL + i).DefaultValue = "";
                     dt.Columns.Add(META_DESC_LENGTH_COL + i, typeof(int)).DefaultValue = null;
                     dt.Columns.Add(META_DESC_PIXEL_WIDTH_COL + i, typeof(int)).DefaultValue = null;
+                    MainForm.HandleNewDescCol(i);
                     descColumnsCount++;
                 }
                 row[META_DESC_COL + i] = desc.MetaDescriptionText;
@@ -182,6 +185,7 @@ namespace Crawler.Base
                 {
                     dt.Columns.Add(META_KEYWORDS_COL + i).DefaultValue = "";
                     dt.Columns.Add(META_KEYWORDS_LENGTH_COL + i, typeof(int)).DefaultValue = null;
+                    MainForm.HandleNewKeywordsCol(i);
                     keywordColumnsCount++;
                 }
                 row[META_KEYWORDS_COL + i] = keyword.MetaKeywordsText;
@@ -199,6 +203,7 @@ namespace Crawler.Base
                 {
                     dt.Columns.Add(H_ONE_COL + i).DefaultValue = "";
                     dt.Columns.Add(H_ONE_LENGTH_COL + i, typeof(int)).DefaultValue = null;
+                    MainForm.HandleNewHeadsOneCol(i);
                     headOneColumnsCount++;
                 }
                 row[H_ONE_COL + i] = headOne.HeadingOneText;
@@ -216,16 +221,13 @@ namespace Crawler.Base
                 {
                     dt.Columns.Add(H_TWO_COL + i).DefaultValue = "";
                     dt.Columns.Add(H_TWO_LENGTH_COL + i, typeof(int)).DefaultValue = null;
+                    MainForm.HandleNewHeadsTwoCol(i);
                     headTwoColumnsCount++;
                 }
                 row[H_TWO_COL + i] = headTwo.HeadingTwoText;
                 row[H_TWO_LENGTH_COL + i] = headTwo.HeadingTwoLength;
                 i++;
             }
-        }
-        public object ShownSize(bool isInternal, long size)
-        {
-            return isInternal ? SizeSuffix(size, 2) : String.Empty;
         }
     }
 }

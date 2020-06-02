@@ -36,15 +36,33 @@ namespace Crawler.MainForm
             this.crawlButton = new System.Windows.Forms.Button();
             this.siteToCrawlMsg = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.allTabPage = new System.Windows.Forms.TabPage();
             this.allDataGridView = new System.Windows.Forms.DataGridView();
             this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.internalTabPage = new System.Windows.Forms.TabPage();
             this.internalDataGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.externalTabPage = new System.Windows.Forms.TabPage();
             this.externalDataGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.titlesTabPage = new System.Windows.Forms.TabPage();
+            this.pageTitlesDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.metaDescTabPage = new System.Windows.Forms.TabPage();
+            this.metaDescDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.metaKeywordsTabPage = new System.Windows.Forms.TabPage();
+            this.keywordsDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.h1TabPage = new System.Windows.Forms.TabPage();
+            this.headingOneDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.h2TabPage = new System.Windows.Forms.TabPage();
+            this.headingTwoDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.imagesTabPage = new System.Windows.Forms.TabPage();
+            this.imagesDataGridView = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label2 = new System.Windows.Forms.Label();
             this.crawlingStatusLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -55,6 +73,7 @@ namespace Crawler.MainForm
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.singleDataGridView = new System.Windows.Forms.DataGridView();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.countersList = new System.Windows.Forms.ListView();
             this.label9 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -73,12 +92,24 @@ namespace Crawler.MainForm
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.allTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).BeginInit();
-            this.tabPage3.SuspendLayout();
+            this.internalTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.internalDataGridView)).BeginInit();
-            this.tabPage2.SuspendLayout();
+            this.externalTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).BeginInit();
+            this.titlesTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pageTitlesDataGridView)).BeginInit();
+            this.metaDescTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.metaDescDataGridView)).BeginInit();
+            this.metaKeywordsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.keywordsDataGridView)).BeginInit();
+            this.h1TabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.headingOneDataGridView)).BeginInit();
+            this.h2TabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.headingTwoDataGridView)).BeginInit();
+            this.imagesTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imagesDataGridView)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -137,9 +168,15 @@ namespace Crawler.MainForm
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.allTabPage);
+            this.tabControl1.Controls.Add(this.internalTabPage);
+            this.tabControl1.Controls.Add(this.externalTabPage);
+            this.tabControl1.Controls.Add(this.titlesTabPage);
+            this.tabControl1.Controls.Add(this.metaDescTabPage);
+            this.tabControl1.Controls.Add(this.metaKeywordsTabPage);
+            this.tabControl1.Controls.Add(this.h1TabPage);
+            this.tabControl1.Controls.Add(this.h2TabPage);
+            this.tabControl1.Controls.Add(this.imagesTabPage);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 3, 0, 0);
@@ -151,16 +188,16 @@ namespace Crawler.MainForm
             this.tabControl1.Tag = "all";
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
-            // tabPage1
+            // allTabPage
             // 
-            this.tabPage1.AutoScroll = true;
-            this.tabPage1.Controls.Add(this.allDataGridView);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(1022, 490);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Wszystkie";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.allTabPage.AutoScroll = true;
+            this.allTabPage.Controls.Add(this.allDataGridView);
+            this.allTabPage.Location = new System.Drawing.Point(4, 22);
+            this.allTabPage.Name = "allTabPage";
+            this.allTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.allTabPage.TabIndex = 0;
+            this.allTabPage.Text = "Wszystkie";
+            this.allTabPage.UseVisualStyleBackColor = true;
             // 
             // allDataGridView
             // 
@@ -181,15 +218,15 @@ namespace Crawler.MainForm
             this.Address.HeaderText = "Address";
             this.Address.Name = "Address";
             // 
-            // tabPage3
+            // internalTabPage
             // 
-            this.tabPage3.Controls.Add(this.internalDataGridView);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1022, 490);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Wewnętrzne";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.internalTabPage.Controls.Add(this.internalDataGridView);
+            this.internalTabPage.Location = new System.Drawing.Point(4, 22);
+            this.internalTabPage.Name = "internalTabPage";
+            this.internalTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.internalTabPage.TabIndex = 2;
+            this.internalTabPage.Text = "Wewnętrzne";
+            this.internalTabPage.UseVisualStyleBackColor = true;
             // 
             // internalDataGridView
             // 
@@ -211,15 +248,15 @@ namespace Crawler.MainForm
             this.dataGridViewTextBoxColumn1.HeaderText = "Address";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             // 
-            // tabPage2
+            // externalTabPage
             // 
-            this.tabPage2.Controls.Add(this.externalDataGridView);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(1022, 490);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Zewnętrzne";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.externalTabPage.Controls.Add(this.externalDataGridView);
+            this.externalTabPage.Location = new System.Drawing.Point(4, 22);
+            this.externalTabPage.Name = "externalTabPage";
+            this.externalTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.externalTabPage.TabIndex = 1;
+            this.externalTabPage.Text = "Zewnętrzne";
+            this.externalTabPage.UseVisualStyleBackColor = true;
             // 
             // externalDataGridView
             // 
@@ -240,6 +277,186 @@ namespace Crawler.MainForm
             this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewTextBoxColumn2.HeaderText = "Address";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // titlesTabPage
+            // 
+            this.titlesTabPage.Controls.Add(this.pageTitlesDataGridView);
+            this.titlesTabPage.Location = new System.Drawing.Point(4, 22);
+            this.titlesTabPage.Name = "titlesTabPage";
+            this.titlesTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.titlesTabPage.TabIndex = 3;
+            this.titlesTabPage.Text = "Tytuły podstron";
+            this.titlesTabPage.UseVisualStyleBackColor = true;
+            // 
+            // pageTitlesDataGridView
+            // 
+            this.pageTitlesDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.pageTitlesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.pageTitlesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn3});
+            this.pageTitlesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pageTitlesDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.pageTitlesDataGridView.Name = "pageTitlesDataGridView";
+            this.pageTitlesDataGridView.Size = new System.Drawing.Size(1022, 490);
+            this.pageTitlesDataGridView.TabIndex = 5;
+            this.pageTitlesDataGridView.Tag = "pageTitles";
+            this.pageTitlesDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn3.HeaderText = "Address";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
+            // metaDescTabPage
+            // 
+            this.metaDescTabPage.Controls.Add(this.metaDescDataGridView);
+            this.metaDescTabPage.Location = new System.Drawing.Point(4, 22);
+            this.metaDescTabPage.Name = "metaDescTabPage";
+            this.metaDescTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.metaDescTabPage.TabIndex = 4;
+            this.metaDescTabPage.Text = "Opisy meta";
+            this.metaDescTabPage.UseVisualStyleBackColor = true;
+            // 
+            // metaDescDataGridView
+            // 
+            this.metaDescDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.metaDescDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.metaDescDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn4});
+            this.metaDescDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.metaDescDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.metaDescDataGridView.Name = "metaDescDataGridView";
+            this.metaDescDataGridView.Size = new System.Drawing.Size(1022, 490);
+            this.metaDescDataGridView.TabIndex = 5;
+            this.metaDescDataGridView.Tag = "metaDesc";
+            this.metaDescDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn4.HeaderText = "Address";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            // 
+            // metaKeywordsTabPage
+            // 
+            this.metaKeywordsTabPage.Controls.Add(this.keywordsDataGridView);
+            this.metaKeywordsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.metaKeywordsTabPage.Name = "metaKeywordsTabPage";
+            this.metaKeywordsTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.metaKeywordsTabPage.TabIndex = 5;
+            this.metaKeywordsTabPage.Text = "Słowa kluczowe";
+            this.metaKeywordsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // keywordsDataGridView
+            // 
+            this.keywordsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.keywordsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.keywordsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn5});
+            this.keywordsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.keywordsDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.keywordsDataGridView.Name = "keywordsDataGridView";
+            this.keywordsDataGridView.Size = new System.Drawing.Size(1022, 490);
+            this.keywordsDataGridView.TabIndex = 5;
+            this.keywordsDataGridView.Tag = "keywords";
+            this.keywordsDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn5.HeaderText = "Address";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            // 
+            // h1TabPage
+            // 
+            this.h1TabPage.Controls.Add(this.headingOneDataGridView);
+            this.h1TabPage.Location = new System.Drawing.Point(4, 22);
+            this.h1TabPage.Name = "h1TabPage";
+            this.h1TabPage.Size = new System.Drawing.Size(1022, 490);
+            this.h1TabPage.TabIndex = 6;
+            this.h1TabPage.Text = "H1";
+            this.h1TabPage.UseVisualStyleBackColor = true;
+            // 
+            // headingOneDataGridView
+            // 
+            this.headingOneDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.headingOneDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.headingOneDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn6});
+            this.headingOneDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.headingOneDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.headingOneDataGridView.Name = "headingOneDataGridView";
+            this.headingOneDataGridView.Size = new System.Drawing.Size(1022, 490);
+            this.headingOneDataGridView.TabIndex = 5;
+            this.headingOneDataGridView.Tag = "headingOne";
+            this.headingOneDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn6.HeaderText = "Address";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            // 
+            // h2TabPage
+            // 
+            this.h2TabPage.Controls.Add(this.headingTwoDataGridView);
+            this.h2TabPage.Location = new System.Drawing.Point(4, 22);
+            this.h2TabPage.Name = "h2TabPage";
+            this.h2TabPage.Size = new System.Drawing.Size(1022, 490);
+            this.h2TabPage.TabIndex = 7;
+            this.h2TabPage.Text = "H2";
+            this.h2TabPage.UseVisualStyleBackColor = true;
+            // 
+            // headingTwoDataGridView
+            // 
+            this.headingTwoDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.headingTwoDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.headingTwoDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn7});
+            this.headingTwoDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.headingTwoDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.headingTwoDataGridView.Name = "headingTwoDataGridView";
+            this.headingTwoDataGridView.Size = new System.Drawing.Size(1022, 490);
+            this.headingTwoDataGridView.TabIndex = 5;
+            this.headingTwoDataGridView.Tag = "headingTwo";
+            this.headingTwoDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn7.HeaderText = "Address";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            // 
+            // imagesTabPage
+            // 
+            this.imagesTabPage.Controls.Add(this.imagesDataGridView);
+            this.imagesTabPage.Location = new System.Drawing.Point(4, 22);
+            this.imagesTabPage.Name = "imagesTabPage";
+            this.imagesTabPage.Size = new System.Drawing.Size(1022, 490);
+            this.imagesTabPage.TabIndex = 8;
+            this.imagesTabPage.Text = "Obrazki";
+            this.imagesTabPage.UseVisualStyleBackColor = true;
+            // 
+            // imagesDataGridView
+            // 
+            this.imagesDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.imagesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.imagesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn8});
+            this.imagesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imagesDataGridView.Location = new System.Drawing.Point(0, 0);
+            this.imagesDataGridView.Name = "imagesDataGridView";
+            this.imagesDataGridView.Size = new System.Drawing.Size(1022, 490);
+            this.imagesDataGridView.TabIndex = 5;
+            this.imagesDataGridView.Tag = "images";
+            this.imagesDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseClick);
+            // 
+            // dataGridViewTextBoxColumn8
+            // 
+            this.dataGridViewTextBoxColumn8.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn8.HeaderText = "Address";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
             // 
             // label2
             // 
@@ -362,6 +579,7 @@ namespace Crawler.MainForm
             // 
             // splitContainer5.Panel1
             // 
+            this.splitContainer5.Panel1.Controls.Add(this.countersList);
             this.splitContainer5.Panel1.Controls.Add(this.label9);
             this.splitContainer5.Panel1.Controls.Add(this.crawledStatusLabel);
             this.splitContainer5.Panel1.Controls.Add(this.label7);
@@ -378,6 +596,16 @@ namespace Crawler.MainForm
             this.splitContainer5.Size = new System.Drawing.Size(250, 734);
             this.splitContainer5.SplitterDistance = 468;
             this.splitContainer5.TabIndex = 10;
+            // 
+            // countersList
+            // 
+            this.countersList.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.countersList.HideSelection = false;
+            this.countersList.Location = new System.Drawing.Point(0, 210);
+            this.countersList.Name = "countersList";
+            this.countersList.Size = new System.Drawing.Size(247, 255);
+            this.countersList.TabIndex = 13;
+            this.countersList.UseCompatibleStateImageBehavior = false;
             // 
             // label9
             // 
@@ -522,12 +750,24 @@ namespace Crawler.MainForm
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.allTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.allDataGridView)).EndInit();
-            this.tabPage3.ResumeLayout(false);
+            this.internalTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.internalDataGridView)).EndInit();
-            this.tabPage2.ResumeLayout(false);
+            this.externalTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.externalDataGridView)).EndInit();
+            this.titlesTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pageTitlesDataGridView)).EndInit();
+            this.metaDescTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.metaDescDataGridView)).EndInit();
+            this.metaKeywordsTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.keywordsDataGridView)).EndInit();
+            this.h1TabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.headingOneDataGridView)).EndInit();
+            this.h2TabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.headingTwoDataGridView)).EndInit();
+            this.imagesTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.imagesDataGridView)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -564,8 +804,8 @@ namespace Crawler.MainForm
         private System.Windows.Forms.Button crawlButton;
         private System.Windows.Forms.Label siteToCrawlMsg;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage allTabPage;
+        private System.Windows.Forms.TabPage externalTabPage;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label crawlingStatusLabel;
         private System.Windows.Forms.Label label4;
@@ -573,7 +813,7 @@ namespace Crawler.MainForm
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.DataGridView allDataGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn Address;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage internalTabPage;
         private System.Windows.Forms.DataGridView internalDataGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridView externalDataGridView;
@@ -600,6 +840,25 @@ namespace Crawler.MainForm
         private Label label7;
         private Label label5;
         private Label label9;
+        private TabPage titlesTabPage;
+        private TabPage metaDescTabPage;
+        private TabPage metaKeywordsTabPage;
+        private TabPage h1TabPage;
+        private TabPage h2TabPage;
+        private TabPage imagesTabPage;
+        private ListView countersList;
+        private DataGridView pageTitlesDataGridView;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private DataGridView metaDescDataGridView;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+        private DataGridView keywordsDataGridView;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+        private DataGridView headingOneDataGridView;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+        private DataGridView headingTwoDataGridView;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private DataGridView imagesDataGridView;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
     }
 }
 

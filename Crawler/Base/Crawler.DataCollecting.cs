@@ -30,6 +30,11 @@ namespace Crawler.Base
             pf.ContentType = response.Content.Headers.ContentType.MediaType;
             pf.StatusCode = ((int)response.StatusCode).ToString();
             pf.Status = response.StatusCode.ToString();
+            pf.UrlDepth = -1;
+            foreach (string segment in page.Segments)
+            {
+                pf.UrlDepth++;
+            }
         }
         private void ManagePageFragment(ref PageFragment pf, ref HttpResponseMessage response, ref HtmlDocument htmlDocument, Uri page)
         {

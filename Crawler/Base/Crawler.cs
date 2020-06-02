@@ -54,11 +54,9 @@ namespace Crawler.Base
 
         private void LoadCrawlingOptions()
         {
-            
             //TODO: updateGui
             MainForm.Invalidate();
             MainForm.Update();
-
         }
 
         private async Task StartCrawlingPage(Uri page, CancellationToken ctsToken)
@@ -83,7 +81,6 @@ namespace Crawler.Base
                     // Download page
                     HttpClient httpClient = new HttpClient();
                     HttpResponseMessage response = await httpClient.GetAsync(page);
-
                     try
                     {
                         // Check whether page is internal or external 

@@ -35,14 +35,27 @@ namespace Crawler.MainForm
             allDataGridView.ColumnCount = 0;
             internalDataGridView.ColumnCount = 0;
             externalDataGridView.ColumnCount = 0;
+            pageTitlesDataGridView.ColumnCount = 0;
+            metaDescDataGridView.ColumnCount = 0;
+            keywordsDataGridView.ColumnCount = 0;
+            headingOneDataGridView.ColumnCount = 0;
+            headingTwoDataGridView.ColumnCount = 0;
+            imagesDataGridView.ColumnCount = 0;
 
             allDataGridView.CellFormatting += this.DataGridViewCellFormating;
             internalDataGridView.CellFormatting += this.DataGridViewCellFormating;
             externalDataGridView.CellFormatting += this.DataGridViewCellFormating;
+            imagesDataGridView.CellFormatting += this.DataGridViewCellFormating;
 
             allDataGridView.ReadOnly = true;
             internalDataGridView.ReadOnly = true;
             externalDataGridView.ReadOnly = true;
+            pageTitlesDataGridView.ReadOnly = true;
+            metaDescDataGridView.ReadOnly = true;
+            keywordsDataGridView.ReadOnly = true;
+            headingOneDataGridView.ReadOnly = true;
+            headingTwoDataGridView.ReadOnly = true;
+            imagesDataGridView.ReadOnly = true;
 
             ConfigureSingleDataGridView();
             isCrawling = false;
@@ -266,7 +279,6 @@ namespace Crawler.MainForm
                 }
             }
         }
-
         private void DataViewCellClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string temp = "";
@@ -311,7 +323,6 @@ namespace Crawler.MainForm
                     break;
             }
         }
-
         public void SaveRowsToCsv(DataGridView view)
         {
             SaveFileDialog saveFileDialog2 = new SaveFileDialog
@@ -344,7 +355,6 @@ namespace Crawler.MainForm
                 }
             }
         }
-
         private void Save_StripMenuItem_Click(object sender, EventArgs e)
         {
             DataGridView view;
@@ -358,20 +368,17 @@ namespace Crawler.MainForm
                 }
             }
         }
-
         private void Settings_StripMenuItem_Click(object sender, EventArgs e)
         {
             OptionsForm.OptionsForm optionsForm = new OptionsForm.OptionsForm();
             optionsForm.Show();
         }
-
         public void IncreaseErrorCount()
         {
             Utils.ErrorsCounter++;
             label7.Text = Utils.ErrorsCounter.ToString();
             Invalidate();
         }
-
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (Control control in tabControl1.SelectedTab.Controls)
