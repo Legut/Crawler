@@ -14,14 +14,6 @@ namespace Crawler.Base
 {
     partial class Crawler
     {
-        // Dynamic colums counters (how much columns of specific type there already are)
-        private static int maxTitles = 3;
-        private static int maxDescs = 3;
-        private static int maxKeywords = 3;
-        private static int maxHeadsOne = 3;
-        private static int maxHeadsTwo = 3;
-
-
         private static void ManagePageFragmentIfExternal(ref PageFragment pf, ref HttpResponseMessage response, Uri page)
         {
             pf.Address = page.AbsoluteUri;
@@ -43,35 +35,42 @@ namespace Crawler.Base
             pf.ContentType = response.Content.Headers.ContentType.MediaType;
             pf.StatusCode = ((int)response.StatusCode).ToString();
             pf.Status = response.StatusCode.ToString();
-            pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
+            if(Utils.ExtractPageSize)
+                pf.Size = response.Content.Headers.ContentLength.GetValueOrDefault();
 
-            pf.Hash = htmlDocument.Text.GetHashCode();
-            string hash = htmlDocument.Text.GetHashCode().ToString();
-            var k = (from row in dt.Rows.OfType<DataRow>() where row[HASH_VALUE_COL].ToString() == hash select row).FirstOrDefault();
-            if (k != null)
+            if (Utils.ExtractHash)
             {
-                k[ISDUPLICATE_COL] = true;
-                pf.IsDuplicate = true;
+                pf.Hash = htmlDocument.Text.GetHashCode();
+                string hash = pf.Hash.GetHashCode().ToString();
+                var k = (from row in dt.Rows.OfType<DataRow>() where row[HASH_VALUE_COL].ToString() == hash select row)
+                    .FirstOrDefault();
+                if (k != null)
+                {
+                    k[ISDUPLICATE_COL] = true;
+                    pf.IsDuplicate = true;
+                }
             }
 
-            List<HtmlNode> bodies = htmlDocument.DocumentNode.Descendants("body").ToList();
-            int nonHtmlCharsCount = 0;
-            foreach (HtmlNode body in bodies)
+            if (Utils.ExtractWordCount || Utils.ExtractTxtCodeRatio)
             {
-                pf.WordCount += Utils.CountWords(body.InnerText);
-                nonHtmlCharsCount += body.InnerText.Length;
+                List<HtmlNode> bodies = htmlDocument.DocumentNode.Descendants("body").ToList();
+                int nonHtmlCharsCount = 0;
+                foreach (HtmlNode body in bodies)
+                {
+                    pf.WordCount += Utils.CountWords(body.InnerText);
+                    nonHtmlCharsCount += body.InnerText.Length;
+                }
+
+                if (Utils.ExtractTxtCodeRatio)
+                {
+                    if (htmlDocument.Text.Length != 0)
+                        pf.TextRatio = (float) nonHtmlCharsCount / (float) htmlDocument.Text.Length;
+                    else
+                        pf.TextRatio = 0;
+                }
             }
 
-            if (htmlDocument.Text.Length != 0)
-                pf.TextRatio = (float) nonHtmlCharsCount / (float) htmlDocument.Text.Length;
-            else
-                pf.TextRatio = 0;
-
-            pf.UrlDepth = -1;
-            foreach (string segment in page.Segments)
-            {
-                pf.UrlDepth++;
-            }
+            pf.UrlDepth = page.Segments.Length-1;
           
             if (pf.StatusCode != "200")
             {
@@ -110,7 +109,7 @@ namespace Crawler.Base
                     .MeasureText(title.TitleText, arialBold).Width;
 
                 pf.Titles.Add(title);
-                if (pf.Titles.Count == maxTitles)
+                if (pf.Titles.Count == Utils.MaxTitles)
                     break;
             }
         }
@@ -129,7 +128,7 @@ namespace Crawler.Base
                 }
                 else if (meta.GetAttributeValue("name", "null") == "description")
                 {
-                    if (pf.MetaDescriptions.Count == maxDescs)
+                    if (pf.MetaDescriptions.Count == Utils.MaxDescs)
                         continue;
 
                     MetaDescription metaDesc = new MetaDescription();
@@ -144,7 +143,7 @@ namespace Crawler.Base
                 }
                 else if (meta.GetAttributeValue("name", "null") == "keywords")
                 {
-                    if (pf.MetaKeywords.Count == maxKeywords)
+                    if (pf.MetaKeywords.Count == Utils.MaxKeywords)
                         continue;
 
                     MetaKeywords metaKey = new MetaKeywords();
@@ -165,7 +164,7 @@ namespace Crawler.Base
                 headingOne.HeadingOneLength = headingOne.HeadingOneText.Length;
 
                 pf.HeadingsOne.Add(headingOne);
-                if (pf.HeadingsOne.Count == maxHeadsOne)
+                if (pf.HeadingsOne.Count == Utils.MaxHeadsOne)
                     break;
             }
         }
@@ -179,7 +178,7 @@ namespace Crawler.Base
                 headingTwo.HeadingTwoLength = headingTwo.HeadingTwoText.Length;
 
                 pf.HeadingsTwo.Add(headingTwo);
-                if (pf.HeadingsTwo.Count == maxHeadsTwo)
+                if (pf.HeadingsTwo.Count == Utils.MaxHeadsTwo)
                     break;
             }
         }

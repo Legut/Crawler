@@ -55,14 +55,14 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.PagenameCharMax = new System.Windows.Forms.NumericUpDown();
+            this.TitleCharMax = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
-            this.PagenameCharMin = new System.Windows.Forms.NumericUpDown();
+            this.TitleCharMin = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.PagenamePixMax = new System.Windows.Forms.NumericUpDown();
+            this.TitlePixMax = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.PagenamePixMin = new System.Windows.Forms.NumericUpDown();
+            this.TitlePixMin = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -81,14 +81,20 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label22 = new System.Windows.Forms.Label();
             this.MaxSemaphores = new System.Windows.Forms.NumericUpDown();
-            this.CrawlSWF = new System.Windows.Forms.CheckBox();
+            this.CrawlIframes = new System.Windows.Forms.CheckBox();
             this.CrawlJavaScript = new System.Windows.Forms.CheckBox();
             this.CrawlCss = new System.Windows.Forms.CheckBox();
             this.CrawlImages = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.MaxPageSize = new System.Windows.Forms.NumericUpDown();
-            this.label21 = new System.Windows.Forms.Label();
-            this.MaxLinksPerUrl = new System.Windows.Forms.NumericUpDown();
+            this.MaxHeadsTwo = new System.Windows.Forms.NumericUpDown();
+            this.label26 = new System.Windows.Forms.Label();
+            this.MaxHeadsOne = new System.Windows.Forms.NumericUpDown();
+            this.label25 = new System.Windows.Forms.Label();
+            this.MaxKeywords = new System.Windows.Forms.NumericUpDown();
+            this.label24 = new System.Windows.Forms.Label();
+            this.MaxDescs = new System.Windows.Forms.NumericUpDown();
+            this.label23 = new System.Windows.Forms.Label();
+            this.MaxTitles = new System.Windows.Forms.NumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
             this.CrawlDepthLimit = new System.Windows.Forms.NumericUpDown();
             this.label19 = new System.Windows.Forms.Label();
@@ -108,18 +114,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.DescPixMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DescPixMin)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenameCharMax)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenameCharMin)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenamePixMax)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenamePixMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitleCharMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitleCharMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitlePixMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitlePixMin)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MaxSemaphores)).BeginInit();
             this.tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxPageSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxLinksPerUrl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxHeadsTwo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxHeadsOne)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxKeywords)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxDescs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxTitles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CrawlDepthLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TotalCrawlLimit)).BeginInit();
             this.SuspendLayout();
@@ -310,7 +319,7 @@
             this.groupBox2.Size = new System.Drawing.Size(378, 75);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Długości opisu metadanych";
+            this.groupBox2.Text = "Długości opisu meta";
             // 
             // DescCharMax
             // 
@@ -416,14 +425,14 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.PagenameCharMax);
+            this.groupBox1.Controls.Add(this.TitleCharMax);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.PagenameCharMin);
+            this.groupBox1.Controls.Add(this.TitleCharMin);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.PagenamePixMax);
+            this.groupBox1.Controls.Add(this.TitlePixMax);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.PagenamePixMin);
+            this.groupBox1.Controls.Add(this.TitlePixMin);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(7, 6);
@@ -431,19 +440,19 @@
             this.groupBox1.Size = new System.Drawing.Size(378, 75);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Długość nazwy strony";
+            this.groupBox1.Text = "Długość tytułu podstrony";
             // 
-            // PagenameCharMax
+            // TitleCharMax
             // 
-            this.PagenameCharMax.Location = new System.Drawing.Point(274, 45);
-            this.PagenameCharMax.Maximum = new decimal(new int[] {
+            this.TitleCharMax.Location = new System.Drawing.Point(274, 45);
+            this.TitleCharMax.Maximum = new decimal(new int[] {
             10000000,
             0,
             0,
             0});
-            this.PagenameCharMax.Name = "PagenameCharMax";
-            this.PagenameCharMax.Size = new System.Drawing.Size(98, 20);
-            this.PagenameCharMax.TabIndex = 9;
+            this.TitleCharMax.Name = "TitleCharMax";
+            this.TitleCharMax.Size = new System.Drawing.Size(98, 20);
+            this.TitleCharMax.TabIndex = 9;
             // 
             // label4
             // 
@@ -454,17 +463,17 @@
             this.label4.TabIndex = 8;
             this.label4.Text = "Max";
             // 
-            // PagenameCharMin
+            // TitleCharMin
             // 
-            this.PagenameCharMin.Location = new System.Drawing.Point(137, 44);
-            this.PagenameCharMin.Maximum = new decimal(new int[] {
+            this.TitleCharMin.Location = new System.Drawing.Point(137, 44);
+            this.TitleCharMin.Maximum = new decimal(new int[] {
             10000000,
             0,
             0,
             0});
-            this.PagenameCharMin.Name = "PagenameCharMin";
-            this.PagenameCharMin.Size = new System.Drawing.Size(98, 20);
-            this.PagenameCharMin.TabIndex = 7;
+            this.TitleCharMin.Name = "TitleCharMin";
+            this.TitleCharMin.Size = new System.Drawing.Size(98, 20);
+            this.TitleCharMin.TabIndex = 7;
             // 
             // label5
             // 
@@ -484,17 +493,17 @@
             this.label6.TabIndex = 5;
             this.label6.Text = "Znaki";
             // 
-            // PagenamePixMax
+            // TitlePixMax
             // 
-            this.PagenamePixMax.Location = new System.Drawing.Point(274, 19);
-            this.PagenamePixMax.Maximum = new decimal(new int[] {
+            this.TitlePixMax.Location = new System.Drawing.Point(274, 19);
+            this.TitlePixMax.Maximum = new decimal(new int[] {
             10000000,
             0,
             0,
             0});
-            this.PagenamePixMax.Name = "PagenamePixMax";
-            this.PagenamePixMax.Size = new System.Drawing.Size(98, 20);
-            this.PagenamePixMax.TabIndex = 4;
+            this.TitlePixMax.Name = "TitlePixMax";
+            this.TitlePixMax.Size = new System.Drawing.Size(98, 20);
+            this.TitlePixMax.TabIndex = 4;
             // 
             // label3
             // 
@@ -505,17 +514,17 @@
             this.label3.TabIndex = 3;
             this.label3.Text = "Max";
             // 
-            // PagenamePixMin
+            // TitlePixMin
             // 
-            this.PagenamePixMin.Location = new System.Drawing.Point(137, 18);
-            this.PagenamePixMin.Maximum = new decimal(new int[] {
+            this.TitlePixMin.Location = new System.Drawing.Point(137, 18);
+            this.TitlePixMin.Maximum = new decimal(new int[] {
             10000000,
             0,
             0,
             0});
-            this.PagenamePixMin.Name = "PagenamePixMin";
-            this.PagenamePixMin.Size = new System.Drawing.Size(98, 20);
-            this.PagenamePixMin.TabIndex = 2;
+            this.TitlePixMin.Name = "TitlePixMin";
+            this.TitlePixMin.Size = new System.Drawing.Size(98, 20);
+            this.TitlePixMin.TabIndex = 2;
             // 
             // label2
             // 
@@ -543,7 +552,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(391, 460);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Wydobycie";
+            this.tabPage2.Text = "Pozyskiwanie";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // groupBox4
@@ -563,16 +572,16 @@
             this.groupBox4.Size = new System.Drawing.Size(378, 447);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Detale strony";
+            this.groupBox4.Text = "Zbierane informacje";
             // 
             // ExtractPageSize
             // 
             this.ExtractPageSize.AutoSize = true;
             this.ExtractPageSize.Location = new System.Drawing.Point(7, 227);
             this.ExtractPageSize.Name = "ExtractPageSize";
-            this.ExtractPageSize.Size = new System.Drawing.Size(90, 17);
+            this.ExtractPageSize.Size = new System.Drawing.Size(101, 17);
             this.ExtractPageSize.TabIndex = 9;
-            this.ExtractPageSize.Text = "rozmiar strony";
+            this.ExtractPageSize.Text = "Rozmiar zasobu";
             this.ExtractPageSize.UseVisualStyleBackColor = true;
             // 
             // ExtractHash
@@ -580,9 +589,9 @@
             this.ExtractHash.AutoSize = true;
             this.ExtractHash.Location = new System.Drawing.Point(7, 204);
             this.ExtractHash.Name = "ExtractHash";
-            this.ExtractHash.Size = new System.Drawing.Size(89, 17);
+            this.ExtractHash.Size = new System.Drawing.Size(92, 17);
             this.ExtractHash.TabIndex = 8;
-            this.ExtractHash.Text = "wartość hash";
+            this.ExtractHash.Text = "Wartość hash";
             this.ExtractHash.UseVisualStyleBackColor = true;
             // 
             // ExtractTxtCodeRatio
@@ -590,9 +599,9 @@
             this.ExtractTxtCodeRatio.AutoSize = true;
             this.ExtractTxtCodeRatio.Location = new System.Drawing.Point(7, 181);
             this.ExtractTxtCodeRatio.Name = "ExtractTxtCodeRatio";
-            this.ExtractTxtCodeRatio.Size = new System.Drawing.Size(134, 17);
+            this.ExtractTxtCodeRatio.Size = new System.Drawing.Size(105, 17);
             this.ExtractTxtCodeRatio.TabIndex = 7;
-            this.ExtractTxtCodeRatio.Text = "Poziom tekstu do kodu";
+            this.ExtractTxtCodeRatio.Text = "Text / code ratio";
             this.ExtractTxtCodeRatio.UseVisualStyleBackColor = true;
             // 
             // ExtractWordCount
@@ -620,9 +629,9 @@
             this.ExtractH2.AutoSize = true;
             this.ExtractH2.Location = new System.Drawing.Point(7, 112);
             this.ExtractH2.Name = "ExtractH2";
-            this.ExtractH2.Size = new System.Drawing.Size(40, 17);
+            this.ExtractH2.Size = new System.Drawing.Size(89, 17);
             this.ExtractH2.TabIndex = 4;
-            this.ExtractH2.Text = "H2";
+            this.ExtractH2.Text = "Nagłówki H2";
             this.ExtractH2.UseVisualStyleBackColor = true;
             // 
             // ExtractH1
@@ -630,9 +639,9 @@
             this.ExtractH1.AutoSize = true;
             this.ExtractH1.Location = new System.Drawing.Point(7, 89);
             this.ExtractH1.Name = "ExtractH1";
-            this.ExtractH1.Size = new System.Drawing.Size(40, 17);
+            this.ExtractH1.Size = new System.Drawing.Size(89, 17);
             this.ExtractH1.TabIndex = 3;
-            this.ExtractH1.Text = "H1";
+            this.ExtractH1.Text = "Nagłówki H1";
             this.ExtractH1.UseVisualStyleBackColor = true;
             // 
             // ExtractMetaKeywords
@@ -640,9 +649,9 @@
             this.ExtractMetaKeywords.AutoSize = true;
             this.ExtractMetaKeywords.Location = new System.Drawing.Point(7, 66);
             this.ExtractMetaKeywords.Name = "ExtractMetaKeywords";
-            this.ExtractMetaKeywords.Size = new System.Drawing.Size(134, 17);
+            this.ExtractMetaKeywords.Size = new System.Drawing.Size(105, 17);
             this.ExtractMetaKeywords.TabIndex = 2;
-            this.ExtractMetaKeywords.Text = "Wyrazy kluczowe mety";
+            this.ExtractMetaKeywords.Text = "Słowa kluczowe";
             this.ExtractMetaKeywords.UseVisualStyleBackColor = true;
             // 
             // ExtractMetadataDesc
@@ -650,9 +659,9 @@
             this.ExtractMetadataDesc.AutoSize = true;
             this.ExtractMetadataDesc.Location = new System.Drawing.Point(7, 43);
             this.ExtractMetadataDesc.Name = "ExtractMetadataDesc";
-            this.ExtractMetadataDesc.Size = new System.Drawing.Size(108, 17);
+            this.ExtractMetadataDesc.Size = new System.Drawing.Size(78, 17);
             this.ExtractMetadataDesc.TabIndex = 1;
-            this.ExtractMetadataDesc.Text = "Opis metadanych";
+            this.ExtractMetadataDesc.Text = "Opisy meta";
             this.ExtractMetadataDesc.UseVisualStyleBackColor = true;
             // 
             // ExtractPageTitle
@@ -660,9 +669,9 @@
             this.ExtractPageTitle.AutoSize = true;
             this.ExtractPageTitle.Location = new System.Drawing.Point(7, 20);
             this.ExtractPageTitle.Name = "ExtractPageTitle";
-            this.ExtractPageTitle.Size = new System.Drawing.Size(82, 17);
+            this.ExtractPageTitle.Size = new System.Drawing.Size(100, 17);
             this.ExtractPageTitle.TabIndex = 0;
-            this.ExtractPageTitle.Text = "Tytuł strony";
+            this.ExtractPageTitle.Text = "Tytuły podstron";
             this.ExtractPageTitle.UseVisualStyleBackColor = true;
             // 
             // tabPage3
@@ -680,7 +689,7 @@
             // 
             this.groupBox5.Controls.Add(this.label22);
             this.groupBox5.Controls.Add(this.MaxSemaphores);
-            this.groupBox5.Controls.Add(this.CrawlSWF);
+            this.groupBox5.Controls.Add(this.CrawlIframes);
             this.groupBox5.Controls.Add(this.CrawlJavaScript);
             this.groupBox5.Controls.Add(this.CrawlCss);
             this.groupBox5.Controls.Add(this.CrawlImages);
@@ -689,7 +698,7 @@
             this.groupBox5.Size = new System.Drawing.Size(378, 156);
             this.groupBox5.TabIndex = 0;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Linki zasobów";
+            this.groupBox5.Text = "Analizowane zasoby";
             // 
             // label22
             // 
@@ -717,20 +726,20 @@
             this.MaxSemaphores.Size = new System.Drawing.Size(120, 20);
             this.MaxSemaphores.TabIndex = 4;
             this.MaxSemaphores.Value = new decimal(new int[] {
-            4,
+            10,
             0,
             0,
             0});
             // 
-            // CrawlSWF
+            // CrawlIframes
             // 
-            this.CrawlSWF.AutoSize = true;
-            this.CrawlSWF.Location = new System.Drawing.Point(7, 92);
-            this.CrawlSWF.Name = "CrawlSWF";
-            this.CrawlSWF.Size = new System.Drawing.Size(50, 17);
-            this.CrawlSWF.TabIndex = 3;
-            this.CrawlSWF.Text = "SWF";
-            this.CrawlSWF.UseVisualStyleBackColor = true;
+            this.CrawlIframes.AutoSize = true;
+            this.CrawlIframes.Location = new System.Drawing.Point(7, 92);
+            this.CrawlIframes.Name = "CrawlIframes";
+            this.CrawlIframes.Size = new System.Drawing.Size(60, 17);
+            this.CrawlIframes.TabIndex = 3;
+            this.CrawlIframes.Text = "Iframes";
+            this.CrawlIframes.UseVisualStyleBackColor = true;
             // 
             // CrawlJavaScript
             // 
@@ -764,9 +773,15 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.MaxPageSize);
-            this.tabPage4.Controls.Add(this.label21);
-            this.tabPage4.Controls.Add(this.MaxLinksPerUrl);
+            this.tabPage4.Controls.Add(this.MaxHeadsTwo);
+            this.tabPage4.Controls.Add(this.label26);
+            this.tabPage4.Controls.Add(this.MaxHeadsOne);
+            this.tabPage4.Controls.Add(this.label25);
+            this.tabPage4.Controls.Add(this.MaxKeywords);
+            this.tabPage4.Controls.Add(this.label24);
+            this.tabPage4.Controls.Add(this.MaxDescs);
+            this.tabPage4.Controls.Add(this.label23);
+            this.tabPage4.Controls.Add(this.MaxTitles);
             this.tabPage4.Controls.Add(this.label20);
             this.tabPage4.Controls.Add(this.CrawlDepthLimit);
             this.tabPage4.Controls.Add(this.label19);
@@ -780,59 +795,182 @@
             this.tabPage4.Text = "Limity";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
-            // MaxPageSize
+            // MaxHeadsTwo
             // 
-            this.MaxPageSize.Location = new System.Drawing.Point(265, 83);
-            this.MaxPageSize.Maximum = new decimal(new int[] {
-            100000000,
+            this.MaxHeadsTwo.Location = new System.Drawing.Point(265, 174);
+            this.MaxHeadsTwo.Maximum = new decimal(new int[] {
+            10,
             0,
             0,
             0});
-            this.MaxPageSize.Name = "MaxPageSize";
-            this.MaxPageSize.Size = new System.Drawing.Size(120, 20);
-            this.MaxPageSize.TabIndex = 7;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(7, 85);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(101, 13);
-            this.label21.TabIndex = 6;
-            this.label21.Text = "Limit rozmiaru strony";
-            // 
-            // MaxLinksPerUrl
-            // 
-            this.MaxLinksPerUrl.Location = new System.Drawing.Point(265, 57);
-            this.MaxLinksPerUrl.Maximum = new decimal(new int[] {
-            100000000,
+            this.MaxHeadsTwo.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
-            this.MaxLinksPerUrl.Name = "MaxLinksPerUrl";
-            this.MaxLinksPerUrl.Size = new System.Drawing.Size(120, 20);
-            this.MaxLinksPerUrl.TabIndex = 5;
+            this.MaxHeadsTwo.Name = "MaxHeadsTwo";
+            this.MaxHeadsTwo.Size = new System.Drawing.Size(120, 20);
+            this.MaxHeadsTwo.TabIndex = 17;
+            this.MaxHeadsTwo.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(7, 176);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(158, 13);
+            this.label26.TabIndex = 16;
+            this.label26.Text = "Limit zbieranych nagłówków H2";
+            // 
+            // MaxHeadsOne
+            // 
+            this.MaxHeadsOne.Location = new System.Drawing.Point(265, 144);
+            this.MaxHeadsOne.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.MaxHeadsOne.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.MaxHeadsOne.Name = "MaxHeadsOne";
+            this.MaxHeadsOne.Size = new System.Drawing.Size(120, 20);
+            this.MaxHeadsOne.TabIndex = 15;
+            this.MaxHeadsOne.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(7, 146);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(158, 13);
+            this.label25.TabIndex = 14;
+            this.label25.Text = "Limit zbieranych nagłówków H1";
+            // 
+            // MaxKeywords
+            // 
+            this.MaxKeywords.Location = new System.Drawing.Point(265, 115);
+            this.MaxKeywords.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.MaxKeywords.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.MaxKeywords.Name = "MaxKeywords";
+            this.MaxKeywords.Size = new System.Drawing.Size(120, 20);
+            this.MaxKeywords.TabIndex = 13;
+            this.MaxKeywords.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(7, 117);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(167, 13);
+            this.label24.TabIndex = 12;
+            this.label24.Text = "Limit zbieranych słów kluczowych";
+            // 
+            // MaxDescs
+            // 
+            this.MaxDescs.Location = new System.Drawing.Point(265, 86);
+            this.MaxDescs.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.MaxDescs.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.MaxDescs.Name = "MaxDescs";
+            this.MaxDescs.Size = new System.Drawing.Size(120, 20);
+            this.MaxDescs.TabIndex = 11;
+            this.MaxDescs.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(7, 88);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(162, 13);
+            this.label23.TabIndex = 10;
+            this.label23.Text = "Limit zbieranych opisów podstron";
+            // 
+            // MaxTitles
+            // 
+            this.MaxTitles.Location = new System.Drawing.Point(265, 58);
+            this.MaxTitles.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.MaxTitles.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.MaxTitles.Name = "MaxTitles";
+            this.MaxTitles.Size = new System.Drawing.Size(120, 20);
+            this.MaxTitles.TabIndex = 9;
+            this.MaxTitles.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(7, 59);
+            this.label20.Location = new System.Drawing.Point(7, 60);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(108, 13);
-            this.label20.TabIndex = 4;
-            this.label20.Text = "Limit linków na strone";
+            this.label20.Size = new System.Drawing.Size(164, 13);
+            this.label20.TabIndex = 8;
+            this.label20.Text = "Limit zbieranych tytułów podstron";
             // 
             // CrawlDepthLimit
             // 
             this.CrawlDepthLimit.Location = new System.Drawing.Point(265, 31);
             this.CrawlDepthLimit.Maximum = new decimal(new int[] {
-            100000000,
+            20,
+            0,
+            0,
+            0});
+            this.CrawlDepthLimit.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
             this.CrawlDepthLimit.Name = "CrawlDepthLimit";
             this.CrawlDepthLimit.Size = new System.Drawing.Size(120, 20);
             this.CrawlDepthLimit.TabIndex = 3;
+            this.CrawlDepthLimit.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // label19
             // 
@@ -847,13 +985,23 @@
             // 
             this.TotalCrawlLimit.Location = new System.Drawing.Point(265, 5);
             this.TotalCrawlLimit.Maximum = new decimal(new int[] {
-            100000000,
+            1000000,
+            0,
+            0,
+            0});
+            this.TotalCrawlLimit.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
             this.TotalCrawlLimit.Name = "TotalCrawlLimit";
             this.TotalCrawlLimit.Size = new System.Drawing.Size(120, 20);
             this.TotalCrawlLimit.TabIndex = 1;
+            this.TotalCrawlLimit.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // label18
             // 
@@ -891,10 +1039,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.DescPixMin)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenameCharMax)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenameCharMin)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenamePixMax)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PagenamePixMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitleCharMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitleCharMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitlePixMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TitlePixMin)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -904,8 +1052,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.MaxSemaphores)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxPageSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MaxLinksPerUrl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxHeadsTwo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxHeadsOne)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxKeywords)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxDescs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaxTitles)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CrawlDepthLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TotalCrawlLimit)).EndInit();
             this.ResumeLayout(false);
@@ -941,19 +1092,18 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown PagenameCharMax;
+        private System.Windows.Forms.NumericUpDown TitleCharMax;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown PagenameCharMin;
+        private System.Windows.Forms.NumericUpDown TitleCharMin;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown PagenamePixMax;
+        private System.Windows.Forms.NumericUpDown TitlePixMax;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown PagenamePixMin;
+        private System.Windows.Forms.NumericUpDown TitlePixMin;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.CheckBox ExtractPageSize;
         private System.Windows.Forms.CheckBox ExtractHash;
         private System.Windows.Forms.CheckBox ExtractTxtCodeRatio;
         private System.Windows.Forms.CheckBox ExtractWordCount;
@@ -965,20 +1115,27 @@
         private System.Windows.Forms.CheckBox ExtractPageTitle;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.CheckBox CrawlSWF;
+        private System.Windows.Forms.CheckBox CrawlIframes;
         private System.Windows.Forms.CheckBox CrawlJavaScript;
         private System.Windows.Forms.CheckBox CrawlCss;
         private System.Windows.Forms.CheckBox CrawlImages;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.NumericUpDown MaxSemaphores;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.NumericUpDown MaxPageSize;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.NumericUpDown MaxLinksPerUrl;
-        private System.Windows.Forms.Label label20;
         private System.Windows.Forms.NumericUpDown CrawlDepthLimit;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.NumericUpDown TotalCrawlLimit;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.CheckBox ExtractPageSize;
+        private System.Windows.Forms.NumericUpDown MaxHeadsTwo;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.NumericUpDown MaxHeadsOne;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.NumericUpDown MaxKeywords;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.NumericUpDown MaxDescs;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.NumericUpDown MaxTitles;
+        private System.Windows.Forms.Label label20;
     }
 }

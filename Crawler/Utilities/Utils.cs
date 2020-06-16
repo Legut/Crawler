@@ -28,32 +28,46 @@ namespace Crawler.Utilities
         public static int DescCharMin = 70;
         public static int DescPixMax = 1010;
         public static int DescPixMin = 400;
-        public static int PagenameCharMax = 60;
-        public static int PagenameCharMin = 30;
-        public static int PagenamePixMax = 545;
-        public static int PagenamePixMin = 200;
-        public static bool ExtractPageSize = false;
-        public static bool ExtractHash = false;
-        public static bool ExtractTxtCodeRatio = false;
-        public static bool ExtractWordCount = false;
-        public static bool ExtractIndexability = false;
-        public static bool ExtractH2 = false;
-        public static bool ExtractH1 = false;
-        public static bool ExtractMetaKeywords = false;
-        public static bool ExtractMetadataDesc = false;
-        public static bool ExtractPageTitle = false;
-        public static bool CrawlSwf = false;
-        public static bool CrawlJavaScript = false;
-        public static bool CrawlCss = false;
-        public static bool CrawlImages = false;
-        public static int MaxPageSize = 1000000;
-        public static int MaxLinksPerUrl = 10000000;
-        public static int CrawlDepthLimit = 10000000;
-        public static int TotalCrawlLimit = 100000000;
+        public static int TitleCharMax = 60;
+        public static int TitleCharMin = 30;
+        public static int TitlePixMax = 545;
+        public static int TitlePixMin = 200;
+        public static bool ExtractPageSize = true;
+        public static bool ExtractHash = true;
+        public static bool ExtractTxtCodeRatio = true;
+        public static bool ExtractWordCount = true;
+        public static bool ExtractIndexability = true;
+        public static bool ExtractH2 = true;
+        public static bool ExtractH1 = true;
+        public static bool ExtractMetaKeywords = true;
+        public static bool ExtractMetadataDesc = true;
+        public static bool ExtractPageTitle = true;
+        public static bool CrawlIframes = true;
+        public static bool CrawlJavaScript = true;
+        public static bool CrawlCss = true;
+        public static bool CrawlImages = true;
+        public static int CrawlDepthLimit = 10;
+        public static int TotalCrawlLimit = 100000;
+        public static int MaxTitles = 3;
+        public static int MaxDescs = 3;
+        public static int MaxKeywords = 3;
+        public static int MaxHeadsOne = 3;
+        public static int MaxHeadsTwo = 3;
         //-----------------------------------------//
         public static int MaxSemaphores = 50;
         public static int ErrorsCounter = 0;
         #endregion
+
+        public const int SEMAPHORES_COUNTER_INDEX = 0;
+        public const int VISITED_PAGES_COUNTER_INDEX = 1;
+        public const int TITLE_PIXEL_SIZE_PROBLEM_COUNTER_INDEX = 2;
+        public const int TITLE_CHAR_SIZE_COUNTER_INDEX = 3;
+        public const int DESC_PIXEL_SIZE_PROBLEM_COUNTER_INDEX = 4;
+        public const int DESC_CHAR_SIZE_PROBLEM_COUNTER_INDEX = 5;
+        public const int URL_CHAR_SIZE_PROBLEM_COUNTER_INDEX = 6;
+        public const int H1_CHAR_SIZE_PROBLEM_COUNTER_INDEX = 7;
+        public const int H2_CHAR_SIZE_PROBLEM_COUNTER_INDEX = 8;
+        public const int IMAGE_SIZE_PROBLEM_COUNTER_INDEX = 9;
 
         public static int CountWords(string text)
         {
@@ -84,7 +98,7 @@ namespace Crawler.Utilities
             using (StreamWriter sw = new StreamWriter(ConfigFilePath))
             {
                 // TODO: declare constant strings for names 
-                sw.WriteLine("ImgSizeMax=102");
+                sw.WriteLine("ImgSizeMax=100");
                 sw.WriteLine("ImgAltCharMax=100");
                 sw.WriteLine("H2CharMax=70");
                 sw.WriteLine("H1CharMax=70");
@@ -93,15 +107,18 @@ namespace Crawler.Utilities
                 sw.WriteLine("DescCharMin=70");
                 sw.WriteLine("DescPixMax=1010");
                 sw.WriteLine("DescPixMin=400");
-                sw.WriteLine("PagenameCharMax=60");
-                sw.WriteLine("PagenameCharMin=30");
-                sw.WriteLine("PagenamePixMax=545");
-                sw.WriteLine("PagenamePixMin=200");
-                sw.WriteLine("MaxSemaphores=4");
-                sw.WriteLine("MaxPageSize=1000000");
-                sw.WriteLine("MaxLinksPerUrl=10000000");
-                sw.WriteLine("CrawlDepthLimit=10000000");
-                sw.WriteLine("TotalCrawlLimit=100000000");
+                sw.WriteLine("TitleCharMax=60");
+                sw.WriteLine("TitleCharMin=30");
+                sw.WriteLine("TitlePixMax=545");
+                sw.WriteLine("TitlePixMin=200");
+                sw.WriteLine("MaxSemaphores=50");
+                sw.WriteLine("CrawlDepthLimit=10");
+                sw.WriteLine("TotalCrawlLimit=1000000");
+                sw.WriteLine("MaxTitles=3");
+                sw.WriteLine("MaxDescs=3");
+                sw.WriteLine("MaxKeywords=3");
+                sw.WriteLine("MaxHeadsOne=3");
+                sw.WriteLine("MaxHeadsTwo=3");
             }
         }
 
@@ -122,26 +139,35 @@ namespace Crawler.Utilities
 
                     switch (temp[0])
                     {
-                        case "PagenamePixMin":
-                            int.TryParse(temp[1], out PagenamePixMin);
+                        case "TitlePixMin":
+                            int.TryParse(temp[1], out TitlePixMin);
                             break;
-                        case "PagenamePixMax":
-                            int.TryParse(temp[1], out PagenamePixMax);
+                        case "TitlePixMax":
+                            int.TryParse(temp[1], out TitlePixMax);
                             break;
-                        case "PagenameCharMin":
-                            int.TryParse(temp[1], out PagenameCharMin);
+                        case "TitleCharMin":
+                            int.TryParse(temp[1], out TitleCharMin);
                             break;
-                        case "PagenameCharMax":
-                            int.TryParse(temp[1], out PagenameCharMax);
+                        case "TitleCharMax":
+                            int.TryParse(temp[1], out TitleCharMax);
                             break;
                         case "MaxSemaphores":
                             int.TryParse(temp[1], out MaxSemaphores);                            
                             break;
-                        case "MaxPageSize":
-                            int.TryParse(temp[1], out MaxPageSize);
+                        case "MaxTitles":
+                            int.TryParse(temp[1], out MaxTitles);
                             break;
-                        case "MaxLinksPerUrl":
-                            int.TryParse(temp[1], out MaxLinksPerUrl);
+                        case "MaxDescs":
+                            int.TryParse(temp[1], out MaxDescs);
+                            break;
+                        case "MaxKeywords":
+                            int.TryParse(temp[1], out MaxKeywords);
+                            break;
+                        case "MaxHeadsOne":
+                            int.TryParse(temp[1], out MaxHeadsOne);
+                            break;
+                        case "MaxHeadsTwo":
+                            int.TryParse(temp[1], out MaxHeadsTwo);
                             break;
                         case "CrawlDepthLimit":
                             int.TryParse(temp[1], out CrawlDepthLimit);
@@ -207,7 +233,7 @@ namespace Crawler.Utilities
                             bool.TryParse(temp[1].ToLower(), out ExtractPageTitle);
                             break;
                         case "CrawlSWF":
-                            bool.TryParse(temp[1].ToLower(), out CrawlSwf);
+                            bool.TryParse(temp[1].ToLower(), out CrawlIframes);
                             break;
                         case "CrawlJavaScript":
                             bool.TryParse(temp[1].ToLower(), out CrawlJavaScript);

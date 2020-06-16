@@ -49,138 +49,138 @@ namespace Crawler
 
         public string Address
         {
-            get { return address; }
-            set { address = value; }
+            get => address;
+            set => address = value;
         }
         public string ContentType
         {
-            get { return contentType; }
-            set { contentType = value; }
+            get => contentType;
+            set => contentType = value;
         }
         public string StatusCode
         {
-            get { return statusCode; }
-            set { statusCode = value; }
+            get => statusCode;
+            set => statusCode = value;
         }
         public string Status
         {
-            get { return status; }
-            set { status = value; }
+            get => status;
+            set => status = value;
         }
         public string Indexability
         {
-            get { return indexability; }
-            set { indexability = value; }
+            get => indexability;
+            set => indexability = value;
         }
         public string IndexabilityStatus
         {
-            get { return indexabilityStatus; }
-            set { indexabilityStatus = value; }
+            get => indexabilityStatus;
+            set => indexabilityStatus = value;
         }
         public List<Title> Titles
         {
-            get { return titles; }
-            set { titles = value; }
+            get => titles;
+            set => titles = value;
         }
         public List<MetaDescription> MetaDescriptions
         {
-            get { return metaDescriptions; }
-            set { metaDescriptions = value; }
+            get => metaDescriptions;
+            set => metaDescriptions = value;
         }
         public List<MetaKeywords> MetaKeywords
         {
-            get { return metaKeywords; }
-            set { metaKeywords = value; }
+            get => metaKeywords;
+            set => metaKeywords = value;
         }
         public List<HeadingOne> HeadingsOne
         {
-            get { return headingsOne; }
-            set { headingsOne = value; }
+            get => headingsOne;
+            set => headingsOne = value;
         }
         public List<HeadingTwo> HeadingsTwo
         {
-            get { return headingsTwo; }
-            set { headingsTwo = value; }
+            get => headingsTwo;
+            set => headingsTwo = value;
         }
-        public Int64 Size
+        public long Size
         {
-            get { return size; }
-            set { size = value; }
+            get => size;
+            set => size = value;
         }
         public int WordCount
         {
-            get { return wordCount; }
-            set { wordCount = value; }
+            get => wordCount;
+            set => wordCount = value;
         }
         public float TextRatio
         {
-            get { return textRatio; }
-            set { textRatio = value; }
+            get => textRatio;
+            set => textRatio = value;
         }
         public int UrlDepth
         {
-            get { return urlDepth; }
-            set { urlDepth = value; }
+            get => urlDepth;
+            set => urlDepth = value;
         }
         public long OutLinks
         {
-            get { return outLinks; }
-            set { outLinks = value; }
+            get => outLinks;
+            set => outLinks = value;
         }
         public long UniqueOutLinks
         {
-            get { return uniqueOutLinks; }
-            set { uniqueOutLinks = value; }
+            get => uniqueOutLinks;
+            set => uniqueOutLinks = value;
         }
         public HashSet<string> OutLinksAdresses
         {
-            get { return outLinksAdresses; }
-            set { outLinksAdresses = value; }
+            get => outLinksAdresses;
+            set => outLinksAdresses = value;
         }
         public long ExternalOutLinks
         {
-            get { return externalOutLinks; }
-            set { externalOutLinks = value; }
+            get => externalOutLinks;
+            set => externalOutLinks = value;
         }
         public long UniqueExternalOutLinks
         {
-            get { return uniqueExternalOutLinks; }
-            set { uniqueExternalOutLinks = value; }
+            get => uniqueExternalOutLinks;
+            set => uniqueExternalOutLinks = value;
         }
         public HashSet<string> ExternalOutLinksAdresses
         {
-            get { return externalOutLinksAdresses; }
-            set { externalOutLinksAdresses = value; }
+            get => externalOutLinksAdresses;
+            set => externalOutLinksAdresses = value;
         }
         public int Hash
         {
-            get { return hash; }
-            set { hash = value; }
+            get => hash;
+            set => hash = value;
         }
         public int ResponseTime
         {
-            get { return responseTime; }
-            set { responseTime = value; }
+            get => responseTime;
+            set => responseTime = value;
         }
         public string RedirectURL
         {
-            get { return redirectURL; }
-            set { redirectURL = value; }
+            get => redirectURL;
+            set => redirectURL = value;
         }
         public string RedirectType
         {
-            get { return redirectType; }
-            set { redirectType = value; }
+            get => redirectType;
+            set => redirectType = value;
         }
         public bool IsInternal
         {
-            get { return isInternal; }
-            set { isInternal = value; }
+            get => isInternal;
+            set => isInternal = value;
         }
         public bool IsDuplicate
         {
-            get { return isDuplicate; }
-            set { isDuplicate = value; }
+            get => isDuplicate;
+            set => isDuplicate = value;
         }
 
         public PageFragment()

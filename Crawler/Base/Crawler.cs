@@ -24,14 +24,15 @@ namespace Crawler.Base
         private readonly HashSet<Uri> crawledPages;
         private static Dictionary<string, InLinksCounter> inLinksData;
 
-
         private readonly SemaphoreSlim semaphore;
         private CancellationToken cancellationToken;
         private readonly CancellationTokenSource cts;
 
         public readonly MainForm.MainForm MainForm;
-        private int przejrzaneStrony;
-        private int stronyDoPrzejrzenia;
+
+        // Counters
+        private int visitedPages;
+        private int pagesTovisit;
 
         private DataTable dt;
 
@@ -48,20 +49,19 @@ namespace Crawler.Base
             inLinksData = new Dictionary<string, InLinksCounter>();            
             cancellationToken = default;
             
-            przejrzaneStrony = 0;
-            stronyDoPrzejrzenia = 1;
+            visitedPages = 0;
+            pagesTovisit = 1;
         }
 
         private void LoadCrawlingOptions()
         {
-            //TODO: updateGui
             MainForm.Invalidate();
             MainForm.Update();
         }
 
         private async Task StartCrawlingPage(Uri page, CancellationToken ctsToken)
         {
-            MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores);
+            MainForm.UpdateSemaphoresStatus(semaphore.CurrentCount);
             crawledPages.Add(page);
 
             // Wait for semaphore
@@ -71,12 +71,6 @@ namespace Crawler.Base
                 if (!cts.IsCancellationRequested)
                 {
                     PageFragment pf = new PageFragment {Address = page.AbsoluteUri};
-
-                    //TODO: Dobrze zaznaczyc błędy/*
-                    if (pf.Address.Length < PagenameCharMin || pf.Address.Length > PagenameCharMax)
-                    {
-                        MainForm.IncreaseErrorCount();
-                    }
 
                     // Download page
                     HttpClient httpClient = new HttpClient();
@@ -92,9 +86,13 @@ namespace Crawler.Base
                             HtmlDocument htmlDocument = new HtmlDocument();
                             htmlDocument.LoadHtml(sourceHtml);
 
-                            // Crawl deeper through urls found on this page
-                            // (it happens in separate threads simultanously)
-                            CrawlFurther(htmlDocument, ref pf);
+                            // Check whether url depth is in acceptable range if not don't crawl further
+                            if (page.Segments.Length - 1 <= Utils.CrawlDepthLimit)
+                            {
+                                // Crawl deeper through urls found on this page
+                                // (it happens in separate threads simultanously)
+                                CrawlFurther(htmlDocument, ref pf);
+                            }
 
                             // Fulfill PageFragment with data
                             ManagePageFragment(ref pf, ref response, ref htmlDocument, page);
@@ -139,7 +137,7 @@ namespace Crawler.Base
                         Debug.WriteLine(" strona " + page + " spotkala niezdefiniowany (nieobsłużony indywidualnie) wyjątek: " + ex.Message);
                     }
 
-                    UpdateDebugGui();
+                    UpdateCountersList(ref pf);
                 }
             }
             catch (OperationCanceledException)
@@ -154,11 +152,36 @@ namespace Crawler.Base
             this.semaphore.Release();
         }
 
-        private void UpdateDebugGui()
+        private void UpdateCountersList(ref PageFragment pf)
         {
-            MainForm.UpdateCrawlingStatus(semaphore.CurrentCount, MaxSemaphores);
-            MainForm.UpdateCrawledStatus(przejrzaneStrony, stronyDoPrzejrzenia);
-            przejrzaneStrony++;
+            MainForm.UpdateSemaphoresStatus(semaphore.CurrentCount);
+            MainForm.UpdateVisitedPagesStatus(visitedPages, pagesTovisit);
+
+            foreach (var title in pf.Titles)
+            {
+                if (title.TitleLength > TitleCharMax || title.TitleLength < TitleCharMin) { MainForm.IncreaseTitleCharProblemsCounter(); }
+                if (title.TitlePixelWidth > TitlePixMax || title.TitlePixelWidth < TitlePixMin) { MainForm.IncreaseTitlePixelProblemsCounter(); }
+            }
+            foreach (var desc in pf.MetaDescriptions)
+            {
+                if (desc.MetaDescriptionLength > TitleCharMax || desc.MetaDescriptionLength < TitleCharMin) { MainForm.IncreaseDescCharProblemsCounter(); }
+                if (desc.MetaDescriptionPixelWidth > TitlePixMax || desc.MetaDescriptionPixelWidth < TitlePixMin) { MainForm.IncreaseDescPixelProblemsCounter(); }
+            }
+
+            if (pf.Address.Length > UrlCharMax) { MainForm.IncreaseUrlProblemsCounter(); }
+
+            foreach (var heading in pf.HeadingsOne)
+            {
+                if (heading.HeadingOneLength > H1CharMax) { MainForm.IncreaseHeadOneProblemsCounter(); }
+            }
+
+            foreach (var heading in pf.HeadingsTwo)
+            {
+                if (heading.HeadingTwoLength > H2CharMax) { MainForm.IncreaseHeadTwoProblemsCounter(); }
+            }
+
+            if (pf.Size > ImgSizeMax && pf.ContentType.Contains("image")) { MainForm.IncreaseImgProblemsCounter(); Debug.WriteLine("Imageee: " + pf.Address);}
+            visitedPages++;
         }
         public async void StartCrawl()
         {
@@ -245,7 +268,8 @@ namespace Crawler.Base
             }
 
             UpdateInLinks();
-            UpdateDebugGui();
+            MainForm.UpdateSemaphoresStatus(semaphore.CurrentCount);
+            MainForm.UpdateVisitedPagesStatus(visitedPages, pagesTovisit);
             MainForm.MakeButtonReady();
         }
 

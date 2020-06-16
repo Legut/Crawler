@@ -63,20 +63,13 @@ namespace Crawler.MainForm
             this.imagesTabPage = new System.Windows.Forms.TabPage();
             this.imagesDataGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label2 = new System.Windows.Forms.Label();
-            this.crawlingStatusLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.crawledStatusLabel = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.singleDataGridView = new System.Windows.Forms.DataGridView();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.countersList = new System.Windows.Forms.ListView();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.countersList = new System.Windows.Forms.ListBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -196,6 +189,7 @@ namespace Crawler.MainForm
             this.allTabPage.Name = "allTabPage";
             this.allTabPage.Size = new System.Drawing.Size(1022, 490);
             this.allTabPage.TabIndex = 0;
+            this.allTabPage.Tag = "allTabPage";
             this.allTabPage.Text = "Wszystkie";
             this.allTabPage.UseVisualStyleBackColor = true;
             // 
@@ -225,6 +219,7 @@ namespace Crawler.MainForm
             this.internalTabPage.Name = "internalTabPage";
             this.internalTabPage.Size = new System.Drawing.Size(1022, 490);
             this.internalTabPage.TabIndex = 2;
+            this.internalTabPage.Tag = "internalTabPage";
             this.internalTabPage.Text = "Wewnętrzne";
             this.internalTabPage.UseVisualStyleBackColor = true;
             // 
@@ -255,6 +250,7 @@ namespace Crawler.MainForm
             this.externalTabPage.Name = "externalTabPage";
             this.externalTabPage.Size = new System.Drawing.Size(1022, 490);
             this.externalTabPage.TabIndex = 1;
+            this.externalTabPage.Tag = "externalTabPage";
             this.externalTabPage.Text = "Zewnętrzne";
             this.externalTabPage.UseVisualStyleBackColor = true;
             // 
@@ -285,6 +281,7 @@ namespace Crawler.MainForm
             this.titlesTabPage.Name = "titlesTabPage";
             this.titlesTabPage.Size = new System.Drawing.Size(1022, 490);
             this.titlesTabPage.TabIndex = 3;
+            this.titlesTabPage.Tag = "titlesTabPage";
             this.titlesTabPage.Text = "Tytuły podstron";
             this.titlesTabPage.UseVisualStyleBackColor = true;
             // 
@@ -315,6 +312,7 @@ namespace Crawler.MainForm
             this.metaDescTabPage.Name = "metaDescTabPage";
             this.metaDescTabPage.Size = new System.Drawing.Size(1022, 490);
             this.metaDescTabPage.TabIndex = 4;
+            this.metaDescTabPage.Tag = "metaDescTabPage";
             this.metaDescTabPage.Text = "Opisy meta";
             this.metaDescTabPage.UseVisualStyleBackColor = true;
             // 
@@ -345,6 +343,7 @@ namespace Crawler.MainForm
             this.metaKeywordsTabPage.Name = "metaKeywordsTabPage";
             this.metaKeywordsTabPage.Size = new System.Drawing.Size(1022, 490);
             this.metaKeywordsTabPage.TabIndex = 5;
+            this.metaKeywordsTabPage.Tag = "metaKeywordsTabPage";
             this.metaKeywordsTabPage.Text = "Słowa kluczowe";
             this.metaKeywordsTabPage.UseVisualStyleBackColor = true;
             // 
@@ -375,6 +374,7 @@ namespace Crawler.MainForm
             this.h1TabPage.Name = "h1TabPage";
             this.h1TabPage.Size = new System.Drawing.Size(1022, 490);
             this.h1TabPage.TabIndex = 6;
+            this.h1TabPage.Tag = "h1TabPage";
             this.h1TabPage.Text = "H1";
             this.h1TabPage.UseVisualStyleBackColor = true;
             // 
@@ -405,6 +405,7 @@ namespace Crawler.MainForm
             this.h2TabPage.Name = "h2TabPage";
             this.h2TabPage.Size = new System.Drawing.Size(1022, 490);
             this.h2TabPage.TabIndex = 7;
+            this.h2TabPage.Tag = "h2TabPage";
             this.h2TabPage.Text = "H2";
             this.h2TabPage.UseVisualStyleBackColor = true;
             // 
@@ -435,6 +436,7 @@ namespace Crawler.MainForm
             this.imagesTabPage.Name = "imagesTabPage";
             this.imagesTabPage.Size = new System.Drawing.Size(1022, 490);
             this.imagesTabPage.TabIndex = 8;
+            this.imagesTabPage.Tag = "imagesTabPage";
             this.imagesTabPage.Text = "Obrazki";
             this.imagesTabPage.UseVisualStyleBackColor = true;
             // 
@@ -458,24 +460,6 @@ namespace Crawler.MainForm
             this.dataGridViewTextBoxColumn8.HeaderText = "Address";
             this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Wolne wątki";
-            // 
-            // crawlingStatusLabel
-            // 
-            this.crawlingStatusLabel.AutoSize = true;
-            this.crawlingStatusLabel.Location = new System.Drawing.Point(172, 8);
-            this.crawlingStatusLabel.Name = "crawlingStatusLabel";
-            this.crawlingStatusLabel.Size = new System.Drawing.Size(36, 13);
-            this.crawlingStatusLabel.TabIndex = 6;
-            this.crawlingStatusLabel.Text = "0 / 10";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -484,24 +468,6 @@ namespace Crawler.MainForm
             this.label4.Size = new System.Drawing.Size(120, 13);
             this.label4.TabIndex = 7;
             this.label4.Text = "Strony do przeszukania:";
-            // 
-            // crawledStatusLabel
-            // 
-            this.crawledStatusLabel.AutoSize = true;
-            this.crawledStatusLabel.Location = new System.Drawing.Point(172, 34);
-            this.crawledStatusLabel.Name = "crawledStatusLabel";
-            this.crawledStatusLabel.Size = new System.Drawing.Size(30, 13);
-            this.crawledStatusLabel.TabIndex = 8;
-            this.crawledStatusLabel.Text = "0 / 0";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 21);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(67, 13);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "IdleCounter: ";
             // 
             // tableLayoutPanel1
             // 
@@ -580,13 +546,6 @@ namespace Crawler.MainForm
             // splitContainer5.Panel1
             // 
             this.splitContainer5.Panel1.Controls.Add(this.countersList);
-            this.splitContainer5.Panel1.Controls.Add(this.label9);
-            this.splitContainer5.Panel1.Controls.Add(this.crawledStatusLabel);
-            this.splitContainer5.Panel1.Controls.Add(this.label7);
-            this.splitContainer5.Panel1.Controls.Add(this.label5);
-            this.splitContainer5.Panel1.Controls.Add(this.label2);
-            this.splitContainer5.Panel1.Controls.Add(this.label6);
-            this.splitContainer5.Panel1.Controls.Add(this.crawlingStatusLabel);
             this.splitContainer5.Panel1.Padding = new System.Windows.Forms.Padding(0, 3, 3, 3);
             // 
             // splitContainer5.Panel2
@@ -599,40 +558,13 @@ namespace Crawler.MainForm
             // 
             // countersList
             // 
-            this.countersList.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.countersList.HideSelection = false;
-            this.countersList.Location = new System.Drawing.Point(0, 210);
+            this.countersList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.countersList.FormattingEnabled = true;
+            this.countersList.Location = new System.Drawing.Point(0, 3);
             this.countersList.Name = "countersList";
-            this.countersList.Size = new System.Drawing.Size(247, 255);
+            this.countersList.Size = new System.Drawing.Size(247, 462);
             this.countersList.TabIndex = 13;
-            this.countersList.UseCompatibleStateImageBehavior = false;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 47);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(68, 13);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "Ilość błędów";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(172, 47);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(13, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "0";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 34);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(117, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Ilość przejrzanych stron";
+            this.countersList.Tag = "countersList";
             // 
             // richTextBox2
             // 
@@ -779,7 +711,6 @@ namespace Crawler.MainForm
             this.splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.singleDataGridView)).EndInit();
             this.splitContainer5.Panel1.ResumeLayout(false);
-            this.splitContainer5.Panel1.PerformLayout();
             this.splitContainer5.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
@@ -806,11 +737,7 @@ namespace Crawler.MainForm
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage allTabPage;
         private System.Windows.Forms.TabPage externalTabPage;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label crawlingStatusLabel;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label crawledStatusLabel;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.DataGridView allDataGridView;
         private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.TabPage internalTabPage;
@@ -837,16 +764,12 @@ namespace Crawler.MainForm
         private ToolStripMenuItem oProgramieToolStripMenuItem;
         private ToolStripMenuItem ustawieniaToolStripMenuItem;
         private Label label3;
-        private Label label7;
-        private Label label5;
-        private Label label9;
         private TabPage titlesTabPage;
         private TabPage metaDescTabPage;
         private TabPage metaKeywordsTabPage;
         private TabPage h1TabPage;
         private TabPage h2TabPage;
         private TabPage imagesTabPage;
-        private ListView countersList;
         private DataGridView pageTitlesDataGridView;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private DataGridView metaDescDataGridView;
@@ -859,6 +782,7 @@ namespace Crawler.MainForm
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
         private DataGridView imagesDataGridView;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
+        private ListBox countersList;
     }
 }
 

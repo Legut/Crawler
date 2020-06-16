@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Crawler.Elements;
+using Crawler.Utilities;
 using HtmlAgilityPack;
 
 namespace Crawler.Base
@@ -15,10 +16,14 @@ namespace Crawler.Base
         private void CrawlFurther(HtmlDocument htmlDocument, ref PageFragment pf)
         {
             CrawlThroughAnchors(htmlDocument, ref pf);
-            CrawlThroughLinks(htmlDocument, ref pf);
-            CrawlThroughScripts(htmlDocument, ref pf);
-            CrawlThroughIframes(htmlDocument, ref pf);
-            CrawlThroughImages(htmlDocument, ref pf);
+            if (Utils.CrawlCss)
+                CrawlThroughLinks(htmlDocument, ref pf);
+            if (Utils.CrawlJavaScript)
+                CrawlThroughScripts(htmlDocument, ref pf);
+            if(Utils.CrawlIframes)
+                CrawlThroughIframes(htmlDocument, ref pf);
+            if (Utils.CrawlImages)
+                CrawlThroughImages(htmlDocument, ref pf);
         }
         private void CrawlThroughAnchors(HtmlDocument htmlDocument, ref PageFragment pf)
         {
@@ -87,39 +92,39 @@ namespace Crawler.Base
             // Refactor addres to make it a full absolute URL
             NormalizeAddress(BaseUrl, ref address, pf.Address);
             // Check whether address is correct or not
-            if (address != null)
+            if (address == null) return;
+
+            if (Uri.Compare(BaseUrl, new Uri(address), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
             {
-                if (Uri.Compare(BaseUrl, new Uri(address), UriComponents.Host, UriFormat.SafeUnescaped, StringComparison.CurrentCulture) == 0)
+                pf.OutLinks++;
+                if (!pf.OutLinksAdresses.Contains(address))
                 {
-                    pf.OutLinks++;
-                    if (!pf.OutLinksAdresses.Contains(address))
-                    {
-                        pf.OutLinksAdresses.Add(address);
-                        pf.UniqueOutLinks++;
-                    }
-                    if (!inLinksData.ContainsKey(address))
-                        inLinksData.Add(address, new InLinksCounter());
-
-                    inLinksData[address].InLinksCount++;
-                    inLinksData[address].UniqueInLinks.Add(pf.Address);
+                    pf.OutLinksAdresses.Add(address);
+                    pf.UniqueOutLinks++;
                 }
-                else
-                {
-                    pf.ExternalOutLinks++;
-                    if (!pf.ExternalOutLinksAdresses.Contains(address))
-                    {
-                        pf.ExternalOutLinksAdresses.Add(address);
-                        pf.UniqueExternalOutLinks++;
-                    }
-                }
+                if (!inLinksData.ContainsKey(address))
+                    inLinksData.Add(address, new InLinksCounter());
 
-                // Check whether address had been crawled before or not
-                if (!crawledPages.Contains(new Uri(address)))
+                inLinksData[address].InLinksCount++;
+                inLinksData[address].UniqueInLinks.Add(pf.Address);
+            }
+            else
+            {
+                pf.ExternalOutLinks++;
+                if (!pf.ExternalOutLinksAdresses.Contains(address))
                 {
-                    stronyDoPrzejrzenia++;
-                    _ = StartCrawlingPage(new Uri(address), cts.Token);
+                    pf.ExternalOutLinksAdresses.Add(address);
+                    pf.UniqueExternalOutLinks++;
                 }
             }
+
+            // Check whether address had been crawled before or not
+            if (crawledPages.Contains(new Uri(address))) { return; }
+            // Check whether total crawl limit has been exceeded
+            if (crawledPages.Count >= Utils.TotalCrawlLimit) { return; }
+
+            pagesTovisit++;
+            _ = StartCrawlingPage(new Uri(address), cts.Token);
         }
     }
 }

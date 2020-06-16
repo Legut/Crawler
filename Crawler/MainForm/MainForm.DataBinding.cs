@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Crawler.Utilities;
 
 namespace Crawler.MainForm
 {
@@ -65,8 +66,11 @@ namespace Crawler.MainForm
             pageTitlesDataGridView.Columns[Base.Crawler.TITLE_COL + 1].Visible = true;
             pageTitlesDataGridView.Columns[Base.Crawler.TITLE_LENGTH_COL + 1].Visible = true;
             pageTitlesDataGridView.Columns[Base.Crawler.TITLE_PIXEL_WIDTH_COL + 1].Visible = true;
-            pageTitlesDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
-            pageTitlesDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            if (Utils.ExtractIndexability)
+            {
+                pageTitlesDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
+                pageTitlesDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            }
         }
         public void BindDataTableToMetaDescs(DataTable dt)
         {
@@ -82,8 +86,11 @@ namespace Crawler.MainForm
             metaDescDataGridView.Columns[Base.Crawler.META_DESC_COL + 1].Visible = true;
             metaDescDataGridView.Columns[Base.Crawler.META_DESC_LENGTH_COL + 1].Visible = true;
             metaDescDataGridView.Columns[Base.Crawler.META_DESC_PIXEL_WIDTH_COL + 1].Visible = true;
-            metaDescDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
-            metaDescDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            if (Utils.ExtractIndexability)
+            {
+                metaDescDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
+                metaDescDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            }
         }
         public void BindDataTableToKeywords(DataTable dt)
         {
@@ -98,8 +105,11 @@ namespace Crawler.MainForm
             keywordsDataGridView.Columns[Base.Crawler.ADDRESS_COL].Visible = true;
             keywordsDataGridView.Columns[Base.Crawler.META_KEYWORDS_COL + 1].Visible = true;
             keywordsDataGridView.Columns[Base.Crawler.META_KEYWORDS_LENGTH_COL + 1].Visible = true;
-            keywordsDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
-            keywordsDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            if (Utils.ExtractIndexability)
+            {
+                keywordsDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
+                keywordsDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            }
         }
         public void BindDataTableToHeadingsOne(DataTable dt)
         {
@@ -114,8 +124,11 @@ namespace Crawler.MainForm
             headingOneDataGridView.Columns[Base.Crawler.ADDRESS_COL].Visible = true;
             headingOneDataGridView.Columns[Base.Crawler.H_ONE_COL + 1].Visible = true;
             headingOneDataGridView.Columns[Base.Crawler.H_ONE_LENGTH_COL + 1].Visible = true;
-            headingOneDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
-            headingOneDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            if (Utils.ExtractIndexability)
+            {
+                headingOneDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
+                headingOneDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            }
         }
         public void BindDataTableToHeadingsTwo(DataTable dt)
         {
@@ -130,8 +143,11 @@ namespace Crawler.MainForm
             headingTwoDataGridView.Columns[Base.Crawler.ADDRESS_COL].Visible = true;
             headingTwoDataGridView.Columns[Base.Crawler.H_TWO_COL + 1].Visible = true;
             headingTwoDataGridView.Columns[Base.Crawler.H_TWO_LENGTH_COL + 1].Visible = true;
-            headingTwoDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
-            headingTwoDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            if (Utils.ExtractIndexability)
+            {
+                headingTwoDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
+                headingTwoDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            }
         }
         public void BindDataTableToImages(DataTable dt)
         {
@@ -145,9 +161,14 @@ namespace Crawler.MainForm
 
             imagesDataGridView.Columns[Base.Crawler.ADDRESS_COL].Visible = true;
             imagesDataGridView.Columns[Base.Crawler.CONTET_TYPE_COL].Visible = true;
-            imagesDataGridView.Columns[Base.Crawler.SIZE_COL].Visible = true;
-            imagesDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
-            imagesDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            if (Utils.ExtractPageSize)
+                imagesDataGridView.Columns[Base.Crawler.SIZE_COL].Visible = true;
+            if (Utils.ExtractIndexability)
+            {
+                imagesDataGridView.Columns[Base.Crawler.INDEXABILITY_COL].Visible = true;
+                imagesDataGridView.Columns[Base.Crawler.INDEXABILITY_STATUS_COL].Visible = true;
+            }
+
             imagesDataGridView.Columns[Base.Crawler.INLINKS_COL].Visible = true;
             imagesDataGridView.Columns[Base.Crawler.UNIQUE_INLINKS_COL].Visible = true;
             imagesDataGridView.Columns[Base.Crawler.UNIQUE_INLINKS_OF_TOTAL_COL].Visible = true;

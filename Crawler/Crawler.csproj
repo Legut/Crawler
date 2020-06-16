@@ -151,6 +151,9 @@
     <Compile Include="Elements\HeadingOne.cs" />
     <Compile Include="Elements\Title.cs" />
     <Compile Include="Base\Crawler.cs" />
+    <Compile Include="MainForm\MainForm.Counters.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainForm\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

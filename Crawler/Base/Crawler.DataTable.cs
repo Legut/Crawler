@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using Crawler.Utilities;
 
 namespace Crawler.Base
 {
@@ -33,10 +29,16 @@ namespace Crawler.Base
             dt.Columns.Add(CONTET_TYPE_COL).DefaultValue = "";
             dt.Columns.Add(STATUS_CODE_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(STATUS_COL).DefaultValue = "";
-            dt.Columns.Add(INDEXABILITY_COL).DefaultValue = "";
-            dt.Columns.Add(INDEXABILITY_STATUS_COL).DefaultValue = "";
+            if (Utils.ExtractIndexability)
+            {
+                dt.Columns.Add(INDEXABILITY_COL).DefaultValue = "";
+                dt.Columns.Add(INDEXABILITY_STATUS_COL).DefaultValue = "";
+            }
+
             dt.Columns.Add(ISINTERNAL_COL).DefaultValue = "";
-            dt.Columns.Add(ISDUPLICATE_COL).DefaultValue = "";
+
+            if (Utils.ExtractHash)
+                dt.Columns.Add(ISDUPLICATE_COL).DefaultValue = "";
 
             dt.Columns.Add(TITLE_COL + titleColumnsCount).DefaultValue = "";
             dt.Columns.Add(TITLE_LENGTH_COL + titleColumnsCount, typeof(int)).DefaultValue = null;
@@ -49,15 +51,24 @@ namespace Crawler.Base
             dt.Columns.Add(META_KEYWORDS_COL + keywordColumnsCount).DefaultValue = "";
             dt.Columns.Add(META_KEYWORDS_LENGTH_COL + keywordColumnsCount, typeof(int)).DefaultValue = null;
 
-            dt.Columns.Add(H_ONE_COL + headOneColumnsCount).DefaultValue = "";
-            dt.Columns.Add(H_ONE_LENGTH_COL + headOneColumnsCount, typeof(int)).DefaultValue = null;
+            if (Utils.ExtractH1)
+            {
+                dt.Columns.Add(H_ONE_COL + headOneColumnsCount).DefaultValue = "";
+                dt.Columns.Add(H_ONE_LENGTH_COL + headOneColumnsCount, typeof(int)).DefaultValue = null;
+            }
 
-            dt.Columns.Add(H_TWO_COL + headTwoColumnsCount).DefaultValue = "";
-            dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount, typeof(int)).DefaultValue = null;
+            if (Utils.ExtractH2)
+            {
+                dt.Columns.Add(H_TWO_COL + headTwoColumnsCount).DefaultValue = "";
+                dt.Columns.Add(H_TWO_LENGTH_COL + headTwoColumnsCount, typeof(int)).DefaultValue = null;
+            }
 
-            dt.Columns.Add(SIZE_COL, typeof(long)).DefaultValue = null;
-            dt.Columns.Add(WORD_COUNT_COL, typeof(int)).DefaultValue = null;
-            dt.Columns.Add(TEXT_RATIO_COL).DefaultValue = "";
+            if (Utils.ExtractPageSize)
+                dt.Columns.Add(SIZE_COL, typeof(long)).DefaultValue = null;
+            if (Utils.ExtractWordCount)
+                dt.Columns.Add(WORD_COUNT_COL, typeof(int)).DefaultValue = null;
+            if (Utils.ExtractTxtCodeRatio)
+                dt.Columns.Add(TEXT_RATIO_COL).DefaultValue = "";
             dt.Columns.Add(URL_DEPTH_COL, typeof(int)).DefaultValue = null;
 
             dt.Columns.Add(OUTLINKS_COL, typeof(int)).DefaultValue = null;
@@ -69,9 +80,8 @@ namespace Crawler.Base
 
             dt.Columns.Add(EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
             dt.Columns.Add(UNIQUE_EXTERNAL_OUTLIKNS_COL, typeof(int)).DefaultValue = null;
-            dt.Columns.Add(HASH_VALUE_COL, typeof(int)).DefaultValue = null;
-
-            
+            if (Utils.ExtractHash)
+                dt.Columns.Add(HASH_VALUE_COL, typeof(int)).DefaultValue = null;
 
             // Bind data to dataGridViews
             MainForm.BindDataTableToAll(dt);
@@ -80,8 +90,25 @@ namespace Crawler.Base
             MainForm.BindDataTableToPageTitles(dt);
             MainForm.BindDataTableToMetaDescs(dt);
             MainForm.BindDataTableToKeywords(dt);
-            MainForm.BindDataTableToHeadingsOne(dt);
-            MainForm.BindDataTableToHeadingsTwo(dt);
+
+            if (Utils.ExtractH1)
+            {
+                if(!MainForm.CheckIfTabIsVisible("h1TabPage"))
+                    MainForm.VisibleTab("h1TabPage");
+                MainForm.BindDataTableToHeadingsOne(dt);
+            }
+            else
+                MainForm.HideTab("h1TabPage");
+
+            if (Utils.ExtractH2)
+            {
+                if (!MainForm.CheckIfTabIsVisible("h2TabPage"))
+                    MainForm.VisibleTab("h2TabPage");
+                MainForm.BindDataTableToHeadingsTwo(dt);
+            }
+            else
+                MainForm.HideTab("h2TabPage");
+
             MainForm.BindDataTableToImages(dt);
         }
         private void UpdateDataTable(PageFragment pf)
@@ -92,25 +119,30 @@ namespace Crawler.Base
             row[CONTET_TYPE_COL] = pf.ContentType;
             row[STATUS_CODE_COL] = pf.StatusCode;
             row[STATUS_COL] = pf.Status;
-            row[INDEXABILITY_COL] = pf.Indexability;
-            row[INDEXABILITY_STATUS_COL] = pf.IndexabilityStatus;
-            row[ISINTERNAL_COL] = pf.IsInternal;
-            row[SIZE_COL] = pf.Size;
+            if (Utils.ExtractIndexability)
+            {
+                row[INDEXABILITY_COL] = pf.Indexability;
+                row[INDEXABILITY_STATUS_COL] = pf.IndexabilityStatus;
+            }
 
-            row[ISDUPLICATE_COL] = pf.IsDuplicate;
-            if(pf.WordCount != 0)
+            row[ISINTERNAL_COL] = pf.IsInternal;
+            if (Utils.ExtractPageSize)
+                row[SIZE_COL] = pf.Size;
+
+            if (Utils.ExtractHash)
+                row[ISDUPLICATE_COL] = pf.IsDuplicate;
+            if (pf.WordCount > 0 && Utils.ExtractWordCount)
                 row[WORD_COUNT_COL] = pf.WordCount;
-            if(pf.TextRatio != 0)
+            if (pf.TextRatio > 0 && Utils.ExtractTxtCodeRatio)
                 row[TEXT_RATIO_COL] = pf.TextRatio.ToString("F");
-            if(pf.IsInternal)
-                row[URL_DEPTH_COL] = pf.UrlDepth;
+            row[URL_DEPTH_COL] = pf.UrlDepth;
 
             HandleTitles(ref row, pf.Titles);
             HandleDesc(ref row, pf.MetaDescriptions);
             HandleKeywords(ref row, pf.MetaKeywords);
-            HandleHeadsOne(ref row, pf.HeadingsOne);
-            HandleHeadsTwo(ref row, pf.HeadingsTwo);
-            
+            if (Utils.ExtractH1) { HandleHeadsOne(ref row, pf.HeadingsOne); }
+            if (Utils.ExtractH2) { HandleHeadsTwo(ref row, pf.HeadingsTwo); }
+
             if (pf.OutLinks > 0)
             {
                 row[OUTLINKS_COL] = pf.OutLinks;
@@ -131,7 +163,8 @@ namespace Crawler.Base
                 row[UNIQUE_INLINKS_OF_TOTAL_COL] = temp.ToString("F");
             }
 
-            row[HASH_VALUE_COL] = pf.Hash;
+            if (Utils.ExtractHash)
+                row[HASH_VALUE_COL] = pf.Hash;
 
             dt.Rows.Add(row);
         }

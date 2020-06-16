@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using System.Windows.Input;
 using Crawler.Utilities;
-using Crawler.Base;
 using System.Drawing;
 using System.Collections.Generic;
 using System.IO;
@@ -23,15 +19,18 @@ namespace Crawler.MainForm
         private DataTable singleRowDataTable;
         private bool pageExists;
         private bool pageHasCerificate;
+        public static List<TabPage> tabPages;
 
         public MainForm()
         {
             InitializeComponent();
-            Utils.LoadSettingsFromFile();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Utils.LoadSettingsFromFile();
+            tabPages = new List<TabPage>();
+
             allDataGridView.ColumnCount = 0;
             internalDataGridView.ColumnCount = 0;
             externalDataGridView.ColumnCount = 0;
@@ -59,6 +58,28 @@ namespace Crawler.MainForm
 
             ConfigureSingleDataGridView();
             isCrawling = false;
+
+            countersList.SelectionMode = SelectionMode.One;
+
+            countersList.Items.Insert(Utils.SEMAPHORES_COUNTER_INDEX, "Wolne wątki: " + Utils.MaxSemaphores + " / " + Utils.MaxSemaphores);
+            countersList.Items.Insert(Utils.VISITED_PAGES_COUNTER_INDEX, "Przejrzane strony: 0 / 0");
+            countersList.Items.Insert(Utils.TITLE_PIXEL_SIZE_PROBLEM_COUNTER_INDEX, "Błedne tytuły (piksele): 0");
+            countersList.Items.Insert(Utils.TITLE_CHAR_SIZE_COUNTER_INDEX, "Błedne tytuły (literki): 0");
+            countersList.Items.Insert(Utils.DESC_PIXEL_SIZE_PROBLEM_COUNTER_INDEX, "Błędne opisy (piksele): 0");
+            countersList.Items.Insert(Utils.DESC_CHAR_SIZE_PROBLEM_COUNTER_INDEX, "Błędne opisy (literki): 0");
+            countersList.Items.Insert(Utils.URL_CHAR_SIZE_PROBLEM_COUNTER_INDEX, "Błędne URL: 0");
+            countersList.Items.Insert(Utils.H1_CHAR_SIZE_PROBLEM_COUNTER_INDEX, "Błędne H1: 0");
+            countersList.Items.Insert(Utils.H2_CHAR_SIZE_PROBLEM_COUNTER_INDEX, "Błędne H2: 0");
+            countersList.Items.Insert(Utils.IMAGE_SIZE_PROBLEM_COUNTER_INDEX, "Błędne obrazki: 0");
+
+            titleCharProblemsCounter = 0;
+            titlePixelProblemsCounter = 0;
+            descCharProblemsCounter = 0;
+            descPixelProblemsCounter = 0;
+            urlProblemsCounter = 0;
+            headOneProblemsCounter = 0;
+            headTwoProblemsCounter = 0;
+            imgProblemsCounter = 0;
         }
         private async void Button1_ClickAsync(object sender, EventArgs e)
         {
@@ -157,14 +178,6 @@ namespace Crawler.MainForm
 
             // TODO: Obsługa poszczególnych wyjątków, tak aby poinformować użytkownika nie tylko o tym, że nie udało się nawiązać połączenia, ale również czemu to się nie udało 
         }
-        public void UpdateCrawlingStatus(int status, int max)
-        {
-            crawlingStatusLabel.Text = status + " / " + max;
-        }
-        public void UpdateCrawledStatus(int crawled, int all)
-        {
-            crawledStatusLabel.Text = crawled + " / " + all;
-        }
         public void MakeButtonReady()
         {
             this.isCrawling = false;
@@ -240,7 +253,7 @@ namespace Crawler.MainForm
         {
             // Convert sizes in bytes to readable sizes in kb, mg, gb etc.
             DataGridView view = sender as DataGridView;
-            if (view.Columns[e.ColumnIndex].Name.Equals(Base.Crawler.SIZE_COL))
+            if (view.Columns[e.ColumnIndex].Name.Equals(Base.Crawler.SIZE_COL) && e.Value != null)
             {
                 e.Value = ShownSize(true, e.Value.ToString());
                 e.FormattingApplied = true;
@@ -373,12 +386,6 @@ namespace Crawler.MainForm
             OptionsForm.OptionsForm optionsForm = new OptionsForm.OptionsForm();
             optionsForm.Show();
         }
-        public void IncreaseErrorCount()
-        {
-            Utils.ErrorsCounter++;
-            label7.Text = Utils.ErrorsCounter.ToString();
-            Invalidate();
-        }
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             foreach (Control control in tabControl1.SelectedTab.Controls)
@@ -390,6 +397,41 @@ namespace Crawler.MainForm
                     PrepareSingleDataGridView(view);
                 }
             }
+        }
+        public void HideTab(string tabPageTag)
+        {
+            foreach (TabPage tabPage in tabControl1.TabPages)
+            {
+                if (tabPage.Tag.Equals(tabPageTag))
+                {
+                    tabPages.Add(tabPage);
+                    tabControl1.TabPages.Remove(tabPage);
+                    break;
+                }
+            }
+        }
+        public void VisibleTab(string tabPageTag)
+        {
+            foreach (TabPage tabPage in tabPages)
+            {
+                if (tabPage.Tag.Equals(tabPageTag))
+                {
+                    tabControl1.TabPages.Add(tabPage);
+                    tabPages.Remove(tabPage);
+                    break;
+                }
+            }
+        }
+        public bool CheckIfTabIsVisible(string tabPageTag)
+        {
+            foreach (TabPage tabPage in tabControl1.TabPages)
+            {
+                if (tabPage.Tag.Equals(tabPageTag))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
