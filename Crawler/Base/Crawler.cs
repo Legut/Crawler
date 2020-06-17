@@ -18,7 +18,7 @@ using System.IO;
 
 namespace Crawler.Base
 {
-    partial class Crawler
+    public partial class Crawler
     {
         private Uri BaseUrl { get; set; }
         private readonly HashSet<Uri> crawledPages;
@@ -189,8 +189,11 @@ namespace Crawler.Base
             await StartCrawlingPage(BaseUrl, cts.Token);
             await OnAbortionComplete();
         }
-        private static void NormalizeAddress(Uri baseUrl, ref string address, string pfAddress)
+        public static void NormalizeAddress(Uri baseUrl, ref string address, string pfAddress)
         {
+            if (address == null) return;
+            if (address == String.Empty) { address = null; return; }
+
             // Addresses starting with protocol (http / https) are considered complete. 
             if (!address.StartsWith("http://") && !address.StartsWith("https://"))
             {
@@ -206,6 +209,8 @@ namespace Crawler.Base
                         address = "http:" + address;
                     else if (address.StartsWith("/"))
                         address = baseUrl.AbsoluteUri + address.Substring(1);
+                    else if (address.Split('/')[0].Contains("."))
+                        address = "http" + Uri.SchemeDelimiter + address;
                     else
                         address = pfAddress.Substring(0, pfAddress.LastIndexOf("/") + 1) + address;
                 }
@@ -217,7 +222,6 @@ namespace Crawler.Base
 
             // Address which is null will be discarded in further operations (not in this method).
             // However if address is not null than it has to take last test. It needs to be proper absolute String.
-            // TODO: Resarch how to improve it.
             if(address!=null)
             { 
                 bool isProperAbsolute = Uri.IsWellFormedUriString(Uri.UnescapeDataString(address), UriKind.Absolute);
