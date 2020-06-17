@@ -5616,7 +5616,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Crawler"
         "ProductCode" = "8:{0E0D69D1-7BD2-4778-B402-80BB67DD21B2}"
-        "PackageCode" = "8:{71FD1C96-8D78-498A-B852-D6CF7FC85D68}"
+        "PackageCode" = "8:{D7A3D9CA-FD21-48BC-88D6-126DB32C5C57}"
         "UpgradeCode" = "8:{8D7A05D8-B259-4398-A592-8885FB065367}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -5738,7 +5738,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_8A411D9AF016424DB4CC80844DAAE994"
             {
-            "Name" = "8:App Installer"
+            "Name" = "8:Crawler"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
